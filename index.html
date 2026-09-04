@@ -1657,13 +1657,18 @@ function levelized(ppp,closing,pts,dues,yrs,g,d){
   return (ppp + closing/pts + pvDues)/af;
 }
 
+/* Clamp to the same bounds the markup advertises. The HTML max attribute is not
+   enforced for pasted or scripted values, and both rates are compounded over the
+   life of the deed — an unbounded one overflows to Infinity, and the direct-minus-
+   resale gap then renders as NaN. Clamp where the untrusted value enters. */
+const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
 function inputs(){
   return {
-    pts:Math.max(1,+el("points").value||150),
-    cD:Math.max(0,+el("closeD").value||0),
-    cR:Math.max(0,+el("closeR").value||0),
-    g:Math.max(0,(+el("esc").value||0)/100),
-    d:Math.max(0,(+el("disc").value||0)/100)
+    pts:clamp(+el("points").value||150,1,1000),
+    cD:clamp(+el("closeD").value||0,0,1e6),
+    cR:clamp(+el("closeR").value||0,0,1e6),
+    g:clamp((+el("esc").value||0)/100,0,0.12),
+    d:clamp((+el("disc").value||0)/100,0,0.12)
   };
 }
 

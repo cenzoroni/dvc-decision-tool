@@ -1,0 +1,22 @@
+{
+  "name": "dvc-decision-tool",
+  "version": "1.0.0",
+  "description": "DVC resale vs direct purchase calculator — static site",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cenzoroni/dvc-decision-tool.git"
+  },
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/cenzoroni/dvc-decision-tool/issues"
+  },
+  "homepage": "https://github.com/cenzoroni/dvc-decision-tool#readme",
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}
