@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DVC at Walt Disney World &mdash; Costs, Rooms &amp; Resorts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B2A41;
+  --ink-soft:#5C6B7E;
+  --paper:#E9ECE8;
+  --surface:#FFFFFF;
+  --line:#CBD2CC;
+  --line-soft:#E1E5E0;
+  --lagoon:#1F6F5C;
+  --lagoon-tint:#E4EFEA;
+  --rust:#8C3A2B;
+  --rust-tint:#F4E7E3;
+  --amber:#9A6F16;
+  --amber-tint:#F2EDDD;
+  --radius:3px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"DM Sans",system-ui,sans-serif;font-size:16px;line-height:1.55;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px 90px}
+
+.mast{padding:56px 0 30px;border-bottom:2px solid var(--ink)}
+.mast h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;
+  font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.015em;margin:0 0 14px}
+.mast p{margin:0;max-width:60ch;color:var(--ink-soft);font-size:1.02rem}
+.asof{margin-top:16px;font-size:.82rem;color:var(--ink-soft)}
+
+section{padding:44px 0 6px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72rem;margin:0 0 6px;letter-spacing:-.01em}
+.lede{margin:0 0 26px;color:var(--ink-soft);max-width:66ch}
+
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:16px 20px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:26px}
+.field label{display:block;font-size:.79rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500}
+.field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:8px 10px;
+  border:1px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink)}
+.field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible{
+  outline:2px solid var(--lagoon);outline-offset:2px}
+.hint{font-size:.74rem;color:var(--ink-soft);margin-top:4px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.col{padding:26px 24px 22px}
+.col + .col{border-left:1px solid var(--line)}
+.col.resale{background:var(--lagoon-tint)}
+.col h3{margin:0 0 2px;font-size:.9rem;font-weight:700}
+.col .sub{margin:0 0 20px;font-size:.8rem;color:var(--ink-soft)}
+.big{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(2.4rem,6.6vw,3.5rem);
+  line-height:1;letter-spacing:-.02em;display:block}
+.big-unit{font-size:.8rem;font-family:"DM Sans",sans-serif;color:var(--ink-soft);display:block;margin-top:7px;max-width:26ch}
+.col.resale .big{color:var(--lagoon)}
+.lines{margin-top:22px;border-top:1px solid var(--line-soft);padding-top:12px}
+.line{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.88rem}
+.line span:last-child{font-weight:500;white-space:nowrap}
+.line.total{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;font-weight:700}
+
+.verdict{margin-top:20px;padding:16px 20px;background:var(--surface);
+  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem}
+.verdict.warn{border-left-color:var(--rust)}
+
+.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft)}
+th:first-child,td:first-child{text-align:left;white-space:nowrap}
+thead th{background:var(--ink);color:#fff;font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none}
+thead th:hover{background:#26374F}
+thead th .arrow{opacity:.45;font-size:.7rem}
+tbody tr:hover{background:#F5F7F4}
+td.save{color:var(--lagoon);font-weight:700}
+td.na{color:var(--ink-soft)}
+tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding-top:12px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{font:inherit;font-size:.83rem;padding:6px 14px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer}
+.chip:hover{border-color:var(--ink-soft)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+
+.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px}
+.resort[hidden]{display:none}
+.resort summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.resort summary::-webkit-details-marker{display:none}
+.resort summary::after{content:"+";margin-left:auto;font-size:1.25rem;color:var(--ink-soft);line-height:1}
+.resort[open] summary::after{content:"\2212"}
+.resort[open] summary{border-bottom:1px solid var(--line-soft)}
+.rname{font-family:"DM Serif Display",Georgia,serif;font-size:1.18rem;letter-spacing:-.01em}
+.meta{font-size:.79rem;color:var(--ink-soft)}
+.modes{font-size:.79rem;color:var(--ink);font-weight:500}
+.tag{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:2px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
+.tag.ok{background:var(--lagoon-tint);color:var(--lagoon)}
+.tag.soon{background:var(--amber-tint);color:var(--amber)}
+.rbody{padding:6px 20px 22px}
+.rnote{font-size:.88rem;color:var(--ink-soft);margin:12px 0 18px;max-width:74ch}
+.alert{font-size:.83rem;background:var(--amber-tint);border-left:3px solid var(--amber);
+  padding:9px 14px;border-radius:var(--radius);margin:0 0 18px;max-width:74ch}
+
+.rooms{width:100%;border-collapse:collapse;font-size:.86rem;min-width:0;margin-bottom:6px}
+.rooms th{background:transparent;color:var(--ink-soft);font-size:.74rem;font-weight:500;
+  text-align:left;padding:6px 10px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
+.rooms th:hover{background:transparent}
+.rooms td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.rooms td:nth-child(2){white-space:nowrap;width:5.5rem}
+.rooms tr:last-child td{border-bottom:0}
+
+.blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;border-top:1px solid var(--line)}
+.block{padding:18px 20px 4px 0}
+.block + .block{border-left:1px solid var(--line-soft);padding-left:20px}
+.block h4{margin:0 0 10px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.02rem}
+.block ul{margin:0 0 12px;padding-left:16px}
+.block li{font-size:.85rem;margin-bottom:6px;line-height:1.45}
+.block .cat{font-size:.72rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
+.block p.none{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px}
+
+.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.stayhead{display:grid;grid-template-columns:auto 1fr;gap:0}
+.duel{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.duel .side{padding:24px 22px;text-align:center}
+.duel .side+.side{border-left:1px solid var(--line)}
+.duel .side h3{margin:0 0 14px;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:var(--ink-soft)}
+.duel .side .big{font-size:clamp(1.9rem,5vw,2.9rem)}
+.duel .side .sub2{display:block;margin-top:8px;font-size:.76rem;color:var(--ink-soft);line-height:1.35}
+.duel .side.win{background:var(--lagoon-tint)}
+.duel .side.win .big{color:var(--lagoon)}
+.duel .side.win h3{color:var(--lagoon)}
+.duel .tagwin{display:inline-block;margin-top:10px;font-size:.66rem;font-weight:700;letter-spacing:.04em;
+  background:var(--lagoon);color:#fff;padding:2px 8px;border-radius:2px}
+@media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
+.staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
+.staypts .big{color:var(--lagoon)}
+.staycost{padding:26px 24px}
+.staycost .cline{display:flex;justify-content:space-between;gap:16px;padding:6px 0;font-size:.9rem;border-bottom:1px solid var(--line-soft)}
+.staycost .cline:last-child{border-bottom:0}
+.staycost .cline span:last-child{font-weight:700;white-space:nowrap}
+.staycost h4{margin:0 0 10px;font-size:.85rem;font-weight:700}
+.nights{width:100%;border-collapse:collapse;font-size:.83rem;min-width:0}
+.nights caption{text-align:left;padding:16px 24px 8px;font-size:.78rem;color:var(--ink-soft);caption-side:top}
+.nights th{background:transparent;color:var(--ink-soft);font-size:.72rem;font-weight:500;text-align:left;
+  padding:6px 24px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
+.nights th:hover{background:transparent}
+.nights th:first-child,.nights td:first-child{padding-left:24px}
+.nights th:last-child,.nights td:last-child{text-align:right;padding-right:24px}
+.nights td{text-align:left;padding:7px 24px 7px 0;border-bottom:1px solid var(--line-soft)}
+.nights tr.wknd td{background:#F5F7F4}
+.nights tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--line);font-size:.88rem;color:var(--ink)}
+.staywarn{padding:14px 24px;background:var(--amber-tint);border-top:1px solid var(--line);font-size:.85rem}
+.staywarn.bad{background:var(--rust-tint)}
+.staywarn.good{background:var(--lagoon-tint)}
+.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px 22px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px}
+.wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.79rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+.wrow label b{color:var(--ink);font-weight:700}
+.wrow input[type=range]{width:100%;accent-color:var(--lagoon)}
+#rank th:first-child,#rank td:first-child{width:62px;padding-right:8px}
+#rank td.sc{font-weight:700;background-repeat:no-repeat}
+#rank th:nth-child(2),#rank td:nth-child(2){white-space:normal}
+#rank td:nth-child(2) .meta{display:block;font-size:.72rem;line-height:1.2}
+#rank td.pos{color:var(--lagoon)}
+#rank td.neg{color:var(--rust)}
+#rank a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+#rank a:hover{border-bottom-color:var(--ink)}
+.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px}
+.refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  padding:10px;border:1px solid var(--line);border-radius:var(--radius);resize:vertical;color:var(--ink);background:#fff}
+.refresh .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.btn{font:inherit;font-size:.85rem;font-weight:500;padding:8px 16px;border-radius:var(--radius);cursor:pointer;
+  border:1px solid var(--ink);background:var(--ink);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.btn:hover{opacity:.88}
+#parseMsg{font-size:.83rem;color:var(--ink-soft)}
+#parseMsg.good{color:var(--lagoon);font-weight:500}
+#parseMsg.bad{color:var(--rust);font-weight:500}
+.matrix{width:100%;border-collapse:collapse;font-size:.83rem;min-width:640px}
+.matrix th{background:var(--ink);color:#fff;font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25}
+.matrix th:hover{background:var(--ink)}
+.matrix th:first-child{text-align:left;width:34%;padding-left:14px}
+.matrix td{text-align:center;padding:7px 6px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+.matrix td:first-child{text-align:left;padding-left:14px;white-space:normal}
+.matrix tbody tr:hover td:first-child{font-weight:700}
+.matrix .rv{color:var(--ink-soft);font-size:.76rem}
+.mlegend{font-size:.78rem;color:var(--ink-soft);padding:12px 14px 0;max-width:78ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.panel h3{margin:0 0 10px;font-size:1rem}
+.panel ul{margin:0;padding-left:18px}
+.panel li{margin-bottom:7px;font-size:.9rem}
+.panel li:last-child{margin-bottom:0}
+
+footer{padding-top:34px;font-size:.8rem;color:var(--ink-soft);max-width:72ch}
+.disclaimer{background:var(--amber-tint);border:1px solid var(--amber);border-radius:var(--radius);
+  padding:14px 20px;margin-bottom:26px;font-size:.82rem;line-height:1.5;color:var(--ink)}
+.disclaimer strong{font-weight:700}
+.disclaimer + .disclaimer{margin-top:-16px}
+
+@media (max-width:860px){.blocks{grid-template-columns:1fr}
+  .block + .block{border-left:0;border-top:1px solid var(--line-soft);padding-left:0}
+  .block{padding-right:0}}
+@media (max-width:720px){.split{grid-template-columns:1fr}
+  .col + .col{border-left:0;border-top:1px solid var(--line)}
+  .grid2{grid-template-columns:1fr}}
+@media print{body{background:#fff}.chips{display:none}.resort,.verdict{break-inside:avoid}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
+  <p>Three decisions in order: whether to own at all, whether to buy resale or direct, and which contract to buy. Every DVC contract is a wasting asset with a hard expiration date, so the only figure that compares a 2042 Beach&nbsp;Club deed to a 2075 Fort&nbsp;Wilderness one is the all-in cost per point per year &mdash; that runs underneath all of it. Start at step 1; everything after it is derived.</p>
+  <p class="asof">Direct prices as published July&nbsp;2026 &middot; resale averages August&nbsp;2026 &middot; 2026 annual dues &middot; dining verified early September&nbsp;2026</p>
+</header>
+
+<div class="disclaimer"><strong>Not affiliated with Disney.</strong> This site is not affiliated with, endorsed by, or connected to The Walt Disney Company, Disney Vacation Development, Inc., or any of their subsidiaries. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; resort names, and related marks are trademarks of The Walt Disney Company.</div>
+<div class="disclaimer"><strong>Not financial advice.</strong> This tool is for informational and educational purposes only. It is not financial, legal, or investment advice. DVC contracts are five-figure purchases &mdash; verify all figures with Disney and consult a licensed professional before making a purchase decision.</div>
+<div class="disclaimer"><strong>Some figures are estimates.</strong> Rack rates and cash seasonality multipliers shown here are rough estimates, not official Disney prices. Point charts and annual dues are sourced from published Disney figures. Always look up current rates for your specific dates on Disney&rsquo;s site.</div>
+
+<section>
+  <h2>1. How your family travels</h2>
+  <p class="lede">Everything below is derived from this. Set how you actually travel and what you would otherwise pay for a room, and the rest of the page answers whether to own, which way to buy, and which contract to buy.</p>
+
+  <div class="controls">
+    <div class="field"><label for="resort">Resort</label><select id="resort"></select></div>
+    <div class="field" style="grid-column:span 2"><label for="unit">Room and view</label><select id="unit"></select></div>
+
+    <div class="field"><label for="tTrips">Trips per year</label><input id="tTrips" type="number" value="3" min="1" max="20" step="1"></div>
+    <div class="field"><label for="tNights">Nights per trip</label><input id="tNights" type="number" value="3" min="1" max="14" step="1"></div>
+    <div class="field"><label for="tWknd">Of those, weekend nights</label><input id="tWknd" type="number" value="2" min="0" max="14" step="1">
+      <div class="hint">Friday and Saturday cost more in both points and cash</div></div>
+    <div class="field"><label for="tSeason">Season you travel</label><select id="tSeason"></select></div>
+    <div class="field"><label for="tRack">Published nightly rate</label><input id="tRack" type="number" value="573" min="100" step="10">
+      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week &mdash; the &ldquo;rack rate&rdquo;, before any discount. Defaults here are rough 2026 estimates; look up a real date and replace it. Weekend nights are taken as 15% higher, the season adjusts it, and your discount comes off the result.</div></div>
+    <div class="field"><label for="tDisc">Discount you would get</label><input id="tDisc" type="number" value="35" min="0" max="60" step="5">
+      <div class="hint">Percent. Florida resident runs 30% on 1&ndash;3 nights, 35% on 4+. Annual Pass adds 5.</div></div>
+    </div>
+
+  <div class="stayout" id="tripOut"></div>
+</section>
+
+<section>
+  <h2>2. Own, or just book a room?</h2>
+  <p class="lede">The gate question. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
+  <div class="stayout" id="cashOut"></div>
+</section>
+
+<section>
+  <h2>3. Resale or direct?</h2>
+  <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds the average annual dues you will pay across that whole span.</p>
+
+  <div class="controls">
+    <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
+      <div class="hint"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ptsAuto" checked style="width:auto;accent-color:var(--lagoon)"> size it to the trips in step 1</label></div></div>
+    <div class="field"><label for="closeD">Direct closing costs</label><input id="closeD" type="number" value="845" min="0" step="50">
+      <div class="hint">Disney quotes $845.08 on a 150-point cash contract</div></div>
+    <div class="field"><label for="closeR">Resale closing + admin</label><input id="closeR" type="number" value="1200" min="0" step="50"></div>
+    <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
+      <div class="hint">Percent. 2026 came in at 6.4%</div></div>
+    <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
+      <div class="hint">Percent. Leave at 0 to treat every future dollar as equal; raise it to price money you spend in 2064 as worth less than money spent now.</div></div>
+  </div>
+
+  <div class="split">
+    <div class="col">
+      <h3>Direct from Disney</h3>
+      <p class="sub" id="subD"></p>
+      <span class="big" id="bigD">&mdash;</span>
+      <span class="big-unit">all-in cost per point, per year, for the life of the contract</span>
+      <div class="lines">
+        <div class="line"><span>Price per point</span><span id="ppD"></span></div>
+        <div class="line"><span>Cash at closing</span><span id="upD"></span></div>
+        <div class="line"><span>Amortized purchase</span><span id="amD"></span></div>
+        <div class="line"><span>Average annual dues</span><span id="duD"></span></div>
+        <div class="line total"><span>Cost per year</span><span id="yrD"></span></div>
+      </div>
+    </div>
+    <div class="col resale">
+      <h3>Resale</h3>
+      <p class="sub" id="subR"></p>
+      <span class="big" id="bigR">&mdash;</span>
+      <span class="big-unit">all-in cost per point, per year, for the life of the contract</span>
+      <div class="lines">
+        <div class="line"><span>Price per point</span><span id="ppR"></span></div>
+        <div class="line"><span>Cash at closing</span><span id="upR"></span></div>
+        <div class="line"><span>Amortized purchase</span><span id="amR"></span></div>
+        <div class="line"><span>Average annual dues</span><span id="duR"></span></div>
+        <div class="line total"><span>Cost per year</span><span id="yrR"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+</section>
+
+
+
+<section>
+  <h2>4. What the contract buys</h2>
+  <p class="lede">The same contract is a fortnight in September or four nights at Christmas. This is every room at the selected resort against every season, using the 2027 chart and the contract size set in the cost model &mdash; then the same grid priced in dollars per night, which is the form the direct-versus-resale question actually takes.</p>
+
+  <div class="controls">
+    <div class="field"><label for="mMode">Show</label><select id="mMode">
+      <option value="nights">Nights per year</option>
+      <option value="resale">Cost per night &mdash; bought resale</option>
+      <option value="direct">Cost per night &mdash; bought direct</option>
+      <option value="prem">What direct adds per night</option>
+      <option value="pts">Points per night</option>
+    </select></div>
+    <div class="field"><label for="mPat">Travel pattern</label><select id="mPat">
+      <option value="1">Typical week (5 weeknights, 2 weekend)</option>
+      <option value="0">Weeknights only (Sun&ndash;Thu)</option>
+      <option value="2">Weekends only (Fri&ndash;Sat)</option>
+    </select></div>
+  </div>
+
+  <div class="tablescroll">
+    <table class="matrix" id="mtx"><thead id="mtxHead"></thead><tbody id="mtxBody"></tbody></table>
+    <p class="mlegend" id="mtxNote"></p>
+  </div>
+</section>
+
+
+
+<section>
+  <h2>5. When to go, and what a stay costs</h2>
+  <p class="lede">Trip length down the side, dates across the top, for the room and resort chosen in step 1. Pick a check-in date and length and the matching cell is outlined, with the night-by-night breakdown underneath. A stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
+
+  <div class="controls">
+    <div class="field"><label for="resortStay">Resort</label><select id="resortStay"></select></div>
+    <div class="field"><label for="checkin">Check-in date</label><input id="checkin" type="date"></div>
+    <div class="field"><label for="nights">Nights</label><input id="nights" type="number" value="3" min="1" max="14" step="1"></div>
+    <div class="field"><label for="wStart">Matrix rows use</label><select id="wStart">
+      <option value="-2">The weekday of my date</option>
+      <option value="-1">Any day &mdash; averaged</option>
+      <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
+      <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option>
+      <option value="6">Saturday</option>
+    </select></div>
+    <div class="field"><label for="wCols">Columns</label><select id="wCols">
+      <option value="m">Calendar months</option>
+      <option value="s">Point-chart seasons &mdash; exact bands</option>
+    </select></div>
+    <div class="field"><label for="wMode">Show</label><select id="wMode">
+      <option value="pts">Points for the stay &mdash; average</option>
+      <option value="range">Points &mdash; cheapest to priciest</option>
+      <option value="cheap">Points &mdash; cheapest start</option>
+      <option value="cost">What the stay costs you as an owner</option>
+    </select></div>
+    <div class="field"><label for="wMax">Longest trip shown</label><input id="wMax" type="number" value="7" min="2" max="14" step="1"></div>
+  </div>
+
+  <div class="tablescroll" style="margin-bottom:20px">
+    <table class="matrix" id="whenTbl"><thead id="whenHead"></thead><tbody id="whenBody"></tbody></table>
+    <p class="mlegend" id="whenNote"></p>
+  </div>
+
+  <div class="stayout" id="stayOut"></div>
+</section>
+
+
+
+<section>
+  <h2>6. Score a listing</h2>
+  <p class="lede">Brokers quote price per point, but two contracts at the same price are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it. A contract carrying banked points hands you nights you would otherwise have to buy &mdash; by owning more points, or by taking them off another member. Either route has a price, and that is what this scorer credits them at &mdash; using each resort&rsquo;s own figure, derived from the trip shape and discount in step 1. A stripped contract quietly costs you a year.</p>
+
+  <div class="controls">
+    <div class="field"><label for="resortList">Resort</label><select id="resortList"></select></div>
+    <div class="field"><label for="lPts">Contract points</label><input id="lPts" type="number" value="160" min="10" max="2000" step="5"></div>
+    <div class="field"><label for="lPpp">Asking $/point</label><input id="lPpp" type="number" value="116" min="10" max="500" step="1"></div>
+    <div class="field"><label for="l26">Points available 2026</label><input id="l26" type="number" value="320" min="0" step="1"></div>
+    <div class="field"><label for="l27">Points available 2027</label><input id="l27" type="number" value="160" min="0" step="1"></div>
+  </div>
+
+  <div class="stayout" id="listOut"></div>
+</section>
+
+
+
+<section>
+  <h2>7. Ranked inventory</h2>
+  <p class="lede">The 149 Walt Disney World contracts that were actually buyable on DVC Resale Market on 3 September 2026 &mdash; pending and under-offer listings excluded. Scored on all-in cost per point-year and on how far under its resort&rsquo;s sold average it is priced, balanced however you like.</p>
+
+  <details class="refresh">
+    <summary style="cursor:pointer;font-weight:500;font-size:.9rem">Refresh this list with current inventory</summary>
+    <p style="font-size:.85rem;color:var(--ink-soft);margin:12px 0 10px;max-width:70ch">This page cannot fetch the broker&rsquo;s site itself &mdash; their server does not send the cross-origin headers a browser would need, so any live request is blocked before it leaves the page. Paste instead: open the listings page, select the table, copy, and drop it below. The parser reads whatever shape it arrives in.</p>
+    <textarea id="pasteBox" placeholder="Paste the copied listings table here"></textarea>
+    <div class="row">
+      <button class="btn" id="btnParse">Parse and re-score</button>
+      <button class="btn ghost" id="btnReset">Restore 3 Sep snapshot</button>
+      <span id="parseMsg"></span>
+    </div>
+  </details>
+
+  <div class="weights">
+    <div class="wrow" style="grid-column:1/-1">
+      <label for="wBal"><span>Cheapest points overall</span><b id="wBalV">35% bargain</b><span>Best bargain for its resort</span></label>
+      <input id="wBal" type="range" min="0" max="100" value="35">
+      <p style="font-size:.78rem;color:var(--ink-soft);margin:8px 0 0">Left ranks purely on all-in cost per point-year, which favours the cheap resorts. Right ranks on how far under its own resort&rsquo;s sold average a contract is priced, which surfaces bargains at expensive resorts. Filter to one resort and the two nearly converge &mdash; the slider matters most when you have not picked a resort yet. ROFR risk is a property of the resort rather than the listing, so it is shown as a column instead of folded into the score.</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="field"><label for="fResort">Resort</label><select id="fResort"><option value="-1">All resorts</option></select></div>
+    <div class="field"><label for="fMin">Minimum points</label><input id="fMin" type="number" value="0" min="0" max="600" step="25"></div>
+    <div class="field"><label for="fMax">Maximum cash at closing</label><input id="fMax" type="number" value="60000" min="2000" step="1000"></div>
+  </div>
+
+  <div class="tablescroll">
+    <table id="rank">
+      <thead><tr>
+        <th data-r="score" tabindex="0">Score <span class="arrow">&#9662;</span></th>
+        <th data-r="resort" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
+        <th data-r="pts" tabindex="0">Pts <span class="arrow">&#9662;</span></th>
+        <th data-r="uy" tabindex="0">UY <span class="arrow">&#9662;</span></th>
+        <th data-r="ppp" tabindex="0">Ask $/pt <span class="arrow">&#9662;</span></th>
+        <th data-r="eff" tabindex="0">Effective <span class="arrow">&#9662;</span></th>
+        <th data-r="vs" tabindex="0">vs sold <span class="arrow">&#9662;</span></th>
+        <th data-r="allin" tabindex="0">$/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-r="cash" tabindex="0">Cash <span class="arrow">&#9662;</span></th>
+        <th data-r="rofr" tabindex="0">ROFR <span class="arrow">&#9662;</span></th>
+      </tr></thead>
+      <tbody id="rankBody"></tbody>
+      <tfoot><tr><td colspan="10" id="rankFoot"></td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+
+
+<section>
+  <h2>8. Every resort side by side</h2>
+  <p class="lede">Sorted by resale cost per point-year, cheapest first. Click any heading to re-sort. The two right-hand columns are the comparable figures; everything to their left feeds them.</p>
+  <div class="tablescroll">
+    <table id="grid">
+      <thead><tr>
+        <th data-k="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
+        <th data-k="exp" tabindex="0">Deed ends <span class="arrow">&#9662;</span></th>
+        <th data-k="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
+        <th data-k="direct" tabindex="0">Direct $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="resale" tabindex="0">Resale $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="dues" tabindex="0">2026 dues <span class="arrow">&#9662;</span></th>
+        <th data-k="cD" tabindex="0">Direct $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="cR" tabindex="0">Resale $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="lR" tabindex="0">Resale, discounted <span class="arrow">&#9662;</span></th>
+      </tr></thead>
+      <tbody id="gridBody"></tbody>
+      <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+
+
+<section>
+  <h2>9. Resort reference</h2>
+  <p class="lede">Rooms, transportation, dining and amenities for each one. Filter by how you would actually get to a park &mdash; for most owners this matters more day to day than the theming does.</p>
+  <div class="chips" id="chips">
+    <button class="chip" data-mode="all" aria-pressed="true">All resorts</button>
+    <button class="chip" data-mode="walk" aria-pressed="false">Walk to a park</button>
+    <button class="chip" data-mode="monorail" aria-pressed="false">Monorail</button>
+    <button class="chip" data-mode="skyliner" aria-pressed="false">Skyliner</button>
+    <button class="chip" data-mode="boat" aria-pressed="false">Boat</button>
+    <button class="chip" data-mode="busonly" aria-pressed="false">Bus only</button>
+  </div>
+  <div id="rooms"></div>
+</section>
+
+
+
+<section>
+  <h2>10. What resale actually costs you</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>The booking restriction</h3>
+      <ul>
+        <li>Resale points bought on or after 19 January 2019 at any of the original 14 resorts can book those 14 resorts, but never Riviera, the Villas at Disneyland Hotel, or the Cabins at Fort Wilderness &mdash; and almost certainly never Lakeshore Lodge.</li>
+        <li>Resale points bought at Riviera, Disneyland Hotel, or Fort Wilderness Cabins can only book that one resort. No 7-month trading at all.</li>
+        <li>That asymmetry is why Riviera resale trades near $124 against a $243 direct price. You are buying a contract that can only ever book one building.</li>
+        <li>Island Tower was folded into the existing Polynesian condominium rather than sold as a new association, so Polynesian resale points do reach it. Confirm this in writing with the broker before you sign.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>The perks you give up</h3>
+      <ul>
+        <li>No blue card. That is the members-only annual pass, dining and merchandise discounts, Moonlight Magic events, and Top of the World Lounge at Bay Lake Tower.</li>
+        <li>Blue card requires 150 direct points minimum, so a small direct add-on does not restore it if your base contract is resale.</li>
+        <li>The discounts are worth real money if you visit often and buy passes; they are worth roughly nothing if you go once a year and stay in the room.</li>
+        <li>Everything structural is identical: same 11-month home resort window, same 7-month window across the original 14, same housekeeping, same banking and borrowing.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Friction on the resale side</h3>
+      <ul>
+        <li>Disney holds right of first refusal. It can take your contract at your agreed price, and you start over. Budget 2&ndash;4 months from offer to points in your account.</li>
+        <li>Closing costs run higher than direct: roughly $600&ndash;$1,000 plus a broker admin fee, and you usually pay the current year&rsquo;s dues on any points that come with the contract.</li>
+        <li>Use year matters more than people expect. Pick one that sits a month or two before your usual travel, so a cancellation leaves you room to rebank.</li>
+        <li>Loaded contracts &mdash; ones carrying banked points &mdash; justify a higher price per point. Stripped ones should trade below the average.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Where direct genuinely wins</h3>
+      <ul>
+        <li>You specifically want Riviera or Lakeshore Lodge as a home resort and want to keep trading rights elsewhere.</li>
+        <li>You want a small contract. Disney will sell 25-point add-ons; the resale market prices small contracts at a steep premium per point.</li>
+        <li>You want the longest runway. Fort Wilderness runs to 2075 and Riviera to 2070, against 2042 for Beach Club, BoardWalk and Boulder Ridge.</li>
+        <li>You value the blue card discounts enough to price them. Put a dollar figure on them per year and compare it to the amortized gap above &mdash; usually it does not close.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Figures are current as of early September 2026 and move constantly. Direct prices for sold-out resorts &mdash; Animal Kingdom, Bay Lake Tower, Beach Club, BoardWalk, Boulder Ridge, Copper Creek, Old Key West, Saratoga Springs and Grand Floridian &mdash; are real list prices, but Disney only sells inventory it has reclaimed, so availability is sporadic and you take the use year and point total on offer. Restaurants open, close and refurbish constantly; verify anything you are planning a trip around, along with point charts and room capacities, against Disney&rsquo;s current listings.</p>
+  <p style="margin-top:16px">This site is not affiliated with, endorsed by, or connected to The Walt Disney Company or Disney Vacation Development, Inc. All trademarks belong to their respective owners. This tool provides estimates for informational purposes only and does not constitute financial or investment advice.</p>
+</footer>
+
+</div>
+
+<script>
+const NOW = new Date();
+
+const RESORTS = [
+  {
+    name:"Animal Kingdom Villas", exp:2057, direct:215, resale:113.14, dues:10.1608, restricted:false,
+    modes:["bus"], modeLabel:"Bus only",
+    note:"Two buildings under one deed. Jambo House holds the Value studios and the club-level villas; Kidani Village has the larger two-bedrooms and its own parking garage. Savanna views are the reason to own here and they go first at 11 months.",
+    rooms:[
+      ["Value Studio","4","Jambo House only. No balcony, dramatically cheaper in points."],
+      ["Deluxe Studio","5","Standard, Savanna, or Club Level at Jambo."],
+      ["One-Bedroom Villa","5","Value, Standard, Savanna, or Club Level."],
+      ["Two-Bedroom Villa","8&ndash;9","Jambo sleeps 8, Kidani 9. Same four view categories."],
+      ["Three-Bedroom Grand Villa","12","Savanna view at Kidani; club level at Jambo."]
+    ],
+    transport:[
+      "Bus to all four parks, Disney Springs and the water parks. No boat, no monorail, no Skyliner.",
+      "Internal bus links Jambo House and Kidani Village; walking between them takes about 10 minutes.",
+      "Animal Kingdom is roughly 5 minutes away; Magic Kingdom is the longest ride in the system at 20&ndash;25 minutes.",
+      "The most car-friendly reason to own here: free self-parking and short drives to every park."
+    ],
+    dining:[
+      ["Signature and table service","Jiko &mdash; The Cooking Place (African-inflected fine dining, deep wine list). Boma &mdash; Flavors of Africa (buffet, breakfast and dinner). Sanaa at Kidani (Indian-African, book a savanna-window table)."],
+      ["Quick service","The Mara at Jambo House. Kidani has grab-and-go only, which is a real inconvenience if you stay there."],
+      ["Bars and lounges","Victoria Falls Lounge (overlooks Boma). Uzima Springs Pool Bar at Jambo. Maji Pool Bar at Kidani."]
+    ],
+    amenities:[
+      "Uzima Springs Pool at Jambo with a 67-foot slide; Samawati Springs Pool at Kidani with its own slide and the Uwanja Camp play area.",
+      "Four savannas with 200-plus animals and 30-plus bird species, viewable from villa balconies and public overlooks.",
+      "Night-vision goggles for after-dark savanna viewing, plus cultural representatives and animal programs run daily.",
+      "Community Hall at Kidani for DVC activities, board games and free bike rentals. Zahanati Fitness Center and massage rooms at Kidani; Zahanati Massage at Jambo.",
+      "Pumbaa's Fun and Games arcade, campfire with s'mores, Zawadi Marketplace, and the Wanyama Safari plus dinner experience."
+    ]
+  },
+  {
+    name:"Bay Lake Tower", exp:2060, direct:275, resale:140.74, dues:8.7415, restricted:false,
+    modes:["walk","monorail","boat","bus"], modeLabel:"Walk &middot; Monorail &middot; Boat &middot; Bus",
+    note:"The best transportation position in the system. Theme park view villas cost a large point premium and are the hardest booking anywhere on fireworks nights.",
+    rooms:[
+      ["Deluxe Studio","5","Standard, Lake, or Theme Park view."],
+      ["One-Bedroom Villa","5","Standard, Lake, or Theme Park view."],
+      ["Two-Bedroom Villa","9","Standard, Lake, or Theme Park view."],
+      ["Three-Bedroom Grand Villa","12","All face Magic Kingdom. Two-story."]
+    ],
+    transport:[
+      "Walk to Magic Kingdom in about 10 minutes on a covered skybridge &mdash; no other DVC resort offers this.",
+      "Monorail resort loop to Magic Kingdom and the Ticket and Transportation Center; transfer there for the Epcot monorail.",
+      "Boat to Wilderness Lodge and Fort Wilderness across Bay Lake.",
+      "Bus to Animal Kingdom, Hollywood Studios, Disney Springs and the water parks.",
+      "Exterior maintenance on the main Contemporary tower runs into late 2027; rooms and dining stay open."
+    ],
+    dining:[
+      ["Signature and table service","California Grill on the 15th floor (sushi and the best indoor fireworks view at Walt Disney World). Steakhouse 71 off the lobby, open all three meals and better value than it looks. Chef Mickey's, the classic Fab Five character buffet."],
+      ["Quick service","Contempo Caf&eacute; on the Grand Canyon Concourse, with mobile ordering."],
+      ["Bars and lounges","Outer Rim, Steakhouse 71 Lounge, California Grill Lounge. The Sand Bar and Cove Bar at the pools. Top of the World Lounge &mdash; A Villains Lair on the roof is open only to members who bought direct."]
+    ],
+    amenities:[
+      "Bay Cove Pool with a slide, reserved for Bay Lake Tower guests, plus access to the Contemporary's larger feature pool.",
+      "Top of the World Lounge, a rooftop bar with an outdoor fireworks deck &mdash; the single most tangible blue card perk in the system.",
+      "Sammy Duvall's Watersports Centre for parasailing, wakeboarding and boat rentals on Bay Lake.",
+      "Community Hall, fitness center, white sand beach with Electrical Water Pageant views, tennis, and the Game Station arcade."
+    ]
+  },
+  {
+    name:"Beach Club Villas", exp:2042, direct:275, resale:138.66, dues:9.8113, restricted:false,
+    modes:["walk","skyliner","boat","bus"], modeLabel:"Walk &middot; Skyliner &middot; Boat &middot; Bus",
+    note:"Stormalong Bay and a five-minute walk to Epcot. The shortest deed at Walt Disney World, which is why the amortized number looks so bad next to a headline price that seems reasonable.",
+    rooms:[
+      ["Deluxe Studio","5","Single view category. Books out at 11 months for most of the year."],
+      ["One-Bedroom Villa","4","Plus one child under three."],
+      ["Two-Bedroom Villa","8","Lock-off or dedicated."]
+    ],
+    transport:[
+      "Walk 5&ndash;8 minutes to Epcot's International Gateway, which puts you in World Showcase without a bus or a bag check queue at the main entrance.",
+      "Walk about 20 minutes to Hollywood Studios, or take the Friendship boat.",
+      "Skyliner from the International Gateway station to Hollywood Studios and the Caribbean Beach hub.",
+      "Friendship boats to BoardWalk, Swan and Dolphin, and Hollywood Studios.",
+      "Bus to Magic Kingdom, Animal Kingdom, Disney Springs and the water parks."
+    ],
+    dining:[
+      ["Signature and table service","Cape May Caf&eacute; (Minnie's character breakfast, seafood clambake at dinner). Beaches and Cream Soda Shop, the ice cream parlor behind the Kitchen Sink. Ale and Compass Restaurant at the Yacht Club next door. Yachtsman Steakhouse at the Yacht Club, back from a refurbishment that closed it through summer 2026."],
+      ["Quick service","Marketplace at Ale and Compass. Hurricane Hanna's Waterside Bar and Grill at Stormalong Bay."],
+      ["Bars and lounges","Martha's Vineyard and Crew's Cup Lounge at the Yacht Club. Ale and Compass Lounge. Epcot's World Showcase is a five-minute walk, which effectively adds eleven countries of dining."]
+    ],
+    amenities:[
+      "Stormalong Bay: three acres of sand-bottom pool with a lazy river, a shipwreck slide and a snorkeling area. Widely considered the best pool at Walt Disney World and restricted to Beach Club, Yacht Club and villa guests.",
+      "Two quiet pools, Ship Shape Health Club with a sauna and massage, and Bayside Marina for boat rentals.",
+      "Community Hall, volleyball on the beach, campfires, and the Lafferty Place Arcade.",
+      "Best walkable position of any DVC resort for Epcot festival season &mdash; Food and Wine runs roughly August through November."
+    ]
+  },
+  {
+    name:"BoardWalk Villas", exp:2042, direct:240, resale:127.70, dues:9.6717, restricted:false,
+    modes:["walk","skyliner","boat","bus"], modeLabel:"Walk &middot; Skyliner &middot; Boat &middot; Bus",
+    note:"Walk to Epcot and to Hollywood Studios. Recently refurbished with reworked view categories, so check the current chart rather than an old one. Same 2042 deed as Beach Club.",
+    rooms:[
+      ["Deluxe Studio","5","Standard, Garden, Pool or BoardWalk view depending on current categories."],
+      ["One-Bedroom Villa","4","Plus one child under three."],
+      ["Two-Bedroom Villa","8","Lock-off or dedicated."],
+      ["Three-Bedroom Grand Villa","12","Two-story, very few units."]
+    ],
+    transport:[
+      "Walk 5&ndash;10 minutes to Epcot's International Gateway.",
+      "Walk 15&ndash;20 minutes to Hollywood Studios along the canal path, or take the Friendship boat.",
+      "Skyliner from the International Gateway station to Hollywood Studios and Caribbean Beach.",
+      "Friendship boats to Beach and Yacht Club, Swan and Dolphin, and Hollywood Studios.",
+      "Bus to Magic Kingdom, Animal Kingdom, Disney Springs and the water parks."
+    ],
+    dining:[
+      ["Signature and table service","Flying Fish, the seafood signature and the strongest restaurant on the boardwalk. The Cake Bake Shop by Gwendolyn Rogers, now occupying the old ESPN Club space, serving breakfast through dinner plus afternoon tea. Trattoria al Forno for Italian."],
+      ["Quick service","BoardWalk Deli, Carousel Coffee, the Pizza Window, BoardWalk Ice Cream, Blue Ribbon Corn Dogs, and the Cake Bake Shop bakery counter."],
+      ["Bars and lounges","AbracadaBar, Belle Vue Lounge, BoardWalk Joe's Marvelous Margaritas, Leaping Horse Libations at the pool. Hurly-Burly, a seaside theatre venue with live music and 21-plus evenings, is due to open late 2026."],
+      ["Since closed","ESPN Club, Big River Grille, Jellyrolls and the original BoardWalk Bakery are all gone. Older guides still list them."]
+    ],
+    amenities:[
+      "Luna Park Pool with the Keister Coaster, a 200-foot clown-mouth slide, plus two quiet pools.",
+      "Surrey bike rentals along the boardwalk and the promenade itself, with nightly street performers, jugglers and magicians.",
+      "Muscles and Bustles Health Club, tennis courts, Community Hall, and the Side Show Games Arcade.",
+      "The only DVC resort where the entertainment district is the resort &mdash; useful with kids who wind down slowly after park days."
+    ]
+  },
+  {
+    name:"Boulder Ridge Villas", exp:2042, direct:215, resale:102.40, dues:9.7672, restricted:false,
+    modes:["boat","bus"], modeLabel:"Boat &middot; Bus",
+    note:"The original Wilderness Lodge villas. Quiet, no grand villas, one view category, and the cheapest way into a boat-to-Magic-Kingdom resort &mdash; but the deed ends in 2042.",
+    rooms:[
+      ["Deluxe Studio","5","Single view category."],
+      ["One-Bedroom Villa","4","Plus one child under three."],
+      ["Two-Bedroom Villa","8","Lock-off or dedicated."]
+    ],
+    transport:[
+      "Boat to Magic Kingdom directly from the resort dock, roughly 10 minutes.",
+      "Boat across Bay Lake to the Contemporary and Fort Wilderness.",
+      "Bus to Epcot, Hollywood Studios, Animal Kingdom, Disney Springs and the water parks.",
+      "No monorail and no Skyliner. The boat is pleasant but weather-dependent; buses substitute during storms."
+    ],
+    dining:[
+      ["Signature and table service","Story Book Dining at Artist Point with Snow White, a fixed-price character dinner. Whispering Canyon Caf&eacute;, loud and deliberately unruly, all three meals."],
+      ["Quick service","Roaring Fork. Geyser Point Bar and Grill, an open-air spot on Bay Lake that works as both counter service and lounge and is the local favorite."],
+      ["Bars and lounges","Territory Lounge, Trout Pass Pool Bar, and the Geyser Point bar side."]
+    ],
+    amenities:[
+      "Boulder Ridge Cove Pool, a quiet pool right beside the villas, plus Copper Creek Springs Pool with a slide and Fire Rock Geyser, which erupts hourly.",
+      "Sturdy Branches Health Club, Teton Boat and Bike Rental, and a Bay Lake beach with Electrical Water Pageant views.",
+      "Community Hall, Buttons and Bells Arcade, evening campfires and outdoor movies, and horse-drawn carriage rides.",
+      "The lobby itself is the draw: an eight-story timber atrium with a working geyser spring running through it."
+    ]
+  },
+  {
+    name:"Copper Creek Villas &amp; Cabins", exp:2068, direct:255, resale:140.20, dues:9.0200, restricted:false,
+    modes:["boat","bus"], modeLabel:"Boat &middot; Bus",
+    note:"Same building and grounds as Boulder Ridge but a 2068 deed instead of 2042. The Cascade Cabins are standalone waterfront units on Bay Lake and carry an enormous point cost.",
+    rooms:[
+      ["Deluxe Studio","4","Queen plus queen Murphy bed. Smaller than most DVC studios."],
+      ["One-Bedroom Villa","5","King, queen pull-down, single pull-down."],
+      ["Two-Bedroom Villa","8","Lock-off or dedicated."],
+      ["Cascade Cabin","8","Freestanding two-bedroom cabin on the water with a private hot tub."],
+      ["Three-Bedroom Grand Villa","12","Two units only."]
+    ],
+    transport:[
+      "Boat to Magic Kingdom from the resort dock, roughly 10 minutes.",
+      "Boat across Bay Lake to the Contemporary and Fort Wilderness.",
+      "Bus to Epcot, Hollywood Studios, Animal Kingdom, Disney Springs and the water parks.",
+      "No monorail and no Skyliner."
+    ],
+    dining:[
+      ["Signature and table service","Story Book Dining at Artist Point with Snow White. Whispering Canyon Caf&eacute; for all three meals."],
+      ["Quick service","Roaring Fork. Geyser Point Bar and Grill on Bay Lake, counter service and lounge in one."],
+      ["Bars and lounges","Territory Lounge, Trout Pass Pool Bar, Geyser Point bar."]
+    ],
+    amenities:[
+      "Copper Creek Springs Pool with a slide and Fire Rock Geyser, the closer of the two pools to these villas, plus the quieter Boulder Ridge Cove Pool.",
+      "Sturdy Branches Health Club, Teton Boat and Bike Rental, and beach access on Bay Lake.",
+      "Community Hall, arcade, campfires, outdoor movies, and carriage rides through the grounds.",
+      "Cascade Cabin guests get a private hot tub and a dock &mdash; the closest thing to a house on the water in the DVC system."
+    ]
+  },
+  {
+    name:"Old Key West", exp:2057, direct:215, resale:97.04, dues:11.2054, restricted:false,
+    modes:["boat","bus"], modeLabel:"Boat &middot; Bus",
+    note:"The largest rooms in the entire system &mdash; the one-bedroom is 942 square feet, bigger than some two-bedrooms elsewhere. The trade-off is the highest dues at Walt Disney World outside the Fort Wilderness cabins, and a sprawling bus-dependent layout.",
+    rooms:[
+      ["Deluxe Studio","5","Two queen beds, unusual for DVC. Standard or Near Hospitality House."],
+      ["One-Bedroom Villa","5","942 sq ft. King, queen sleeper, plus a chair bed."],
+      ["Two-Bedroom Villa","9","Lock-off or dedicated."],
+      ["Three-Bedroom Grand Villa","12","Single-story, 2,265 sq ft."]
+    ],
+    transport:[
+      "Bus to all four parks, the water parks and Disney Springs. No park is walkable.",
+      "Boat to Disney Springs from the Hospitality House dock &mdash; scenic, slow, and it stops running in bad weather.",
+      "Four internal bus stops across a sprawling site. Ask for a building near the Hospitality House if bus time bothers you.",
+      "Parking is at your building, which makes this one of the easiest resorts to drive from."
+    ],
+    dining:[
+      ["Table service","Olivia's Caf&eacute;, home-style Key West cooking and one of the more relaxed sit-down rooms on property. Breakfast here is a genuine local institution."],
+      ["Quick service","Good's Food to Go, a walk-up window at the Hospitality House. Turtle Shack Pool Bar near the Turtle Pond pool, seasonal."],
+      ["Bars and lounges","Gurgling Suitcase Libations, a tiny bar off Olivia's with maybe a dozen seats."]
+    ],
+    amenities:[
+      "Sandcastle Pool with a 125-foot slide, a sauna and a hot tub, plus three quiet pools spread through the resort.",
+      "R.E.S.T. Beach Recreation for bike, surrey and watercraft rentals on Trumbo Canyon.",
+      "Community Hall, two tennis courts, basketball, shuffleboard, volleyball, a playground and the Electric Eel Arcade.",
+      "Movies under the stars, fishing excursions on Bay Lake, and Conch Flats General Store.",
+      "Full washer and dryer in every villa including studios &mdash; unusual, and the practical reason many families with kids stay here."
+    ]
+  },
+  {
+    name:"Polynesian Villas &amp; Bungalows", exp:2066, direct:243, resale:169.58, dues:8.3334, restricted:false,
+    modes:["walk","monorail","boat","bus"], modeLabel:"Walk &middot; Monorail &middot; Boat &middot; Bus",
+    note:"Two very different products on one deed. The longhouse studios are the largest deluxe studios in DVC at 447 square feet; the Island Tower added a full range of villa sizes in December 2024. Low dues, high resale price &mdash; the market has already priced in the location.",
+    alert:"Exterior work on the Great Ceremonial House runs through 2026, and views from &lsquo;Ohana may be partly obstructed. Trader Sam&rsquo;s Tiki Terrace has been closed for refurbishment.",
+    rooms:[
+      ["Longhouse Deluxe Studio","5","447 sq ft, split bathroom. Standard, Lake, or Theme Park view."],
+      ["Bungalow","8","Over-water on Seven Seas Lagoon with a plunge pool. Highest points per night of any non-grand villa."],
+      ["Island Tower Duo Studio","2","262 sq ft, queen Murphy bed only. No connecting rooms."],
+      ["Island Tower Deluxe Studio","4","Has a dishwasher, which studios normally do not."],
+      ["Island Tower One-Bedroom","5","Full kitchen, laundry, patio."],
+      ["Island Tower Two-Bedroom","9","Three full baths."],
+      ["Island Tower Two-Bedroom Penthouse","8","Top floor, wraparound patio facing Magic Kingdom."]
+    ],
+    transport:[
+      "Monorail resort loop to Magic Kingdom and the Ticket and Transportation Center; transfer at the TTC for the Epcot monorail.",
+      "Boat to Magic Kingdom across Seven Seas Lagoon, often faster than the monorail.",
+      "Walk about 10 minutes to the Grand Floridian on a paved path, and on to Magic Kingdom in roughly 20 minutes total.",
+      "Walk about 10 minutes to the TTC, which is the quickest route to Epcot on a busy morning.",
+      "Bus to Animal Kingdom, Hollywood Studios, Disney Springs and the water parks."
+    ],
+    dining:[
+      ["Signature and table service","&lsquo;Ohana, family-style Polynesian dinner and the Lilo and Stitch Best Friends Breakfast &mdash; the hardest reservation on this side of property. Kona Caf&eacute; for Tonga Toast and macadamia pancakes. Wailulu Bar and Grill in the Island Tower, table service with lagoon views and far easier to book."],
+      ["Quick service","Capt. Cook's, open early and late. Pineapple Lanai for Dole Whip. Kona Island for coffee and grab-and-go sushi."],
+      ["Bars and lounges","Trader Sam's Grog Grotto, the tiki bar with the interactive effects &mdash; walk-up only, and the line forms before it opens. Tambu Lounge beside &lsquo;Ohana serves the same appetizers. Barefoot Pool Bar and the Oasis Bar and Grill at the Island Tower pool."]
+    ],
+    amenities:[
+      "Lava Pool with a volcano slide and a zero-entry edge, the Oasis quiet pool, and the Island Tower pool with the Moana splash pad.",
+      "White sand beach on Seven Seas Lagoon with direct sightlines to the Magic Kingdom fireworks and the Electrical Water Pageant.",
+      "Nightly torch lighting ceremony, campfires, and outdoor movies on the beach.",
+      "Fitness center in the Island Tower, Community Hall, Moana Mercantile, and the Moorea Marina for watercraft.",
+      "Lowest dues of any Magic Kingdom-area DVC resort except Grand Floridian, which matters more over thirty years than the purchase price does."
+    ]
+  },
+  {
+    name:"Riviera Resort", exp:2070, direct:243, resale:123.72, dues:9.4553, restricted:true,
+    modes:["skyliner","bus"], modeLabel:"Skyliner &middot; Bus",
+    note:"Skyliner to both Epcot and Hollywood Studios. The resale restriction is severe: a Riviera resale contract can book Riviera and nothing else, ever. That is the entire reason it trades at roughly half the direct price despite being one of the newest deeds.",
+    rooms:[
+      ["Tower Studio","2","255 sq ft, queen Murphy bed, shower only. Cheapest room in the system by points."],
+      ["Deluxe Studio","5","Standard or Preferred view."],
+      ["One-Bedroom Villa","5","Standard or Preferred. 813 sq ft."],
+      ["Two-Bedroom Villa","9","Lock-off or dedicated."],
+      ["Three-Bedroom Grand Villa","12","Corner units with wraparound balconies."]
+    ],
+    transport:[
+      "Skyliner station at the resort, direct to Epcot's International Gateway and, with one transfer at Caribbean Beach, to Hollywood Studios.",
+      "Bus to Magic Kingdom, Animal Kingdom, Disney Springs and the water parks.",
+      "No boat and no monorail. The Skyliner stops for lightning and high wind, and the bus backup adds real time on those days.",
+      "Compact enough to walk the whole resort in a few minutes, which is a genuine advantage with a stroller."
+    ],
+    dining:[
+      ["Signature and table service","Topolino's Terrace &mdash; Flavors of the Riviera on the rooftop: a French-Italian dinner signature, and Breakfast &agrave; la Art with Mickey and friends in artist smocks. One of the best character meals on property."],
+      ["Quick service","Primo Piatto, a genuinely good counter service with breakfast through dinner."],
+      ["Bars and lounges","Le Petit Caf&eacute;, a lobby coffee bar by day and a wine bar by night. Bar Riva at the pool."]
+    ],
+    amenities:[
+      "Riviera Pool with a zero-entry edge and a slide, the Beau Soleil quiet pool, and the S'il Vous Play splash pad.",
+      "Rooftop sightlines to both the Epcot and Hollywood Studios fireworks from Topolino's Terrace and the observation deck.",
+      "Bambou Feu fire pit, movies on the lawn, and a curated art collection with member art tours.",
+      "Fitness center, Community Hall, and Le Petit Caf&eacute; &mdash; the smallest DVC footprint at Walt Disney World, and the least walking."
+    ]
+  },
+  {
+    name:"Saratoga Springs Resort &amp; Spa", exp:2054, direct:215, resale:102.56, dues:9.1877, restricted:false,
+    modes:["boat","bus"], modeLabel:"Boat &middot; Bus",
+    note:"The largest resort in the system, which is exactly why people buy it: availability at seven months is better here than anywhere else, so it works well as a cheap trading contract.",
+    alert:"The Turf Club Bar and Grill and its lounge have been in phased refurbishment from March through mid-September 2026. Check what is open before you count on it.",
+    rooms:[
+      ["Deluxe Studio","5","Standard or Preferred view."],
+      ["One-Bedroom Villa","4","Plus one child under three."],
+      ["Two-Bedroom Villa","8","Lock-off or dedicated."],
+      ["Three-Bedroom Grand Villa","12","Two-story."],
+      ["Treehouse Villa","9","Freestanding three-bedroom cabin elevated in the woods. Its own bus stop."]
+    ],
+    transport:[
+      "Boat to Disney Springs, and a walkway over the bridge that takes 10&ndash;15 minutes on foot.",
+      "Bus to all four parks and the water parks. No park is walkable.",
+      "Five internal bus stops &mdash; Congress Park, The Springs, The Paddock, The Carousel, The Grandstand &mdash; plus a separate Treehouse stop. Longest internal transit of any DVC resort, so request The Springs if that matters.",
+      "Congress Park buildings look across the water at Disney Springs and are the shortest walk out."
+    ],
+    dining:[
+      ["Table service","The Turf Club Bar and Grill, with a patio over the golf course. Currently in phased refurbishment."],
+      ["Quick service","The Artist's Palette, a combined counter service and grocery market that is the resort's hub. The Paddock Grill by the main pool."],
+      ["Bars and lounges","On the Rocks at High Rock Spring Pool, Backstretch Pool Bar at The Paddock, and the Turf Club Lounge.",],
+      ["Nearby","Disney Springs is a 10-minute walk or a short boat ride, which effectively gives this resort forty restaurants."]
+    ],
+    amenities:[
+      "High Rock Spring Pool with a zero-entry edge, a slide and a waterfall, plus three leisure pools spread across the site.",
+      "Senses Spa, a full-service spa &mdash; one of only two at a DVC resort.",
+      "Lake Buena Vista Golf Course on the property, plus tennis, basketball, bike and surrey rentals, and a playground.",
+      "Community Hall, Win Place or Show Arcade, campfires and outdoor movies.",
+      "The Disney Springs walkway is the underrated feature: dinner without a bus, and a grocery run without a car."
+    ]
+  },
+  {
+    name:"Villas at Grand Floridian", exp:2064, direct:275, resale:165.78, dues:8.3142, restricted:false,
+    modes:["walk","monorail","boat","bus"], modeLabel:"Walk &middot; Monorail &middot; Boat &middot; Bus",
+    note:"The lowest dues at Walt Disney World and a walking path to Magic Kingdom. The Resort Studios in Big Pine Key are converted hotel rooms &mdash; more floor space and two real queen beds, but only a beverage cooler instead of a kitchenette.",
+    alert:"A resort-wide refurbishment runs into 2027. Grand Floridian Caf&eacute; closed on 20 July 2026 with reopening expected around October; its brunch has moved to C&iacute;tricos in the meantime and there is no dinner replacement.",
+    rooms:[
+      ["Resort Studio","5","Big Pine Key building. Two queens, ~440 sq ft, no kitchenette."],
+      ["Deluxe Studio","5","~374 sq ft with a full kitchenette and split bath. Standard, Lake, or Theme Park view."],
+      ["One-Bedroom Villa","5","844 sq ft."],
+      ["Two-Bedroom Villa","9","Lock-off or dedicated."],
+      ["Three-Bedroom Grand Villa","12","Very limited inventory."]
+    ],
+    transport:[
+      "Walk to Magic Kingdom in about 15 minutes on a dedicated paved path &mdash; the villas sit at the near end of it.",
+      "Monorail resort loop to Magic Kingdom and the Ticket and Transportation Center; transfer for Epcot.",
+      "Boat to Magic Kingdom across Seven Seas Lagoon.",
+      "Walk about 10 minutes to the Polynesian, which doubles your dining options.",
+      "Bus to Animal Kingdom, Hollywood Studios, Disney Springs and the water parks."
+    ],
+    dining:[
+      ["Signature and table service","Victoria and Albert's, the only Forbes Five-Star restaurant in Florida &mdash; adults only, jackets, months of lead time. C&iacute;tricos and Narcoossee's, both signatures. 1900 Park Fare for character dining. Grand Floridian Caf&eacute; is closed for a refresh until roughly October 2026."],
+      ["Quick service","Gasparilla Island Grill, open 24 hours, which is genuinely useful with a small child."],
+      ["Bars and lounges","Enchanted Rose, a large themed lounge off the lobby. Garden View Tea Room, whose afternoon tea returned in 2026 after six years. Beaches Pool Bar and Grill, Courtyard Pool Bar, and the C&iacute;tricos lounge."]
+    ],
+    amenities:[
+      "Beach Pool with a slide and the Alice in Wonderland splash pad, plus the quieter Courtyard Pool.",
+      "Senses Spa at the Grand Floridian and a full health club.",
+      "White sand beach with fireworks and Electrical Water Pageant views, and the Captain's Shipyard marina for watercraft.",
+      "The Grand Floridian Society Orchestra and a lobby pianist play daily in the atrium &mdash; the most formal resort lobby on property.",
+      "Community Hall, arcade, and a location that lets you walk home from Magic Kingdom at park close instead of queuing for a bus."
+    ]
+  },
+  {
+    name:"The Cabins at Fort Wilderness", exp:2075, direct:243, resale:null, dues:12.2756, restricted:true,
+    modes:["boat","bus"], modeLabel:"Boat &middot; Bus",
+    note:"The longest deed in the system and the highest dues. One room type only. Resale contracts here can book nothing but these cabins, and the resale market is still too thin to price reliably.",
+    rooms:[
+      ["Cabin","6","Freestanding cabin with a bedroom, a living area with a Murphy bed, a full kitchen, and a deck. Park at your door."]
+    ],
+    transport:[
+      "Boat to Magic Kingdom from the Settlement dock, and across Bay Lake to Wilderness Lodge and the Contemporary.",
+      "Bus to Epcot, Hollywood Studios, Animal Kingdom and Disney Springs &mdash; but almost every trip starts with an internal bus to the Settlement or Outpost first.",
+      "Internal buses run constantly because the campground is 750 acres. Realistically the most transit-heavy resort at Walt Disney World.",
+      "The offsetting advantage is that you park a car at your own cabin, which no other DVC resort offers."
+    ],
+    dining:[
+      ["Table service and shows","Hoop-Dee-Doo Musical Revue at Pioneer Hall, the long-running dinner show and still one of the better-value meals on property."],
+      ["Quick service","Trail's End Restaurant, now a quick-service marketplace serving breakfast, lunch and dinner &mdash; it is no longer the buffet older guides describe. Meadow Snack Bar, seasonal. The Chuck Wagon food truck."],
+      ["Bars and lounges","Crockett's Tavern beside Pioneer Hall, open afternoons and evenings, with a full lounge menu."],
+      ["Nearby","A short boat ride reaches Geyser Point and Whispering Canyon at Wilderness Lodge, which is what most guests actually do for a sit-down meal."]
+    ],
+    amenities:[
+      "Meadow Swimmin' Pool with a slide and a splash zone, plus the smaller Wilderness Swimmin' Pool.",
+      "Tri-Circle-D Ranch for horseback trail rides, pony rides and carriage rides &mdash; the only stables on property.",
+      "Archery, fishing excursions, canoe and kayak rentals, bike and golf cart rentals at the Bike Barn.",
+      "Nightly campfire with Chip 'n Dale and an outdoor movie, plus Electrical Water Pageant views from the beach.",
+      "Tennis, basketball, volleyball, horseshoes, and Davy Crockett's Wilderness Arcade.",
+      "Every cabin has a full kitchen and a private deck with a grill and a picnic table."
+    ]
+  }
+];
+
+const UPCOMING = {
+  name:"Disney's Lakeshore Lodge", opens:"1 July 2027",
+  note:"On Bay Lake between Wilderness Lodge and Fort Wilderness, 967 accommodations. Cash bookings open 6 October 2026 for members and 8 October for everyone. DVC point sales, price, dues and point charts have not been announced. The filed resort plan confirms it will carry the modern resale restrictions, so resale points from anywhere else will not book it.",
+  rooms:[
+    ["Resort Studio &mdash; Queen","4","Two queens, hotel-style with microwave and mini fridge."],
+    ["Resort Studio &mdash; King","2","King bed, hotel-style."],
+    ["Duo Studio","2","Queen pull-down, kitchenette, balcony."],
+    ["Deluxe Studio","4","Queen plus queen pull-down, kitchenette."],
+    ["One-Bedroom Villa","5","Full kitchen, laundry, split bath with soaking tub."],
+    ["Two-Bedroom Villa","9","Adds a third bathroom."],
+    ["Three-Bedroom Grand Villa","12","Bay Lake views."],
+    ["One-Bedroom Lake House","5","Freestanding waterfront unit."],
+    ["Two-Bedroom Lake House","8","A-frame with a waterfront porch."],
+    ["Hidden Willow Presidential Suite","6","Two bedrooms, club level, fireworks views."]
+  ],
+  transport:[
+    "Water taxi to Magic Kingdom across Bay Lake.",
+    "Bus to everywhere else. No monorail, no Skyliner, no walking path to a park."
+  ],
+  dining:[
+    ["Announced so far","The Artist's Nest concierge lounge for club-level guests &mdash; only the second club level at a Walt Disney World DVC resort, after Animal Kingdom Lodge. Full restaurant lineup has not been released."]
+  ],
+  amenities:[
+    "A lazy river is confirmed, which no other Magic Kingdom-area DVC resort has.",
+    "Nature and conservation theming throughout, carried over from the shelved Reflections concept.",
+    "Point charts, dues and amenity detail are still unannounced &mdash; treat anything more specific as rumor."
+  ]
+};
+
+/* Current asking market on DVC Resale Market, sampled 3 September 2026.
+   ask = median asking $/pt across listings not already pending or under offer.
+   Index-aligned with RESORTS. */
+const MARKET=[
+  {ask:120,n:36,live:22},{ask:150,n:18,live:7},{ask:145,n:22,live:15},{ask:130,n:18,live:6},
+  {ask:113,n:4,live:2},{ask:149,n:22,live:15},{ask:99,n:39,live:27},{ask:173,n:19,live:3},
+  {ask:122,n:13,live:10},{ask:114,n:52,live:31},{ask:177,n:20,live:11},{ask:null,n:0,live:0}
+];
+
+function renderListing(){
+  const ri=+el("resort").value, r=RESORTS[ri], m=MARKET[ri], i=inputs();
+  const pts=Math.max(1,+el("lPts").value||1);
+  const ppp=Math.max(1,+el("lPpp").value||1);
+  const a26=Math.max(0,+el("l26").value||0);
+  const a27=Math.max(0,+el("l27").value||0);
+  const rate=bankedValue(ri);
+
+  const cash=pts*ppp+i.cR;
+  const delta=(a26-pts)+(a27-pts);          // points above or below a normal two-year allotment
+  const credit=delta*rate;
+  const eff=(pts*ppp-credit)/pts;           // effective price per point after valuing those points
+  const yrs=yearsLeft(r.exp);
+  const allin=costPerPointYear(eff,i.cR,pts,r.dues,yrs,i.g);
+
+  const vsSold=r.resale===null?null:(eff/r.resale-1)*100;
+  const vsAsk=m.ask===null?null:(ppp/m.ask-1)*100;
+
+  const flags=[];
+  if(delta>=pts*0.5) flags.push(["ok","Loaded. It arrives with "+delta+" points beyond a normal allotment &mdash; worth about "+money(credit)+" at what a banked point is worth here ("+money2(rate)+"), which is why the asking price can look high and still be the better buy."]);
+  if(delta<=-pts*0.5) flags.push(["bad","Stripped. You are short "+Math.abs(delta)+" points against a normal allotment. The low asking price is buying you fewer points, not cheaper points."]);
+  if(vsSold!==null&&vsSold<-10) flags.push(["bad","Effective price sits "+Math.abs(vsSold).toFixed(0)+"% under the August sold average. Disney's right of first refusal is most likely to trigger here &mdash; budget for the possibility of starting over."]);
+  if(vsAsk!==null&&vsAsk>12) flags.push(["warn","Asking "+vsAsk.toFixed(0)+"% above the current median ask at this resort. Worth an offer rather than a full-price bid."]);
+  if(pts<=50) flags.push(["warn","Small contracts carry a premium. Across the current board, contracts of 50 points or fewer ask a median $138/pt against $118/pt for contracts of 200 or more."]);
+  if(a26===0&&a27<pts) flags.push(["warn","No 2026 points and an incomplete 2027 allotment. Your first usable full year is 2028."]);
+
+  el("listOut").innerHTML=
+    "<div class=\"stayhead\">"+
+      "<div class=\"staypts\">"+
+        "<span class=\"big\">"+money2(eff)+"</span>"+
+        "<span class=\"big-unit\">effective price per point, after valuing the points that come with it at "+money(rate)+"</span>"+
+      "</div>"+
+      "<div class=\"staycost\">"+
+        "<h4>Against the market</h4>"+
+        "<div class=\"cline\"><span>Cash at closing</span><span>"+money(cash)+"</span></div>"+
+        "<div class=\"cline\"><span>Points above a normal allotment</span><span>"+(delta>0?"+":"")+delta+" ("+money(credit)+")</span></div>"+
+        "<div class=\"cline\"><span>Asking vs current median ask</span><span>"+(vsAsk===null?"&mdash;":(vsAsk>0?"+":"")+vsAsk.toFixed(0)+"%")+"</span></div>"+
+        "<div class=\"cline\"><span>Effective vs August sold average</span><span>"+(vsSold===null?"&mdash;":(vsSold>0?"+":"")+vsSold.toFixed(0)+"%")+"</span></div>"+
+        "<div class=\"cline\"><span>All-in cost per point-year</span><span>"+money2(allin.total)+"</span></div>"+
+        "<div class=\"cline\"><span>A banked point is worth</span><span>"+money2(rate)+"</span></div>"+
+      "</div>"+
+    "</div>"+
+    (flags.length
+      ? flags.map(f=>"<div class=\"staywarn"+(f[0]==="bad"?" bad":f[0]==="ok"?" good":"")+"\">"+f[1]+"</div>").join("")
+      : "<div class=\"staywarn good\">Nothing unusual. Points included are close to a normal allotment and the price sits in line with both the current asking board and recent sales.</div>")+
+    "<div class=\"staywarn\">Median ask at "+plain(r.name)+" right now is "+(m.ask===null?"not established":money(m.ask)+"/pt across "+m.live+" buyable listings")+
+      ". Of "+m.n+" listings shown, "+(m.n-m.live)+" were already pending or under offer &mdash; across the whole board 43% are spoken for, so move on anything that prices well.</div>";
+}
+
+let LISTINGS=[
+];
+
+/* 2026 year-to-date buyback rates, approximated from the monthly ROFR reports.
+   Index-aligned with RESORTS. Used only to score relative risk. */
+const ROFR=[3,5,3,0,0,0,12,0,3,4,15,0];
+const SLUG=["animal-kingdom-lodge","bay-lake-tower","beach-club","boardwalk","wilderness-lodge",
+  "copper-creek","old-key-west","polynesian","rivieraresort","saratoga-springs","grand-floridian",""];
+
+const SNAPSHOT=LISTINGS.slice();
+const PREFIX={AK:0,BL:1,BC:2,BW:3,BR:4,CC:5,OK:6,PL:7,RR:8,SS:9,GF:10};
+const MONTHS=["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+
+/* Tolerant parser: finds listing IDs, then reads the fields between one ID and the next.
+   Deliberately shape-agnostic so a markup change on the broker's side does not break it. */
+function parseListings(text){
+  const ids=[...text.matchAll(/\b[A-Z]{2}[A-Z0-9]\d{4}\b/g)];
+  const out=[]; let skipped=0, pending=0, foreign=0;
+  for(let k=0;k<ids.length;k++){
+    const id=ids[k][0];
+    const seg=text.slice(ids[k].index+id.length, k+1<ids.length?ids[k+1].index:text.length);
+    const ri=PREFIX[id.slice(0,2)];
+    if(ri===undefined){foreign++;continue;}
+    if(/pending|offer accepted|under contract/i.test(seg)){pending++;continue;}
+    const mm=seg.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i);
+    if(!mm){skipped++;continue;}
+    const before=seg.slice(0,mm.index).match(/\d[\d,]*/g)||[];
+    const after=seg.slice(mm.index).match(/\d[\d,]*/g)||[];
+    const num=x=>parseInt(String(x).replace(/,/g,""),10);
+    if(before.length<3||after.length<1){skipped++;continue;}
+    const pts=num(before[0]), a26=num(before[1]), a27=num(before[2]);
+    const ppp=after.map(num).find(v=>v>=40&&v<=600);
+    if(!(pts>0&&pts<=5000)||ppp===undefined||!isFinite(a26)||!isFinite(a27)){skipped++;continue;}
+    const uy=mm[0].slice(0,3); 
+    out.push([ri,id,pts,a26,a27,uy.charAt(0).toUpperCase()+uy.slice(1).toLowerCase(),ppp]);
+  }
+  return {out,skipped,pending,foreign};
+}
+
+function applyParse(){
+  const msg=el("parseMsg"), txt=el("pasteBox").value||"";
+  if(txt.trim().length<20){msg.className="bad";msg.textContent="Nothing to parse yet.";return;}
+  const {out,skipped,pending,foreign}=parseListings(txt);
+  if(!out.length){msg.className="bad";msg.textContent="No listings recognised. Copy the table rows themselves, including the listing IDs.";return;}
+  LISTINGS=out;
+  const resorts=new Set(out.map(x=>x[0])).size;
+  msg.className="good";
+  msg.textContent=out.length+" buyable listings across "+resorts+" resorts"+
+    (pending?", "+pending+" pending skipped":"")+
+    (foreign?", "+foreign+" non-WDW skipped":"")+
+    (skipped?", "+skipped+" unreadable":"")+".";
+  renderRank();
+}
+
+const SEASON_SHORT=["Sep","Jan &middot; early May","Late spring &middot; early Dec","Summer &middot; early Feb","Oct &ndash; late Nov","Spring &middot; Thanksgiving","Easter &middot; Christmas"];
+
+function renderMatrix(){
+  const ri=+el("resort").value, r=RESORTS[ri], i=inputs(), mode=el("mMode").value, pat=+el("mPat").value;
+  const chart=chartFor(ri,2027), cols=CHARTS[ri].cols, y=yearsLeft(r.exp);
+  const cR=r.resale===null?null:costPerPointYear(r.resale,i.cR,i.pts,r.dues,y,i.g).total;
+  const cD=costPerPointYear(r.direct,i.cD,i.pts,r.dues,y,i.g).total;
+  const rate=(s,c)=>pat===0?chart[s][0][c]:pat===2?chart[s][1][c]:(5*chart[s][0][c]+2*chart[s][1][c])/7;
+
+  el("mtxHead").innerHTML="<tr><th>Room</th>"+SEASON_SHORT.map(x=>"<th>"+x+"</th>").join("")+"</tr>";
+
+  const ordered=sortedCols(ri);
+  const vals=[];
+  ordered.forEach(({ci})=>SEASON_SHORT.forEach((_,si)=>{
+    const n=rate(si,ci);
+    vals.push(mode==="nights"?i.pts/n:mode==="pts"?n:n*(mode==="resale"?(cR||cD):mode==="direct"?cD:(cD-(cR||cD))));
+  }));
+  const lo=Math.min(...vals), hi=Math.max(...vals);
+  const shade=v=>{
+    const t=hi===lo?0.35:(mode==="nights"?(v-lo)/(hi-lo):1-(v-lo)/(hi-lo));
+    return "background:rgba(31,111,92,"+(0.06+0.32*t).toFixed(3)+")";
+  };
+
+  el("mtxBody").innerHTML=ordered.map(({c,ci})=>{
+    const [room,view]=c.split("|");
+    return "<tr><td>"+room+(view?"<span class=\"rv\"> &middot; "+view+"</span>":"")+"</td>"+
+      SEASON_SHORT.map((_,si)=>{
+        const n=rate(si,ci);
+        let v,txt;
+        if(mode==="nights"){ v=i.pts/n; txt=v<1?"&mdash;":v.toFixed(v<10?1:0); }
+        else if(mode==="pts"){ v=n; txt=n.toFixed(n<10?1:0); }
+        else { const u=mode==="resale"?(cR||cD):mode==="direct"?cD:(cD-(cR||cD)); v=n*u; txt=money(v); }
+        return "<td style=\""+shade(v)+"\">"+txt+"</td>";
+      }).join("")+"</tr>";
+  }).join("");
+
+  const pn=pat===0?"Sun&ndash;Thu nights":pat===2?"Friday and Saturday nights":"a normal week, five weeknights to two weekend nights";
+  const label={
+    nights:"Nights per year that "+i.pts+" points buys, averaged over "+pn+". Values under one mean the contract cannot cover a single night in that room and season.",
+    pts:"Points per night, averaged over "+pn+".",
+    resale:"What one night costs you as an owner who bought resale &mdash; points per night multiplied by your all-in cost per point-year of "+(cR===null?"n/a":money2(cR))+".",
+    direct:"What one night costs you as an owner who bought direct, at "+money2(cD)+" per point-year.",
+    prem:"The extra you pay per night for having bought direct rather than resale. Multiply by the nights you would actually take each year to see the annual cost of that choice."
+  }[mode];
+  el("mtxNote").innerHTML=label+" 2027 chart. Darker cells are better value.";
+}
+
+/* Rough 2026 rack rates, deluxe studio, standard view, weeknight. Starting points only. */
+const RACK=[573,780,760,720,650,700,520,850,700,500,900,500];
+/* Cash rates move by season too, and not in step with points. Rough multipliers
+   against a normal fall week, from Disney's own 2026 season structure. */
+const CASH_SEASON=[0.97,0.91,1.00,0.93,1.00,1.16,1.45];
+
+function tripShape(){
+  const nights=Math.max(1,+el("tNights").value||1);
+  const wknd=Math.min(nights,Math.max(0,+el("tWknd").value||0));
+  return {nights, wknd, week:nights-wknd,
+          trips:Math.max(1,+el("tTrips").value||1),
+          si:+el("tSeason").value||0,
+          disc:Math.min(0.9,Math.max(0,(+el("tDisc").value||0)/100))};
+}
+function tripPoints(){
+  const t=tripShape(), ri=+el("resort").value;
+  const ci=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
+  const ch=chartFor(ri,2027);
+  const per=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
+  const year=per*t.trips;
+  return {...t, ci, per, year, nightsYear:t.nights*t.trips,
+          size:Math.max(25,Math.ceil(year/25)*25)};
+}
+function syncSize(){
+  const auto=el("ptsAuto").checked;
+  el("points").disabled=auto;
+  el("points").style.opacity=auto?".6":"1";
+  if(auto) el("points").value=tripPoints().size;
+}
+function renderTrips(){
+  const t=tripPoints(), ri=+el("resort").value, r=RESORTS[ri];
+  const [room,view]=CHARTS[ri].cols[t.ci].split("|");
+  const pat=t.wknd+" weekend, "+t.week+" week"+(t.week===1?"":"")+"night"+(t.week===1?"":"s");
+  el("tripOut").innerHTML=
+    "<div class=\"stayhead\">"+
+      "<div class=\"staypts\">"+
+        "<span class=\"big\">"+t.year+"</span>"+
+        "<span class=\"big-unit\">points a year &mdash; "+t.trips+" trips of "+t.nights+" nights ("+pat+") in a "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+"</span>"+
+      "</div>"+
+      "<div class=\"staycost\">"+
+        "<h4>"+plain(r.name)+" &middot; "+SEASON_SHORT[t.si].replace(/&[a-z]+;/g," ")+"</h4>"+
+        "<div class=\"cline\"><span>Points per trip</span><span>"+t.per+"</span></div>"+
+        "<div class=\"cline\"><span>Nights per year</span><span>"+t.nightsYear+"</span></div>"+
+        "<div class=\"cline\"><span>Contract size this needs</span><span>"+t.size+" points</span></div>"+
+        "<div class=\"cline\"><span>A banked point is worth here</span><span>"+money2(bankedValue(ri))+"</span></div>"+
+      "</div>"+
+    "</div>";
+}
+
+function studioCol(ri){
+  const c=CHARTS[ri].cols;
+  let i=c.findIndex(x=>/^Deluxe Studio/.test(x));
+  if(i<0) i=c.findIndex(x=>/Studio|Cabin/.test(x));
+  return i<0?0:i;
+}
+
+/* What one banked point is worth at a given resort: the cash you avoid on a night,
+   divided by the points that night costs. Derived from the trip shape and discount
+   set in the cash comparison — never entered by hand, because it is not a preference. */
+function bankedValue(ri){
+  const {nights,wknd,week,si,disc}=tripShape();
+  const ci=studioCol(ri), ch=chartFor(ri,2027);
+  const ppn=(week*ch[si][0][ci]+wknd*ch[si][1][ci])/nights;
+  const sr=RACK[ri]*CASH_SEASON[si];
+  const cash=(week*sr+wknd*sr*1.15)/nights*(1-disc);
+  return ppn>0?cash/ppn:0;
+}
+
+function renderCash(){
+  const ri=+el("resort").value, r=RESORTS[ri], i=inputs();
+  const rack=Math.max(1,+el("tRack").value||1); RACK[ri]=rack;
+  const t=tripPoints();
+  const {nights,wknd,week,disc}=t, ptsYear=t.year, nightsYear=t.nightsYear;
+  const size=Math.max(25,+el("points").value||t.size);
+
+  const y=yearsLeft(r.exp);
+  const uR=r.resale===null?null:costPerPointYear(r.resale,i.cR,size,r.dues,y,i.g).total;
+  const uD=costPerPointYear(r.direct,i.cD,size,r.dues,y,i.g).total;
+  const duesOnly=avgDues(r.dues,y,i.g);
+
+  const seasonRack=rack*CASH_SEASON[t.si];
+  const cashNight=(week*seasonRack+wknd*seasonRack*1.15)/nights*(1-disc);
+  const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
+  const ownNightD=ptsYear*uD/nightsYear;
+  const marginal=ptsYear*duesOnly/nightsYear;
+
+  const annCash=cashNight*nightsYear;
+  const annR=ownNightR===null?null:ownNightR*nightsYear;
+  const annD=ownNightD*nightsYear;
+  const best=ownNightR===null?ownNightD:ownNightR;
+  const gap=annCash-(annR===null?annD:annR);
+  const upfront=(r.resale===null?r.direct:r.resale)*size+(r.resale===null?i.cD:i.cR);
+
+  const verdict = gap>0
+    ? ["good","Owning wins by <strong>"+money(gap)+"</strong> a year on these assumptions, against <strong>"+money(upfront)+"</strong> tied up in a contract you cannot easily sell. That is a return of "+(gap/upfront*100).toFixed(1)+"% a year on the capital, before you count the flexibility you give up."]
+    : ["bad","Booking cash wins by <strong>"+money(-gap)+"</strong> a year here. At this usage the purchase price never earns itself back, and you would be locking up "+money(upfront)+" to spend more per night."];
+
+  const cells=[
+    {k:"Own it &mdash; bought resale", v:ownNightR, s:annR===null?"no resale market here":money(annR)+" a year"},
+    {k:"Own it &mdash; bought direct", v:ownNightD, s:money(annD)+" a year"},
+    {k:"Book it &mdash; cash at "+(disc*100).toFixed(0)+"% off", v:cashNight, s:money(annCash)+" a year"}
+  ];
+  const low=Math.min(...cells.filter(c=>c.v!==null).map(c=>c.v));
+  el("cashOut").innerHTML=
+    "<div class=\"duel\">"+cells.map(c=>
+      "<div class=\"side"+(c.v!==null&&Math.abs(c.v-low)<0.01?" win":"")+"\">"+
+        "<h3>"+c.k+"</h3>"+
+        "<span class=\"big\">"+(c.v===null?"&mdash;":money(Math.round(c.v)))+"</span>"+
+        "<span class=\"sub2\">per night<br>"+c.s+"</span>"+
+        (c.v!==null&&Math.abs(c.v-low)<0.01?"<span class=\"tagwin\">CHEAPEST</span>":"")+
+      "</div>").join("")+"</div>"+
+    "<div class=\"stayhead\">"+
+      "<div class=\"staypts\">"+
+        "<span class=\"big\">"+nightsYear+"</span>"+
+        "<span class=\"big-unit\">nights a year, costing "+ptsYear+" points &mdash; "+money(Math.round(seasonRack*(1-disc)))+" a weeknight in cash after your discount</span>"+
+      "</div>"+
+      "<div class=\"staycost\">"+
+        "<h4>The contract</h4>"+
+        "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
+        "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
+        "<div class=\"cline\"><span>Published rate this season</span><span>"+money(Math.round(seasonRack))+"/night</span></div>"+
+        "<div class=\"cline\"><span>Dues only, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
+      "</div>"+
+    "</div>"+
+    "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
+    "<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s resident and passholder discounts cover set date windows &mdash; summer, late summer into early October, and parts of the holiday season &mdash; and largely vanish over spring break, Thanksgiving week and Christmas. Points cost the same premium whenever you go, so ownership is worth most exactly when the discounts are not there. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-disc)))+" a night after the same discount, which no villa contract can beat.</div>";
+}
+
+const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+/* Render a season's real date bands from the chart data, so headers can never
+   drift out of step with the pricing. */
+function bandDates(si,yr){
+  return SEASONS[yr][si].r.map(([a,b])=>{
+    const m1=Math.floor(a/100)-1, d1=a%100, m2=Math.floor(b/100)-1, d2=b%100;
+    return MONTH_SHORT[m1]+" "+d1+"&ndash;"+(m1===m2?d2:MONTH_SHORT[m2]+" "+d2);
+  }).join(", ");
+}
+
+/* Points for an N-night stay beginning on a given date, or null if any night
+   falls outside the published charts. */
+function stayPoints(ri,ci,start,n){
+  let tot=0;
+  for(let k=0;k<n;k++){
+    const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+k);
+    const si=seasonIndex(d);
+    if(si<0) return null;
+    const wknd=(d.getDay()===5||d.getDay()===6);
+    tot+=chartFor(ri,d.getFullYear())[si][wknd?1:0][ci];
+  }
+  return tot;
+}
+
+function renderWhen(){
+  const ri=+el("resort").value, r=RESORTS[ri], i=inputs();
+  const ci=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
+  const mode=el("wMode").value, byMonth=el("wCols").value==="m";
+  const start=parseDate(el("checkin").value);
+  const nSel=Math.min(14,Math.max(1,+el("nights").value||1));
+  let day=+el("wStart").value;
+  if(day===-2) day=start?start.getDay():-1;
+  const maxN=Math.min(14,Math.max(2,+el("wMax").value||7,nSel));
+  const hotCol=start?(byMonth?start.getMonth():seasonIndex(start)):-1;
+  const y=yearsLeft(r.exp);
+  const unit=r.resale===null
+    ? costPerPointYear(r.direct,i.cD,+el("points").value||150,r.dues,y,i.g).total
+    : costPerPointYear(r.resale,i.cR,+el("points").value||150,r.dues,y,i.g).total;
+
+  // one cell = every eligible check-in date in that column, priced as an n-night stay
+  const cell=(colIdx,n)=>{
+    const vals=[];
+    for(let m=0;m<12;m++){
+      const dim=new Date(2027,m+1,0).getDate();
+      for(let d=1;d<=dim;d++){
+        const start=new Date(2027,m,d);
+        if(byMonth ? m!==colIdx : seasonIndex(start)!==colIdx) continue;
+        if(day>=0 && start.getDay()!==day) continue;
+        const p=stayPoints(ri,ci,start,n);
+        if(p!==null) vals.push(p);
+      }
+    }
+    if(!vals.length) return null;
+    return {lo:Math.min(...vals), hi:Math.max(...vals),
+            avg:vals.reduce((a,b)=>a+b,0)/vals.length, n:vals.length};
+  };
+
+  const heads=byMonth?MONTH_SHORT:SEASON_SHORT;
+  const grid=[];
+  for(let n=1;n<=maxN;n++) grid.push(heads.map((_,c)=>cell(c,n)));
+  const pick=v=>mode==="cheap"?v.lo:v.avg;
+  const flat=grid.flat().filter(v=>v!==null).map(pick);
+  const lo=Math.min(...flat), hi=Math.max(...flat);
+
+  el("whenHead").innerHTML="<tr><th>Nights</th>"+heads.map((x,c)=>
+    "<th"+(c===hotCol?" style=\"background:var(--lagoon)\"":"")+">"+x+
+    (byMonth?"":"<span style=\"display:block;font-weight:400;opacity:.75;font-size:.66rem;margin-top:3px\">"+bandDates(c,2027)+"</span>")+
+    "</th>").join("")+"</tr>";
+  el("whenBody").innerHTML=grid.map((row,idx)=>{
+    const n=idx+1;
+    return "<tr><td>"+n+" night"+(n>1?"s":"")+"</td>"+row.map((v,c)=>{
+      const hot=(c===hotCol&&n===nSel);
+      if(v===null) return "<td class=\"na\""+(hot?" style=\"outline:2px solid var(--lagoon);outline-offset:-2px\"":"")+">&mdash;</td>";
+      const t=hi===lo?0.3:(pick(v)-lo)/(hi-lo);
+      const wide=v.hi/v.lo>1.12;
+      const txt = mode==="cost" ? money(v.avg*unit)
+                : mode==="range" ? (v.lo===v.hi?Math.round(v.lo):Math.round(v.lo)+"&ndash;"+Math.round(v.hi))
+                : mode==="cheap" ? Math.round(v.lo)
+                : Math.round(v.avg)+(wide?"<span style=\"color:var(--rust);font-weight:700\">*</span>":"");
+      return "<td style=\"background:rgba(140,58,43,"+(0.05+0.30*t).toFixed(3)+")"+
+        (hot?";outline:3px solid var(--lagoon);outline-offset:-3px;font-weight:700":"")+"\">"+txt+"</td>";
+    }).join("")+"</tr>";
+  }).join("");
+
+  const [room,view]=CHARTS[ri].cols[ci].split("|");
+  const dn=day<0?"averaged across every check-in day":"checking in on a "+["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][day];
+  const hl=hotCol>=0?" Your "+nSel+"-night stay from "+el("checkin").value+" is outlined.":"";
+  el("whenNote").innerHTML=
+    (mode==="cost"?"What the stay costs you as an owner, at "+money2(unit)+" per point-year":
+     mode==="cheap"?"Points for the stay, taking the cheapest start date available":
+     mode==="range"?"Points for the stay, cheapest to priciest start date":
+     "Points for the stay, averaged over every eligible start date")+
+    " &mdash; "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+" at "+plain(r.name)+", "+dn+
+    ". 2027 chart. Darker cells cost more; blank cells run past the published chart. "+
+    (byMonth
+      ? "<strong>Months are not pricing periods.</strong> Disney&rsquo;s seasons cut mid-month &mdash; season 6 ends 20 March and season 7 runs only 21&ndash;28 March &mdash; so a monthly figure can average two very different prices. An asterisk marks a column where the cheapest and priciest start differ by more than 12%; switch the columns to point-chart seasons, or to the cheapest-to-priciest view, to see it."
+      : "These are Disney&rsquo;s actual pricing bands, so every start date inside a column carries the same nightly rate. Variation left within a column comes only from which weekdays the stay covers.")+hl;
+}
+
+let rankKey="score", rankDir=-1;
+
+function scoreListings(){
+  const i=inputs();
+  const rows=LISTINGS.map(L=>{
+    const [ri,id,pts,a26,a27,uy,ppp]=L;
+    const r=RESORTS[ri], y=yearsLeft(r.exp);
+    const delta=(a26-pts)+(a27-pts);
+    const eff=(pts*ppp-delta*bankedValue(ri))/pts;
+    const allin=costPerPointYear(eff,i.cR,pts,r.dues,y,i.g).total;
+    return {ri,id,pts,a26,a27,uy,ppp,delta,eff,allin,
+      resort:plain(r.name), cash:pts*ppp+i.cR, rofr:ROFR[ri],
+      vs:r.resale===null?0:(eff/r.resale-1)*100};
+  });
+  const rng=(k,inv)=>{const a=rows.map(x=>x[k]),lo=Math.min(...a),hi=Math.max(...a);
+    return x=>hi===lo?50:100*(inv?(hi-x[k])/(hi-lo):(x[k]-lo)/(hi-lo));};
+  const fC=rng("allin",true), fD=rng("vs",true);
+  const b=+el("wBal").value/100;
+  rows.forEach(x=>{ x.sCost=fC(x); x.sDeal=fD(x); x.score=(1-b)*x.sCost+b*x.sDeal; });
+  return rows;
+}
+
+function renderRank(){
+  el("wBalV").textContent=el("wBal").value+"% bargain";
+  const only=+el("fResort").value, min=+el("fMin").value||0, max=+el("fMax").value||1e9;
+  let rows=scoreListings().filter(x=>(only<0||x.ri===only)&&x.pts>=min&&x.cash<=max);
+  rows.sort((a,b)=>{
+    const x=a[rankKey],y=b[rankKey];
+    return (typeof x==="string"?x.localeCompare(y):x-y)*rankDir;
+  });
+  const top=Math.max(...rows.map(x=>x.score),1);
+  el("rankBody").innerHTML=rows.slice(0,60).map(x=>
+    "<tr>"+
+      "<td class=\"sc\" style=\"background-image:linear-gradient(90deg,var(--lagoon-tint) 0 "+(x.score/top*100).toFixed(0)+"%,transparent "+(x.score/top*100).toFixed(0)+"% 100%)\">"+x.score.toFixed(0)+"</td>"+
+      "<td><a href=\"https://www.dvcresalemarket.com/listings/"+SLUG[x.ri]+"/"+x.id.toLowerCase()+"/\" target=\"_blank\" rel=\"noopener\">"+x.resort+"</a><span class=\"meta\">"+x.id+"</span></td>"+
+      "<td>"+x.pts+"</td><td>"+x.uy+"</td><td>"+money(x.ppp)+"</td>"+
+      "<td>"+money(x.eff)+"</td>"+
+      "<td class=\""+(x.vs<0?"pos":"neg")+"\">"+(x.vs>0?"+":"")+x.vs.toFixed(0)+"%</td>"+
+      "<td>"+money2(x.allin)+"</td><td>"+money(x.cash)+"</td>"+
+      "<td class=\""+(x.rofr>=10?"neg":x.rofr>=4?"":"pos")+"\">"+x.rofr+"%</td>"+
+    "</tr>").join("");
+  el("rankFoot").innerHTML=rows.length+" listing"+(rows.length===1?"":"s")+" match"+(rows.length===1?"es":"")+
+    (rows.length>60?", showing the top 60":"")+
+    ". Effective price credits banked points and debits missing ones at each resort&rsquo;s own value &mdash; the cash a point saves you there, derived from the trip shape and discount set above, so a BoardWalk point and a Saratoga point are not treated as equal; &ldquo;vs sold&rdquo; compares it to the August 2026 average for that resort. Resort names link out to the listing &mdash; 43% of the board was already pending when this was captured, so expect some to be gone.";
+  document.querySelectorAll("#rank thead th").forEach(th=>{
+    const a=th.querySelector(".arrow"); if(!a) return;
+    a.innerHTML=th.dataset.r===rankKey?(rankDir===1?"&#9652;":"&#9662;"):"&#9662;";
+    a.style.opacity=th.dataset.r===rankKey?"1":".4";
+  });
+}
+
+/* ---- 2026 and 2027 point charts, Walt Disney World resorts ----
+   Season bands are shared across every WDW resort within a year.
+   Ranges are MMDD integers. Values are [Sun-Thu, Fri-Sat] per column. */
+const SEASONS = {
+  2026:[
+    {n:"Sep 1 &ndash; 30", r:[[901,930]]},
+    {n:"Jan 1 &ndash; 31 &middot; May 1 &ndash; 14", r:[[101,131],[501,514]]},
+    {n:"May 15 &ndash; Jun 10 &middot; Dec 1 &ndash; 23", r:[[515,610],[1201,1223]]},
+    {n:"Feb 1 &ndash; 15 &middot; Jun 11 &ndash; Aug 31", r:[[201,215],[611,831]]},
+    {n:"Oct 1 &ndash; Nov 24 &middot; Nov 28 &ndash; 30", r:[[1001,1124],[1128,1130]]},
+    {n:"Feb 16 &ndash; Mar 28 &middot; Apr 6 &ndash; 30 &middot; Nov 25 &ndash; 27", r:[[216,328],[406,430],[1125,1127]]},
+    {n:"Mar 29 &ndash; Apr 5 &middot; Dec 24 &ndash; 31", r:[[329,405],[1224,1231]]}
+  ],
+  2027:[
+    {n:"Sep 1 &ndash; 30", r:[[901,930]]},
+    {n:"Jan 1 &ndash; 31 &middot; May 1 &ndash; 14", r:[[101,131],[501,514]]},
+    {n:"May 15 &ndash; Jun 10 &middot; Dec 1 &ndash; 23", r:[[515,610],[1201,1223]]},
+    {n:"Feb 1 &ndash; 15 &middot; Jun 11 &ndash; Aug 31", r:[[201,215],[611,831]]},
+    {n:"Oct 1 &ndash; Nov 23 &middot; Nov 27 &ndash; 30", r:[[1001,1123],[1127,1130]]},
+    {n:"Feb 16 &ndash; Mar 20 &middot; Mar 29 &ndash; Apr 30 &middot; Nov 24 &ndash; 26", r:[[216,320],[329,430],[1124,1126]]},
+    {n:"Mar 21 &ndash; 28 &middot; Dec 24 &ndash; 31", r:[[321,328],[1224,1231]]}
+  ]
+};
+
+/* index-aligned with RESORTS. y27 omitted means the 2027 values match 2026. */
+const CHARTS = [
+  { // 0 Animal Kingdom Villas
+    cols:["Deluxe Studio|Value","Deluxe Studio|Resort","Deluxe Studio|Savanna","Deluxe Studio|Club Level",
+          "One-Bedroom|Value","One-Bedroom|Resort","One-Bedroom|Savanna","One-Bedroom|Club Level",
+          "Two-Bedroom|Value","Two-Bedroom|Resort","Two-Bedroom|Savanna","Two-Bedroom|Club Level",
+          "Three-Bedroom Grand Villa|Resort","Three-Bedroom Grand Villa|Savanna"],
+    y26:[
+      [[7,10,13,18,17,20,27,38,22,28,35,51,68,73],[10,13,16,22,20,25,31,43,28,34,43,58,78,85]],
+      [[8,12,15,20,19,24,31,41,25,31,39,55,73,79],[11,14,17,23,21,28,34,46,31,37,48,63,82,89]],
+      [[8,13,16,21,20,26,33,43,27,32,42,58,78,86],[12,15,18,24,22,29,35,49,32,39,50,66,88,96]],
+      [[9,14,17,22,21,27,34,44,29,35,43,60,81,89],[12,15,20,24,24,30,36,50,34,40,52,66,91,100]],
+      [[10,15,19,23,23,29,35,46,30,36,47,61,88,96],[13,16,20,25,26,32,39,53,35,44,57,71,100,110]],
+      [[12,16,19,23,24,32,38,49,31,40,52,66,97,107],[14,18,22,26,27,35,41,56,36,48,61,77,111,121]],
+      [[16,21,27,33,31,38,47,65,43,55,70,88,117,127],[17,23,29,36,35,45,52,73,48,60,76,98,135,144]]
+    ],
+    y27:[
+      [[8,10,12,20,19,20,26,41,25,28,35,55,68,73],[11,13,15,24,23,25,30,46,32,34,43,62,78,85]],
+      [[9,12,14,23,21,24,30,43,28,31,39,59,73,79],[12,14,16,26,23,28,33,48,34,37,47,68,82,89]],
+      [[9,13,15,23,23,26,32,45,31,32,42,63,78,86],[13,15,17,26,24,29,35,51,35,39,50,70,88,96]],
+      [[10,14,15,25,23,27,33,47,32,35,43,65,81,89],[13,15,18,27,25,30,35,51,36,40,50,72,91,100]],
+      [[11,15,17,26,25,29,34,50,35,36,47,68,88,96],[14,16,19,29,27,32,39,57,40,44,57,79,100,110]],
+      [[13,16,17,27,26,32,37,54,37,40,52,74,97,107],[16,18,21,31,29,35,41,61,43,48,61,87,111,121]],
+      [[17,21,26,37,34,38,45,67,51,55,70,99,117,127],[19,23,29,40,39,45,51,74,56,60,76,109,135,144]]
+    ]
+  },
+  { // 1 Bay Lake Tower
+    cols:["Deluxe Studio|Resort","Deluxe Studio|Preferred","Deluxe Studio|Theme Park",
+          "One-Bedroom|Resort","One-Bedroom|Preferred","One-Bedroom|Theme Park",
+          "Two-Bedroom|Resort","Two-Bedroom|Preferred","Two-Bedroom|Theme Park",
+          "Three-Bedroom Grand Villa|Preferred","Three-Bedroom Grand Villa|Theme Park"],
+    y26:[
+      [[13,16,18,24,29,35,35,38,48,82,101],[16,19,23,32,36,44,42,47,59,98,120]],
+      [[15,18,20,28,33,39,40,43,54,88,106],[17,19,23,35,38,46,45,50,61,104,125]],
+      [[16,19,21,30,35,41,42,46,57,96,115],[18,20,25,38,41,50,48,54,66,112,135]],
+      [[17,19,23,31,36,45,43,47,58,100,120],[19,21,26,39,44,53,49,58,67,115,141]],
+      [[18,20,24,33,38,47,45,50,60,108,131],[21,23,27,41,47,56,53,61,72,126,153]],
+      [[19,21,26,36,42,49,50,54,65,120,143],[22,24,29,44,48,59,57,62,76,140,168]],
+      [[26,28,34,48,53,64,66,72,88,146,176],[29,32,38,56,62,75,77,84,98,171,207]]
+    ]
+  },
+  { // 2 Beach Club Villas
+    cols:["Deluxe Studio|","One-Bedroom|","Two-Bedroom|"],
+    y26:[
+      [[14,26,36],[15,31,43]],
+      [[15,29,38],[16,33,44]],
+      [[16,31,41],[17,36,46]],
+      [[16,35,44],[18,38,47]],
+      [[17,36,46],[21,39,52]],
+      [[18,37,48],[22,42,55]],
+      [[27,51,68],[28,56,71]]
+    ]
+  },
+  { // 3 BoardWalk Villas
+    cols:["Deluxe Studio|Resort","Deluxe Studio|BoardWalk or Preferred",
+          "One-Bedroom|Resort","One-Bedroom|BoardWalk or Preferred",
+          "Two-Bedroom|Resort","Two-Bedroom|BoardWalk or Preferred",
+          "Three-Bedroom Grand Villa|BoardWalk or Preferred"],
+    y26:[
+      [[10,14,19,26,29,35,76],[13,16,27,29,35,40,88]],
+      [[10,15,23,29,32,39,81],[14,16,28,34,38,45,91]],
+      [[11,16,24,32,31,41,88],[15,17,30,37,41,47,97]],
+      [[11,16,25,35,33,43,91],[16,18,31,39,44,47,102]],
+      [[14,18,28,35,39,45,101],[16,20,33,41,45,51,114]],
+      [[15,19,31,39,43,51,110],[19,22,36,43,49,55,124]],
+      [[22,28,42,50,60,68,133],[24,29,48,56,67,77,145]]
+    ]
+  },
+  { // 4 Boulder Ridge Villas
+    cols:["Deluxe Studio|","One-Bedroom|","Two-Bedroom|"],
+    y26:[
+      [[13,27,36],[16,31,41]],
+      [[15,30,38],[16,34,44]],
+      [[16,32,41],[17,36,47]],
+      [[16,34,44],[18,39,48]],
+      [[17,35,46],[20,40,51]],
+      [[19,37,49],[21,42,54]],
+      [[26,47,64],[28,55,72]]
+    ]
+  },
+  { // 5 Copper Creek Villas & Cabins
+    cols:["Deluxe Studio|","One-Bedroom|","Two-Bedroom|","Three-Bedroom Grand Villa|","Cascade Cabin (Two-Bedroom)|"],
+    y26:[
+      [[13,25,35,91,84],[15,30,40,107,100]],
+      [[15,30,38,101,94],[16,34,44,116,109]],
+      [[16,33,41,108,101],[17,36,47,124,117]],
+      [[17,34,43,113,107],[18,38,49,130,121]],
+      [[17,35,45,120,113],[19,42,52,137,131]],
+      [[18,37,50,128,124],[21,43,56,147,143]],
+      [[25,48,64,176,171],[28,54,72,206,196]]
+    ]
+  },
+  { // 6 Old Key West
+    cols:["Deluxe Studio|","One-Bedroom|","Two-Bedroom|","Three-Bedroom Grand Villa|"],
+    y26:[
+      [[9,20,27,46],[13,25,35,56]],
+      [[10,23,31,50],[14,26,35,59]],
+      [[10,25,34,53],[15,28,38,64]],
+      [[11,26,36,56],[16,30,41,69]],
+      [[13,28,39,59],[17,34,44,71]],
+      [[15,31,42,66],[19,36,49,79]],
+      [[22,40,57,82],[26,50,65,106]]
+    ]
+  },
+  { // 7 Polynesian Villas & Bungalows
+    cols:["Longhouse Deluxe Studio|Resort","Longhouse Deluxe Studio|Preferred",
+          "Bungalow|Preferred",
+          "Island Tower Duo Studio|Resort","Island Tower Duo Studio|Preferred","Island Tower Duo Studio|Premium",
+          "Island Tower Deluxe Studio|Resort","Island Tower Deluxe Studio|Preferred","Island Tower Deluxe Studio|Theme Park",
+          "Island Tower One-Bedroom|Resort","Island Tower One-Bedroom|Preferred","Island Tower One-Bedroom|Theme Park",
+          "Island Tower Two-Bedroom|Resort","Island Tower Two-Bedroom|Preferred","Island Tower Two-Bedroom|Theme Park",
+          "Island Tower Two-Bedroom Penthouse|Preferred","Island Tower Two-Bedroom Penthouse|Theme Park"],
+    y26:[
+      [[14,19,112,12,16,19,14,19,24,28,38,42,44,54,68,86,108],[17,24,132,14,19,23,17,24,29,34,46,51,53,65,79,104,128]],
+      [[17,22,120,14,18,21,17,22,26,34,42,47,48,60,71,95,117],[20,24,138,16,20,24,20,24,30,40,48,54,56,68,84,112,135]],
+      [[19,22,128,16,19,22,19,22,27,38,47,53,54,62,76,102,122],[22,26,147,18,21,26,22,26,32,44,52,61,62,73,90,119,144]],
+      [[20,24,136,17,20,24,20,24,29,40,48,54,56,68,82,108,128],[23,27,157,19,22,27,23,27,33,46,54,63,65,79,96,122,152]],
+      [[22,25,150,18,21,26,22,25,31,44,53,58,62,73,90,115,140],[25,30,172,20,24,29,25,30,36,50,60,67,70,84,101,132,162]],
+      [[25,28,162,20,23,28,25,28,34,48,54,65,68,79,96,126,153],[28,32,185,23,26,32,28,32,39,56,64,75,79,90,110,144,179]],
+      [[34,41,199,27,32,39,34,41,48,68,78,89,92,109,128,178,197],[36,43,226,30,36,43,36,43,53,78,86,98,105,125,149,198,226]]
+    ],
+    y27:[
+      [[15,20,114,13,17,20,15,20,25,30,39,44,46,56,70,88,110],[18,24,134,15,20,24,18,24,30,36,47,53,55,67,81,105,129]],
+      [[17,22,122,14,18,21,17,22,26,34,42,47,49,61,72,96,118],[20,24,140,16,20,24,20,24,30,40,48,54,57,69,85,113,136]],
+      [[19,22,128,16,19,22,19,22,27,38,47,53,54,62,76,102,122],[22,26,147,18,21,26,22,26,32,44,52,61,62,73,90,119,144]],
+      [[20,24,136,17,20,24,20,24,29,40,48,54,56,68,82,108,128],[23,27,157,19,22,27,23,27,33,46,54,63,65,79,96,122,152]],
+      [[22,25,150,18,21,26,22,25,31,44,53,58,62,73,90,115,140],[25,30,172,20,24,29,25,30,36,50,60,67,70,84,101,132,162]],
+      [[25,28,162,20,23,28,25,28,34,48,54,65,68,79,96,126,153],[28,32,185,23,26,32,28,32,39,56,64,75,79,90,110,144,179]],
+      [[34,41,199,27,32,39,34,41,48,68,78,89,92,109,128,178,197],[36,43,226,30,36,43,36,43,53,78,86,98,105,125,149,198,226]]
+    ]
+  },
+  { // 8 Riviera Resort
+    cols:["Tower Studio|","Deluxe Studio|Resort","Deluxe Studio|Preferred",
+          "One-Bedroom|Resort","One-Bedroom|Preferred",
+          "Two-Bedroom|Resort","Two-Bedroom|Preferred","Three-Bedroom Grand Villa|Preferred"],
+    y26:[
+      [[10,14,17,29,36,38,47,103],[13,17,22,34,46,47,58,120]],
+      [[12,16,19,34,41,44,52,108],[14,18,24,39,50,49,61,127]],
+      [[13,17,20,35,44,47,55,116],[15,19,26,42,54,53,67,135]],
+      [[14,17,21,36,48,50,59,120],[17,20,26,48,58,59,70,141]],
+      [[16,19,24,39,49,52,65,129],[18,22,28,50,59,63,74,154]],
+      [[17,21,27,43,53,56,71,140],[20,25,30,53,63,65,79,166]],
+      [[24,29,35,58,68,77,88,172],[27,32,40,68,81,90,103,204]]
+    ]
+  },
+  { // 9 Saratoga Springs Resort & Spa
+    cols:["Deluxe Studio|Standard","Deluxe Studio|Preferred",
+          "One-Bedroom|Standard","One-Bedroom|Preferred",
+          "Two-Bedroom|Standard","Two-Bedroom|Preferred",
+          "Three-Bedroom Grand Villa|Standard","Three-Bedroom Grand Villa|Preferred",
+          "Three-Bedroom Treehouse Villa|"],
+    y26:[
+      [[9,11,21,24,27,35,63,74,38],[14,16,27,30,34,39,72,84,43]],
+      [[12,13,24,28,32,38,68,76,41],[15,17,29,34,36,42,78,89,45]],
+      [[13,15,26,30,35,39,74,82,43],[15,18,31,35,39,45,83,94,48]],
+      [[14,15,28,32,36,41,77,87,44],[16,19,33,37,39,50,86,98,51]],
+      [[14,16,30,34,37,46,86,98,47],[17,19,34,39,45,54,97,112,52]],
+      [[15,17,32,38,41,49,93,108,51],[18,21,36,42,47,59,107,125,58]],
+      [[21,23,43,49,56,67,113,131,66],[25,28,47,53,63,75,127,139,76]]
+    ]
+  },
+  { // 10 Villas at Grand Floridian
+    cols:["Resort Studio|Resort","Resort Studio|Preferred","Resort Studio|Theme Park",
+          "Deluxe Studio|Resort","Deluxe Studio|Preferred",
+          "One-Bedroom|Resort","One-Bedroom|Preferred",
+          "Two-Bedroom|Resort","Two-Bedroom|Preferred","Three-Bedroom Grand Villa|Preferred"],
+    y26:[
+      [[16,19,24,16,19,31,39,44,54,111],[20,24,27,20,24,41,48,55,65,131]],
+      [[17,21,25,17,21,36,43,49,59,118],[20,24,29,20,24,44,51,58,68,138]],
+      [[18,21,26,18,21,38,46,53,62,126],[21,26,31,21,26,46,55,61,74,148]],
+      [[18,22,28,18,22,41,49,56,66,131],[21,27,32,21,27,48,57,65,78,155]],
+      [[22,26,32,22,26,43,53,61,73,143],[24,29,36,24,29,51,61,69,82,169]],
+      [[24,27,34,24,27,46,55,65,75,161],[26,32,41,26,32,55,66,75,88,187]],
+      [[32,38,47,32,38,64,76,87,103,197],[37,44,54,37,44,75,89,103,122,227]]
+    ]
+  },
+  { // 11 The Cabins at Fort Wilderness
+    cols:["Cabin|"],
+    y26:[ [[15],[18]],[[16],[19]],[[18],[21]],[[20],[24]],[[22],[25]],[[24],[28]],[[32],[36]] ]
+  }
+];
+
+const el = id => document.getElementById(id);
+const money = n => "$" + n.toLocaleString("en-US",{maximumFractionDigits:0});
+const money2 = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const plain = s => s.replace(/&amp;/g,"&");
+
+function yearsLeft(exp){ return Math.max(0.5,(new Date(exp,0,31)-NOW)/(365.2425*24*3600*1000)); }
+
+function avgDues(dues,yrs,g){
+  const n = Math.max(1,Math.round(yrs));
+  if(g===0) return dues;
+  let sum=0; for(let t=0;t<n;t++) sum += dues*Math.pow(1+g,t);
+  return sum/n;
+}
+function costPerPointYear(ppp,closing,pts,dues,yrs,g){
+  const acq=(ppp*pts+closing)/pts/yrs, d=avgDues(dues,yrs,g);
+  return {acq,dues:d,total:acq+d};
+}
+/* Levelized cost per point-year: present value of purchase plus all future dues,
+   divided by the present-value annuity factor. At a 0% discount rate this reduces
+   exactly to the simple amortized figure. */
+function levelized(ppp,closing,pts,dues,yrs,g,d){
+  const n=Math.max(1,Math.round(yrs));
+  let pvDues=0, af=0;
+  for(let t=0;t<n;t++){ const df=Math.pow(1+d,-t); pvDues+=dues*Math.pow(1+g,t)*df; af+=df; }
+  return (ppp + closing/pts + pvDues)/af;
+}
+
+function inputs(){
+  return {
+    pts:Math.max(1,+el("points").value||150),
+    cD:Math.max(0,+el("closeD").value||0),
+    cR:Math.max(0,+el("closeR").value||0),
+    g:Math.max(0,(+el("esc").value||0)/100),
+    d:Math.max(0,(+el("disc").value||0)/100)
+  };
+}
+
+function renderCalc(){
+  const r=RESORTS[+el("resort").value], i=inputs(), yrs=yearsLeft(r.exp);
+  const D=costPerPointYear(r.direct,i.cD,i.pts,r.dues,yrs,i.g);
+  el("subD").textContent = plain(r.name)+" \u00B7 "+yrs.toFixed(1)+" years left";
+  el("bigD").textContent = money2(D.total);
+  el("ppD").textContent = money(r.direct);
+  el("upD").textContent = money(r.direct*i.pts+i.cD);
+  el("amD").textContent = money2(D.acq)+"/pt";
+  el("duD").textContent = money2(D.dues)+"/pt";
+  el("yrD").textContent = money(D.total*i.pts);
+
+  const vd=el("verdict");
+  if(r.resale===null){
+    ["bigR","ppR","upR","amR","duR","yrR"].forEach(id=>el(id).textContent="\u2014");
+    el("subR").textContent="No reliable resale market yet";
+    vd.className="verdict warn";
+    vd.innerHTML="<strong>"+plain(r.name)+"</strong> has too few resale sales to average, and resale contracts here can only ever book these cabins. Direct is effectively the only route, at "+money(D.total*i.pts)+" per year all-in.";
+    return;
+  }
+  const R=costPerPointYear(r.resale,i.cR,i.pts,r.dues,yrs,i.g);
+  el("subR").textContent="August 2026 average \u00B7 "+yrs.toFixed(1)+" years left";
+  el("bigR").textContent=money2(R.total);
+  el("ppR").textContent=money2(r.resale);
+  el("upR").textContent=money(r.resale*i.pts+i.cR);
+  el("amR").textContent=money2(R.acq)+"/pt";
+  el("duR").textContent=money2(R.dues)+"/pt";
+  el("yrR").textContent=money(R.total*i.pts);
+
+  const gapYear=(D.total-R.total)*i.pts, gapLife=gapYear*yrs;
+  const cashGap=(r.direct*i.pts+i.cD)-(r.resale*i.pts+i.cR);
+  vd.className="verdict";
+  vd.innerHTML =
+    "Resale saves <strong>"+money(cashGap)+"</strong> at closing and <strong>"+money(gapYear)+"</strong> a year, about <strong>"+money(gapLife)+"</strong> over the remaining "+yrs.toFixed(0)+" years. "+
+    (r.restricted
+      ? "But a resale contract here books <strong>"+plain(r.name)+" only</strong> &mdash; no trading at seven months, ever. Price that restriction before you price the savings."
+      : "Resale points here still book all fourteen original resorts at seven months; you lose Riviera, Disneyland Hotel, the Fort Wilderness cabins, Lakeshore Lodge, and the blue card discounts.")+
+    "<br><br>Put the other way: paying direct costs you an extra <strong>"+money(gapYear)+" every year</strong> for the life of the deed. "+
+    (r.restricted
+      ? "Here that buys the ability to trade out at seven months, plus the blue card. Everything else is identical."
+      : "The rooms, the booking windows and the dues are identical either way, so that premium buys exactly three things: the blue card discounts, the ability to book Riviera and Lakeshore Lodge at seven months, and the option to buy in smaller increments. The discounts alone would have to be worth more than "+money(gapYear)+" a year before direct wins on the numbers.");
+}
+
+/* ---------- stay points calculator ---------- */
+const DAYNAME=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MONTH=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function parseDate(v){
+  const p=(v||"").split("-").map(Number);
+  if(p.length!==3||!p[0]) return null;
+  return new Date(p[0],p[1]-1,p[2]);
+}
+function seasonIndex(d){
+  const bands=SEASONS[d.getFullYear()];
+  if(!bands) return -1;
+  const md=(d.getMonth()+1)*100+d.getDate();
+  for(let i=0;i<bands.length;i++)
+    for(const [a,b] of bands[i].r) if(md>=a&&md<=b) return i;
+  return -1;
+}
+function chartFor(resortIdx,year){
+  const c=CHARTS[resortIdx];
+  return (year>=2027 && c.y27) ? c.y27 : c.y26;
+}
+/* Disney's charts group by room size then view, which is not cost order.
+   Sort by average nightly points so the list reads cheapest to priciest,
+   keeping the original column index as the option value. */
+function sortedCols(ri){
+  const ch=chartFor(ri,2027), cols=CHARTS[ri].cols;
+  return cols.map((c,ci)=>{
+    let sum=0, lo=Infinity, hi=0;
+    for(let k=0;k<7;k++){
+      sum+=(5*ch[k][0][ci]+2*ch[k][1][ci])/7;
+      lo=Math.min(lo,ch[k][0][ci]); hi=Math.max(hi,ch[k][1][ci]);
+    }
+    return {c,ci,avg:sum/7,lo,hi};
+  }).sort((a,b)=>a.avg-b.avg);
+}
+
+function fillUnits(){
+  const i=+el("resort").value;
+  const cur=el("unit").value;
+  el("unit").innerHTML=sortedCols(i).map(x=>{
+    const [room,view]=x.c.split("|");
+    return "<option value=\""+x.ci+"\">"+room+(view?" &mdash; "+view+" view":"")+
+      " &middot; "+x.lo+"&ndash;"+x.hi+" pts/night</option>";
+  }).join("");
+  const n=CHARTS[i].cols.length;
+  el("unit").value=String(Math.min(Math.max(0,+cur||0),n-1));
+}
+
+function renderStay(){
+  const ri=+el("resort").value, r=RESORTS[ri];
+  const start=parseDate(el("checkin").value);
+  const n=Math.min(30,Math.max(1,+el("nights").value||1));
+  const col=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
+  const out=el("stayOut");
+  if(!start){ out.innerHTML="<div class=\"staywarn\">Pick a check-in date to price a stay.</div>"; return; }
+
+  const rows=[]; let total=0, unknown=false;
+  for(let k=0;k<n;k++){
+    const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+k);
+    const s=seasonIndex(d);
+    if(s<0){ unknown=true; rows.push({d,season:null,pts:0,wknd:false}); continue; }
+    const dow=d.getDay(), wknd=(dow===5||dow===6);
+    const pts=chartFor(ri,d.getFullYear())[s][wknd?1:0][col];
+    total+=pts;
+    rows.push({d,season:SEASONS[d.getFullYear()][s].n,pts,wknd});
+  }
+
+  const [room,view]=CHARTS[ri].cols[col].split("|");
+  const i=inputs(), yrs=yearsLeft(r.exp);
+  const D=costPerPointYear(r.direct,i.cD,i.pts,r.dues,yrs,i.g);
+  const R=r.resale===null?null:costPerPointYear(r.resale,i.cR,i.pts,r.dues,yrs,i.g);
+  const duesOnly=avgDues(r.dues,yrs,i.g);
+  const last=new Date(start.getFullYear(),start.getMonth(),start.getDate()+n);
+  const fmt=d=>DAYNAME[d.getDay()]+" "+MONTH[d.getMonth()]+" "+d.getDate();
+
+  let costs =
+    "<h4>What those points cost you</h4>"+
+    "<div class=\"cline\"><span>Annual dues alone</span><span>"+money(total*duesOnly)+"</span></div>"+
+    (R? "<div class=\"cline\"><span>All-in, bought resale</span><span>"+money(total*R.total)+"</span></div>":"")+
+    "<div class=\"cline\"><span>All-in, bought direct</span><span>"+money(total*D.total)+"</span></div>"+
+    "";
+
+  out.innerHTML =
+    "<div class=\"stayhead\">"+
+      "<div class=\"staypts\">"+
+        "<span class=\"big\">"+(unknown?"&mdash;":total)+"</span>"+
+        "<span class=\"big-unit\">points for "+n+" night"+(n>1?"s":"")+", "+room.toLowerCase()+
+        (view?", "+view.toLowerCase()+" view":"")+"</span>"+
+      "</div>"+
+      "<div class=\"staycost\">"+costs+"</div>"+
+    "</div>"+
+    "<table class=\"nights\"><caption>"+fmt(start)+" to "+fmt(last)+" &middot; check-out is not charged</caption>"+
+      "<thead><tr><th>Night</th><th>Season</th><th>Points</th></tr></thead><tbody>"+
+      rows.map(x=>"<tr class=\""+(x.wknd?"wknd":"")+"\"><td>"+fmt(x.d)+"</td>"+
+        "<td>"+(x.season||"<em>no published chart for "+x.d.getFullYear()+"</em>")+"</td>"+
+        "<td>"+(x.season?x.pts:"&mdash;")+"</td></tr>").join("")+
+      "</tbody><tfoot><tr><td colspan=\"2\">Total</td><td>"+(unknown?"&mdash;":total)+"</td></tr></tfoot></table>"+
+    warnings(start,n,unknown,total,i.pts);
+}
+
+function warnings(start,n,unknown,total,owned){
+  let w="";
+  if(unknown) w+="<div class=\"staywarn bad\">Part of this stay falls outside the published 2026 and 2027 charts. Disney releases the next year&rsquo;s chart each December.</div>";
+  const window11=new Date(NOW.getFullYear(),NOW.getMonth()+11,NOW.getDate());
+  if(start>window11) w+="<div class=\"staywarn\">This check-in is beyond the 11-month home resort booking window, which currently reaches "+MONTH[window11.getMonth()]+" "+window11.getDate()+", "+window11.getFullYear()+". You could not book it yet.</div>";
+  if(!unknown && total>owned) w+="<div class=\"staywarn\">This stay needs "+total+" points and the contract above is "+owned+". You would have to bank the prior year or borrow from the next &mdash; both allowed, but you cannot do it two years running.</div>";
+  return w;
+}
+
+let sortKey="cR", sortDir=1;
+function renderGrid(){
+  const i=inputs();
+  const rows=RESORTS.map(r=>{
+    const yrs=yearsLeft(r.exp);
+    return {name:plain(r.name),exp:r.exp,yrs,direct:r.direct,resale:r.resale,dues:r.dues,
+      cD:costPerPointYear(r.direct,i.cD,i.pts,r.dues,yrs,i.g).total,
+      cR:r.resale===null?null:costPerPointYear(r.resale,i.cR,i.pts,r.dues,yrs,i.g).total,
+      lR:r.resale===null?null:levelized(r.resale,i.cR,i.pts,r.dues,yrs,i.g,i.d)};
+  });
+  rows.sort((a,b)=>{
+    let x=a[sortKey],y=b[sortKey];
+    if(x===null) return 1; if(y===null) return -1;
+    return typeof x==="string" ? x.localeCompare(y)*sortDir : (x-y)*sortDir;
+  });
+  el("gridBody").innerHTML=rows.map(r=>
+    "<tr><td>"+r.name+"</td><td>"+r.exp+"</td><td>"+r.yrs.toFixed(1)+"</td><td>"+money(r.direct)+"</td>"+
+    "<td class=\""+(r.resale===null?"na":"")+"\">"+(r.resale===null?"&mdash;":money2(r.resale))+"</td>"+
+    "<td>"+money2(r.dues)+"</td><td>"+money2(r.cD)+"</td>"+
+    "<td class=\""+(r.cR===null?"na":"save")+"\">"+(r.cR===null?"&mdash;":money2(r.cR))+"</td>"+
+    "<td class=\""+(r.lR===null?"na":"")+"\">"+(r.lR===null?"&mdash;":money2(r.lR))+"</td></tr>").join("");
+  document.querySelectorAll("#grid thead th").forEach(th=>{
+    const a=th.querySelector(".arrow"); if(!a) return;
+    a.innerHTML = th.dataset.k===sortKey ? (sortDir===1?"&#9652;":"&#9662;") : "&#9662;";
+    a.style.opacity = th.dataset.k===sortKey ? "1" : ".4";
+  });
+}
+
+const roomTable = rooms =>
+  "<table class=\"rooms\"><thead><tr><th>Room</th><th>Sleeps</th><th>Notes</th></tr></thead><tbody>"+
+  rooms.map(x=>"<tr><td>"+x[0]+"</td><td>"+x[1]+"</td><td>"+x[2]+"</td></tr>").join("")+"</tbody></table>";
+
+const list = items => "<ul>"+items.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+const diningBlock = groups => groups.map(g=>"<p class=\"cat\">"+g[0]+"</p><ul><li>"+g[1]+"</li></ul>").join("");
+
+function blocks(r){
+  return "<div class=\"blocks\">"+
+    "<div class=\"block\"><h4>Getting around</h4>"+list(r.transport)+"</div>"+
+    "<div class=\"block\"><h4>Food &amp; drink</h4>"+diningBlock(r.dining)+"</div>"+
+    "<div class=\"block\"><h4>Amenities</h4>"+list(r.amenities)+"</div>"+
+  "</div>";
+}
+
+function renderRooms(){
+  const main=RESORTS.map((r,i)=>
+    "<details class=\"resort\" data-modes=\""+r.modes.join(" ")+"\" data-i=\""+i+"\">"+
+      "<summary>"+
+        "<span class=\"rname\">"+r.name+"</span>"+
+        "<span class=\"modes\">"+r.modeLabel+"</span>"+
+        "<span class=\"meta\">Deed ends "+r.exp+" &middot; dues "+money2(r.dues)+"/pt</span>"+
+        (r.restricted
+          ? "<span class=\"tag\">Resale books this resort only</span>"
+          : "<span class=\"tag ok\">Resale trades across the original 14</span>")+
+      "</summary>"+
+      "<div class=\"rbody\">"+
+        "<p class=\"rnote\">"+r.note+"</p>"+
+        (r.alert ? "<p class=\"alert\">"+r.alert+"</p>" : "")+
+        roomTable(r.rooms)+
+        blocks(r)+
+      "</div>"+
+    "</details>").join("");
+
+  const soon =
+    "<details class=\"resort\" data-modes=\"boat bus\">"+
+      "<summary>"+
+        "<span class=\"rname\">"+UPCOMING.name+"</span>"+
+        "<span class=\"modes\">Boat &middot; Bus</span>"+
+        "<span class=\"meta\">Opens "+UPCOMING.opens+"</span>"+
+        "<span class=\"tag soon\">Not yet on sale</span>"+
+      "</summary>"+
+      "<div class=\"rbody\">"+
+        "<p class=\"rnote\">"+UPCOMING.note+"</p>"+
+        roomTable(UPCOMING.rooms)+
+        blocks(UPCOMING)+
+      "</div>"+
+    "</details>";
+
+  el("rooms").innerHTML = main + soon;
+}
+
+function applyFilter(mode){
+  document.querySelectorAll("#rooms .resort").forEach(d=>{
+    const m=(d.dataset.modes||"").split(" ");
+    let show;
+    if(mode==="all") show=true;
+    else if(mode==="busonly") show = m.length===1 && m[0]==="bus";
+    else show = m.includes(mode);
+    d.hidden=!show;
+    if(!show) d.open=false;
+  });
+}
+
+const RSEL=["resort","resortStay","resortList"];
+const ROPTS=RESORTS.map((r,i)=>"<option value=\""+i+"\">"+plain(r.name)+"</option>").join("");
+RSEL.forEach(id=>{el(id).innerHTML=ROPTS;el(id).value="8";});
+function syncResort(v){
+  RSEL.forEach(id=>{if(el(id).value!==v) el(id).value=v;});
+  el("tRack").value=RACK[+v]; fillUnits(); renderAll();
+}
+
+function renderAll(){
+  syncSize(); renderTrips(); renderCash(); renderCalc(); renderGrid();
+  renderStay(); renderListing(); renderRank(); renderMatrix(); renderWhen();
+}
+RSEL.forEach(id=>el(id).addEventListener("change",e=>syncResort(e.target.value)));
+
+// default check-in about six months out, clamped into the published charts
+(function(){
+  let d=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate()+180);
+  if(d>new Date(2027,11,27)) d=new Date(2027,11,27);
+  const pad=x=>String(x).padStart(2,"0");
+  const iso=x=>x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate());
+  el("checkin").value=iso(d);
+  el("checkin").min=iso(NOW);
+  el("checkin").max="2027-12-31";
+})();
+el("tSeason").innerHTML=SEASON_SHORT.map((n,i)=>"<option value=\""+i+"\">"+n+"</option>").join("");
+el("tSeason").value="4";
+el("tRack").value=RACK[8];
+fillUnits();
+el("fResort").innerHTML='<option value="-1">All resorts</option>'+
+  RESORTS.map((r,i)=>ROFR[i]===undefined?"":'<option value="'+i+'">'+plain(r.name)+'</option>').join("");
+["wBal","fResort","fMin","fMax"].forEach(id=>
+  el(id).addEventListener("input",renderRank));
+el("btnParse").addEventListener("click",applyParse);
+el("btnReset").addEventListener("click",()=>{
+  LISTINGS=SNAPSHOT.slice(); el("pasteBox").value="";
+  el("parseMsg").className=""; el("parseMsg").textContent="Snapshot restored.";
+  renderRank();
+});
+document.querySelectorAll("#rank thead th").forEach(th=>{
+  const go=()=>{const k=th.dataset.r; if(k===rankKey) rankDir*=-1; else {rankKey=k;rankDir=(k==="resort"||k==="uy")?1:-1;} renderRank();};
+  th.addEventListener("click",go);
+  th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+});
+
+["points","ptsAuto","closeD","closeR","esc","disc"].forEach(id=>
+  el(id).addEventListener("input",renderAll));
+["mMode","mPat"].forEach(id=>el(id).addEventListener("input",renderMatrix));
+["wStart","wMode","wMax","wCols"].forEach(id=>el(id).addEventListener("input",renderWhen));
+["tTrips","tNights","tWknd","tSeason","tRack","tDisc","unit"].forEach(id=>
+  el(id).addEventListener("input",renderAll));
+["lPts","lPpp","l26","l27"].forEach(id=>
+  el(id).addEventListener("input",renderListing));
+["checkin","nights"].forEach(id=>
+  el(id).addEventListener("input",()=>{renderStay();renderWhen();}));
+
+document.querySelectorAll("#grid thead th").forEach(th=>{
+  const go=()=>{const k=th.dataset.k; if(k===sortKey) sortDir*=-1; else {sortKey=k;sortDir=1;} renderGrid();};
+  th.addEventListener("click",go);
+  th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+});
+
+document.querySelectorAll("#chips .chip").forEach(c=>{
+  c.addEventListener("click",()=>{
+    document.querySelectorAll("#chips .chip").forEach(o=>o.setAttribute("aria-pressed","false"));
+    c.setAttribute("aria-pressed","true");
+    applyFilter(c.dataset.mode);
+  });
+});
+
+renderRooms(); renderAll();
+</script>
+</body>
+</html>
