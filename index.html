@@ -9,19 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#1B2A41;
-  --ink-soft:#5C6B7E;
-  --paper:#E9ECE8;
+  --ink:#2D3748;
+  --ink-soft:#718096;
+  --paper:#F7F8FA;
   --surface:#FFFFFF;
-  --line:#CBD2CC;
-  --line-soft:#E1E5E0;
-  --lagoon:#1F6F5C;
-  --lagoon-tint:#E4EFEA;
-  --rust:#8C3A2B;
-  --rust-tint:#F4E7E3;
-  --amber:#9A6F16;
-  --amber-tint:#F2EDDD;
-  --radius:3px;
+  --line:#E2E8F0;
+  --line-soft:#EDF2F7;
+  --lagoon:#2B8A6E;
+  --lagoon-tint:#E6F6F0;
+  --rust:#C53030;
+  --rust-tint:#FFF5F5;
+  --amber:#B7791F;
+  --amber-tint:#FEFCF3;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -32,28 +34,30 @@ body{
 }
 .wrap{max-width:1060px;margin:0 auto;padding:0 22px 90px}
 
-.mast{padding:56px 0 30px;border-bottom:2px solid var(--ink)}
+.mast{padding:56px 0 36px;border-bottom:1px solid var(--line)}
 .mast h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;
-  font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.015em;margin:0 0 14px}
-.mast p{margin:0;max-width:60ch;color:var(--ink-soft);font-size:1.02rem}
+  font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px}
+.mast p{margin:0;color:var(--ink-soft);font-size:1.1rem;line-height:1.55}
 .asof{margin-top:16px;font-size:.82rem;color:var(--ink-soft)}
 
-section{padding:44px 0 6px;border-bottom:1px solid var(--line)}
+section{padding:48px 0 12px;border-bottom:1px solid var(--line)}
 section:last-of-type{border-bottom:0}
-h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72rem;margin:0 0 6px;letter-spacing:-.01em}
-.lede{margin:0 0 26px;color:var(--ink-soft);max-width:66ch}
+h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72rem;margin:0 0 8px;letter-spacing:-.01em}
+.lede{margin:0 0 28px;color:var(--ink-soft);max-width:66ch;line-height:1.65}
 
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:16px 20px;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:26px}
-.field label{display:block;font-size:.79rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500}
-.field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:8px 10px;
-  border:1px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:18px 22px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:28px;box-shadow:var(--shadow)}
+.field label{display:block;font-size:.79rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+.field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:9px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.field select:hover,.field input:hover{border-color:var(--ink-soft)}
+.field select:focus,.field input:focus{border-color:var(--lagoon);background:#fff;box-shadow:0 0 0 3px var(--lagoon-tint)}
 .field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible{
   outline:2px solid var(--lagoon);outline-offset:2px}
 .hint{font-size:.74rem;color:var(--ink-soft);margin-top:4px}
 
-.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
-.col{padding:26px 24px 22px}
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow-md)}
+.col{padding:30px 28px 26px}
 .col + .col{border-left:1px solid var(--line)}
 .col.resale{background:var(--lagoon-tint)}
 .col h3{margin:0 0 2px;font-size:.9rem;font-weight:700}
@@ -67,29 +71,30 @@ h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72re
 .line span:last-child{font-weight:500;white-space:nowrap}
 .line.total{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;font-weight:700}
 
-.verdict{margin-top:20px;padding:16px 20px;background:var(--surface);
-  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem}
+.verdict{margin-top:22px;padding:18px 22px;background:var(--surface);
+  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem;box-shadow:var(--shadow)}
 .verdict.warn{border-left-color:var(--rust)}
 
-.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
 th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft)}
 th:first-child,td:first-child{text-align:left;white-space:nowrap}
-thead th{background:var(--ink);color:#fff;font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none}
-thead th:hover{background:#26374F}
+thead th{background:var(--ink);color:#fff;font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none;letter-spacing:.02em}
+thead th:hover{background:#4A5568}
 thead th .arrow{opacity:.45;font-size:.7rem}
-tbody tr:hover{background:#F5F7F4}
+tbody tr:hover{background:var(--line-soft)}
 td.save{color:var(--lagoon);font-weight:700}
 td.na{color:var(--ink-soft)}
 tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding-top:12px}
 
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{font:inherit;font-size:.83rem;padding:6px 14px;border:1px solid var(--line);
-  background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer}
-.chip:hover{border-color:var(--ink-soft)}
-.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.chip{font:inherit;font-size:.83rem;padding:7px 16px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--lagoon);color:var(--lagoon)}
+.chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:#fff;font-weight:500}
 
-.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px}
+.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s}
+.resort:hover{box-shadow:var(--shadow-md)}
 .resort[hidden]{display:none}
 .resort summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
 .resort summary::-webkit-details-marker{display:none}
@@ -99,7 +104,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .rname{font-family:"DM Serif Display",Georgia,serif;font-size:1.18rem;letter-spacing:-.01em}
 .meta{font-size:.79rem;color:var(--ink-soft)}
 .modes{font-size:.79rem;color:var(--ink);font-weight:500}
-.tag{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:2px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
+.tag{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
 .tag.ok{background:var(--lagoon-tint);color:var(--lagoon)}
 .tag.soon{background:var(--amber-tint);color:var(--amber)}
 .rbody{padding:6px 20px 22px}
@@ -124,7 +129,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .block .cat{font-size:.72rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
 .block p.none{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px}
 
-.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .stayhead{display:grid;grid-template-columns:auto 1fr;gap:0}
 .duel{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
 .duel .side{padding:24px 22px;text-align:center}
@@ -136,7 +141,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .duel .side.win .big{color:var(--lagoon)}
 .duel .side.win h3{color:var(--lagoon)}
 .duel .tagwin{display:inline-block;margin-top:10px;font-size:.66rem;font-weight:700;letter-spacing:.04em;
-  background:var(--lagoon);color:#fff;padding:2px 8px;border-radius:2px}
+  background:var(--lagoon);color:#fff;padding:3px 10px;border-radius:6px}
 @media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
 .staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
 .staypts .big{color:var(--lagoon)}
@@ -153,13 +158,13 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .nights th:first-child,.nights td:first-child{padding-left:24px}
 .nights th:last-child,.nights td:last-child{text-align:right;padding-right:24px}
 .nights td{text-align:left;padding:7px 24px 7px 0;border-bottom:1px solid var(--line-soft)}
-.nights tr.wknd td{background:#F5F7F4}
+.nights tr.wknd td{background:var(--line-soft)}
 .nights tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--line);font-size:.88rem;color:var(--ink)}
 .staywarn{padding:14px 24px;background:var(--amber-tint);border-top:1px solid var(--line);font-size:.85rem}
 .staywarn.bad{background:var(--rust-tint)}
 .staywarn.good{background:var(--lagoon-tint)}
-.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px 22px;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px}
+.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px 24px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow)}
 .wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.79rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
 .wrow label b{color:var(--ink);font-weight:700}
 .wrow input[type=range]{width:100%;accent-color:var(--lagoon)}
@@ -169,21 +174,23 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 #rank td:nth-child(2) .meta{display:block;font-size:.72rem;line-height:1.2}
 #rank td.pos{color:var(--lagoon)}
 #rank td.neg{color:var(--rust)}
-#rank a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
-#rank a:hover{border-bottom-color:var(--ink)}
-.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px}
+#rank a{color:var(--lagoon);text-decoration:none;border-bottom:1px solid var(--lagoon-tint);transition:border-color .15s}
+#rank a:hover{border-bottom-color:var(--lagoon)}
+.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow)}
 .refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  padding:10px;border:1px solid var(--line);border-radius:var(--radius);resize:vertical;color:var(--ink);background:#fff}
+  padding:12px;border:1px solid var(--line);border-radius:8px;resize:vertical;color:var(--ink);background:var(--paper);transition:border-color .15s,box-shadow .15s}
+.refresh textarea:focus{border-color:var(--lagoon);background:#fff;box-shadow:0 0 0 3px var(--lagoon-tint)}
 .refresh .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
-.btn{font:inherit;font-size:.85rem;font-weight:500;padding:8px 16px;border-radius:var(--radius);cursor:pointer;
-  border:1px solid var(--ink);background:var(--ink);color:#fff}
+.btn{font:inherit;font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--lagoon);background:var(--lagoon);color:#fff;transition:all .15s}
 .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
-.btn:hover{opacity:.88}
+.btn:hover{background:#237a5e;border-color:#237a5e}
+.btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
 #parseMsg{font-size:.83rem;color:var(--ink-soft)}
 #parseMsg.good{color:var(--lagoon);font-weight:500}
 #parseMsg.bad{color:var(--rust);font-weight:500}
 .matrix{width:100%;border-collapse:collapse;font-size:.83rem;min-width:640px}
-.matrix th{background:var(--ink);color:#fff;font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25}
+.matrix th{background:var(--ink);color:#fff;font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;letter-spacing:.02em}
 .matrix th:hover{background:var(--ink)}
 .matrix th:first-child{text-align:left;width:34%;padding-left:14px}
 .matrix td{text-align:center;padding:7px 6px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
@@ -192,17 +199,16 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .matrix .rv{color:var(--ink-soft);font-size:.76rem}
 .mlegend{font-size:.78rem;color:var(--ink-soft);padding:12px 14px 0;max-width:78ch}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow)}
 .panel h3{margin:0 0 10px;font-size:1rem}
 .panel ul{margin:0;padding-left:18px}
 .panel li{margin-bottom:7px;font-size:.9rem}
 .panel li:last-child{margin-bottom:0}
 
-footer{padding-top:34px;font-size:.8rem;color:var(--ink-soft);max-width:72ch}
-.disclaimer{background:var(--amber-tint);border:1px solid var(--amber);border-radius:var(--radius);
-  padding:14px 20px;margin-bottom:26px;font-size:.82rem;line-height:1.5;color:var(--ink)}
-.disclaimer strong{font-weight:700}
-.disclaimer + .disclaimer{margin-top:-16px}
+footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;line-height:1.6}
+.disclaimer{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 22px;margin:24px 0 8px;font-size:.82rem;line-height:1.6;color:var(--ink-soft);box-shadow:var(--shadow)}
+.disclaimer strong{font-weight:600;color:var(--ink)}
 
 @media (max-width:860px){.blocks{grid-template-columns:1fr}
   .block + .block{border-left:0;border-top:1px solid var(--line-soft);padding-left:0}
@@ -219,13 +225,13 @@ footer{padding-top:34px;font-size:.8rem;color:var(--ink-soft);max-width:72ch}
 
 <header class="mast">
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
-  <p>Three decisions in order: whether to own at all, whether to buy resale or direct, and which contract to buy. Every DVC contract is a wasting asset with a hard expiration date, so the only figure that compares a 2042 Beach&nbsp;Club deed to a 2075 Fort&nbsp;Wilderness one is the all-in cost per point per year &mdash; that runs underneath all of it. Start at step 1; everything after it is derived.</p>
-  <p class="asof">Direct prices as published July&nbsp;2026 &middot; resale averages August&nbsp;2026 &middot; 2026 annual dues &middot; dining verified early September&nbsp;2026</p>
+  <p>A free calculator that answers three questions: whether to own, whether to buy resale or direct, and which contract to buy.</p>
+  <p class="asof">Data current as of September&nbsp;2026</p>
 </header>
 
-<div class="disclaimer"><strong>Not affiliated with Disney.</strong> This site is not affiliated with, endorsed by, or connected to The Walt Disney Company, Disney Vacation Development, Inc., or any of their subsidiaries. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; resort names, and related marks are trademarks of The Walt Disney Company.</div>
-<div class="disclaimer"><strong>Not financial advice.</strong> This tool is for informational and educational purposes only. It is not financial, legal, or investment advice. DVC contracts are five-figure purchases &mdash; verify all figures with Disney and consult a licensed professional before making a purchase decision.</div>
-<div class="disclaimer"><strong>Some figures are estimates.</strong> Rack rates and cash seasonality multipliers shown here are rough estimates, not official Disney prices. Point charts and annual dues are sourced from published Disney figures. Always look up current rates for your specific dates on Disney&rsquo;s site.</div>
+<div class="disclaimer">
+  <strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.
+</div>
 
 <section>
   <h2>1. How your family travels</h2>
@@ -388,18 +394,18 @@ footer{padding-top:34px;font-size:.8rem;color:var(--ink-soft);max-width:72ch}
 
 <section>
   <h2>7. Ranked inventory</h2>
-  <p class="lede">The 149 Walt Disney World contracts that were actually buyable on DVC Resale Market on 3 September 2026 &mdash; pending and under-offer listings excluded. Scored on all-in cost per point-year and on how far under its resort&rsquo;s sold average it is priced, balanced however you like.</p>
+  <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
-  <details class="refresh">
-    <summary style="cursor:pointer;font-weight:500;font-size:.9rem">Refresh this list with current inventory</summary>
-    <p style="font-size:.85rem;color:var(--ink-soft);margin:12px 0 10px;max-width:70ch">This page cannot fetch the broker&rsquo;s site itself &mdash; their server does not send the cross-origin headers a browser would need, so any live request is blocked before it leaves the page. Paste instead: open the listings page, select the table, copy, and drop it below. The parser reads whatever shape it arrives in.</p>
-    <textarea id="pasteBox" placeholder="Paste the copied listings table here"></textarea>
+  <div class="refresh" style="border:2px dashed var(--lagoon);background:var(--lagoon-tint)">
+    <p style="font-size:.95rem;font-weight:600;color:var(--ink);margin:0 0 6px">Paste resale listings to get started</p>
+    <p style="font-size:.85rem;color:var(--ink-soft);margin:0 0 12px;max-width:70ch">Open a broker&rsquo;s listings page, select the table, copy it, and paste it below. The parser reads whatever shape it arrives in.</p>
+    <textarea id="pasteBox" placeholder="Paste the copied listings table here" style="min-height:110px"></textarea>
     <div class="row">
-      <button class="btn" id="btnParse">Parse and re-score</button>
-      <button class="btn ghost" id="btnReset">Restore 3 Sep snapshot</button>
+      <button class="btn" id="btnParse">Parse and score</button>
+      <button class="btn ghost" id="btnReset">Clear listings</button>
       <span id="parseMsg"></span>
     </div>
-  </details>
+  </div>
 
   <div class="weights">
     <div class="wrow" style="grid-column:1/-1">
@@ -1877,7 +1883,7 @@ el("fResort").innerHTML='<option value="-1">All resorts</option>'+
 el("btnParse").addEventListener("click",applyParse);
 el("btnReset").addEventListener("click",()=>{
   LISTINGS=SNAPSHOT.slice(); el("pasteBox").value="";
-  el("parseMsg").className=""; el("parseMsg").textContent="Snapshot restored.";
+  el("parseMsg").className=""; el("parseMsg").textContent="Listings cleared.";
   renderRank();
 });
 document.querySelectorAll("#rank thead th").forEach(th=>{
