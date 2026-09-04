@@ -28,7 +28,7 @@ const SEASONS = {
   ]
 };
 
-const SEASON_SHORT=["Sep 1&ndash;30","Jan &middot; May 1&ndash;14","May 15&ndash;Jun 10 &middot; Dec 1&ndash;23","Jun 11&ndash;Aug 31 &middot; Feb 1&ndash;15","Oct&ndash;Nov","Mar &middot; Apr &middot; Thanksgiving","Easter week &middot; Dec 24&ndash;31"];
+const SEASON_SHORT=["Sep 1&ndash;30","Jan &middot; May 1&ndash;14","May 15&ndash;Jun 10 &middot; Dec 1&ndash;23","Feb 1&ndash;15 &middot; Jun 11&ndash;Aug 31","Oct&ndash;Nov","Mar &middot; Apr &middot; Thanksgiving","Easter week &middot; Dec 24&ndash;31"];
 
 const CHARTS = [
   { // 0 Animal Kingdom Villas

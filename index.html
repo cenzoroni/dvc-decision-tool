@@ -580,6 +580,26 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 <script src="data/resorts.js"></script>
 <script src="data/market.js"></script>
 <script>
+/* The data files above are classic scripts declaring top-level consts. If one
+   fails to load, the first reference to a missing name throws at global scope
+   and halts the rest of this script — leaving a page that looks half-built and
+   is entirely dead, with nothing but a console error to explain it. Fail loudly
+   and legibly instead. */
+(function(){
+  const missing=["CHARTS","SEASONS","RESORTS","RACK","MARKET","ROFR"].filter(
+    n=>typeof window[n]==="undefined"&&(()=>{try{eval(n);return false}catch(e){return true}})());
+  if(!missing.length) return;
+  const b=document.createElement("div");
+  b.setAttribute("role","alert");
+  b.style.cssText="margin:24px 22px;padding:18px 22px;border:1px solid #C53030;border-radius:10px;"+
+    "background:#FFF5F5;color:#2D3748;font:16px/1.55 system-ui,sans-serif;max-width:1060px";
+  b.innerHTML="<strong>The data files did not load.</strong> This page needs "+
+    "<code>data/charts.js</code>, <code>data/resorts.js</code> and <code>data/market.js</code> "+
+    "alongside it. Missing: "+missing.join(", ")+".";
+  document.body.prepend(b);
+  throw new Error("data files failed to load: "+missing.join(", "));
+})();
+
 const NOW = new Date();
 
 
@@ -754,9 +774,25 @@ function renderTripRows(){
     "</tr>").join("");
   el("tripsBody").querySelectorAll("select,input").forEach(inp=>{
     inp.addEventListener("input",()=>{
-      const idx=+inp.dataset.idx, f=inp.dataset.f;
-      trips[idx][f]=+inp.value;
-      if(f==="nights") trips[idx].wknd=Math.min(trips[idx].wknd,trips[idx].nights);
+      const idx=+inp.dataset.idx, f=inp.dataset.f, tr=trips[idx];
+      tr[f]=+inp.value;
+      /* Clamp both directions, not just when nights changes. Editing weekend
+         nights directly could push wknd past nights: the maths clamped it on
+         read, but the row kept displaying the impossible value and encodeTrips
+         baked it into the shared link, so sender and recipient disagreed.
+         Correct the offending field in place rather than calling
+         renderTripRows(), which would rebuild the table and drop focus
+         mid-keystroke. */
+      if(f==="nights"){
+        tr.nights=clamp(tr.nights||1,1,14);
+        tr.wknd=Math.min(tr.wknd,tr.nights);
+        const w=el("tripsBody").querySelector('input[data-idx="'+idx+'"][data-f="wknd"]');
+        if(w){ w.max=String(tr.nights); if(+w.value>tr.nights) w.value=String(tr.wknd); }
+      }
+      if(f==="wknd"){
+        tr.wknd=clamp(tr.wknd||0,0,tr.nights);
+        if(+inp.value>tr.nights) inp.value=String(tr.wknd);
+      }
       renderAll();
     });
   });
@@ -844,7 +880,17 @@ function bankedValue(ri){
 
 function renderCash(){
   const ri=+el("resort").value, r=RESORTS[ri], i=inputs();
-  const rack=Math.max(1,+el("tRack").value||1); RACK[ri]=rack;
+  /* #tRack holds the rate for whichever room is currently selected, but RACK is
+     documented as the deluxe-studio rate and bankedValue() divides it by studio
+     points. Writing a grand-villa rate back into RACK inflates every banked
+     point several-fold and corrupts the listing scorer, so only a studio rate
+     is persisted. A transiently empty or unparseable field is not persisted at
+     all — doing so pinned the resort at $1/night for the rest of the session. */
+  const typedRack=parseFloat(el("tRack").value);
+  const rackOk=Number.isFinite(typedRack)&&typedRack>0;
+  const selCi=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
+  if(rackOk&&selCi===studioCol(ri)) RACK[ri]=typedRack;
+  const rack=rackOk?typedRack:RACK[ri];
   const t=tripPoints();
   const disc=t.disc, ptsYear=t.year, nightsYear=t.nightsYear;
   const size=Math.max(25,+el("points").value||t.size);
@@ -862,7 +908,10 @@ function renderCash(){
   const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
-  const marginal=ptsYear*duesOnly/nightsYear;
+  /* What a night actually costs an existing owner THIS year, so it uses this
+     year's dues. The lifetime-averaged figure belongs in the cost-per-point-year
+     comparison, not here — using it overstated the marginal cost by ~3x. */
+  const marginal=ptsYear*r.dues/nightsYear;
 
   const annR=ownNightR===null?null:ownNightR*nightsYear;
   const annD=ownNightD*nightsYear;
@@ -897,7 +946,7 @@ function renderCash(){
         "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
         "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
         "<div class=\"cline\"><span>Avg cash rate after discount</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
-        "<div class=\"cline\"><span>Dues only, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
+        "<div class=\"cline\"><span>Dues only this year, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
@@ -1397,6 +1446,9 @@ const URL_FIELDS=[
   ["es","esc"], ["di","disc"], ["ci","checkin"], ["n","nights"]
 ];
 const URL_DEFAULTS={};
+// RACK is mutated as the user enters real rates; keep the shipped defaults so
+// writeURL can tell an override from a resort switch.
+const RACK_PRISTINE=RACK.slice();
 let urlReady=false;
 
 const readField=n=>n.type==="checkbox"?(n.checked?"1":"0"):n.value;
@@ -1429,6 +1481,16 @@ function writeURL(){
     // chosen — pinning it in the link would freeze a number the recipient's
     // own trip list should recompute.
     if(id==="points"&&el("ptsAuto").checked) return;
+    /* The rack rate's default is per-resort, so comparing against a single
+       boot-time snapshot marked every resort switch as a manual override and
+       froze an estimated rate into links the sharer never chose. Compare
+       against this resort's own pristine default instead. */
+    if(id==="tRack"){
+      const cur=parseFloat(el("tRack").value);
+      if(!Number.isFinite(cur)||cur===RACK_PRISTINE[+el("resort").value]) return;
+      p.set(key,el("tRack").value);
+      return;
+    }
     const v=readField(el(id));
     if(v!==URL_DEFAULTS[id]) p.set(key,v);
   });

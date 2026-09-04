@@ -81,7 +81,7 @@ describe("provenance", () => {
     // and they render alongside sourced figures, so mislabelling them is the
     // specific failure this test exists to prevent.
     const byLabel = Object.fromEntries(g("DATASETS").map((m) => [m.label, m]));
-    const rack = byLabel["Published nightly rack rates"];
+    const rack = byLabel["Estimated nightly rack rates"];
     const seasonality = byLabel["Cash rate seasonality"];
     assert.ok(rack, "rack rate provenance should be present");
     assert.ok(seasonality, "seasonality provenance should be present");

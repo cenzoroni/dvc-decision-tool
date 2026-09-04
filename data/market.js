@@ -7,7 +7,7 @@
 
 const MARKET_META={label:"Resale asking prices",source:"Broker listing board snapshot",captured:"2026-09-03",estimated:false,note:"A point-in-time snapshot; 43% of the board was already pending when captured."};
 const ROFR_META={label:"ROFR buyback rates",source:"Monthly ROFR reports, 2026 year to date",captured:"2026-09-03",estimated:true,note:"Approximated from published monthly reports; used only to score relative risk."};
-const RACK_META={label:"Published nightly rack rates",source:"Author's estimate",captured:"2026-09-03",estimated:true,note:"ROUGH ESTIMATES, not sourced Disney prices. Look up real dates and replace. Editable per-scenario in step 1."};
+const RACK_META={label:"Estimated nightly rack rates",source:"Author's estimate",captured:"2026-09-03",estimated:true,note:"ROUGH ESTIMATES, not sourced Disney prices. Look up real dates and replace. Editable per-scenario in step 1."};
 const CASH_SEASON_META={label:"Cash rate seasonality",source:"Author's estimate, shaped by Disney's 2026 season structure",captured:"2026-09-03",estimated:true,note:"ROUGH ESTIMATES. Multipliers against a normal fall week."};
 
 const MARKET=[
