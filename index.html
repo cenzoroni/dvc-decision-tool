@@ -205,6 +205,9 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .panel li{margin-bottom:7px;font-size:.9rem}
 .panel li:last-child{margin-bottom:0}
 
+.sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
+
 .trips-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;box-shadow:var(--shadow)}
 .trips-table{width:100%;border-collapse:collapse;font-size:.88rem}
 .trips-table th{text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line)}
@@ -270,6 +273,11 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     </div>
 
   <div class="stayout" id="tripOut"></div>
+
+  <div class="sharerow">
+    <button class="btn ghost" id="copyLink">Copy link to this scenario</button>
+    <span id="copyMsg"></span>
+  </div>
 </section>
 
 <section>
@@ -1926,6 +1934,117 @@ function syncResort(v){
 function renderAll(){
   syncSize(); renderTrips(); renderCash(); renderCalc(); renderGrid();
   renderStay(); renderListing(); renderRank(); renderMatrix(); renderWhen();
+  writeURL();
+}
+
+/* ---- shareable URL state ------------------------------------------------
+   Scenario inputs serialise to the query string so a configuration can be
+   linked. Display-only state (sort order, matrix mode, rank filters) is
+   deliberately excluded: that is how you are looking at a scenario rather
+   than the scenario itself, and folding it in would mean an incidental
+   sort click silently changes the link you are about to share.
+
+   Only values that differ from the page defaults are written, so an
+   untouched page keeps a clean URL. Everything read back in is clamped —
+   a hand-edited or truncated link degrades to defaults instead of
+   rendering garbage. */
+
+const URL_FIELDS=[
+  ["u","unit"], ["rk","tRack"], ["dc","tDisc"],
+  ["p","points"], ["pa","ptsAuto"], ["cd","closeD"], ["cr","closeR"],
+  ["es","esc"], ["di","disc"], ["ci","checkin"], ["n","nights"]
+];
+const URL_DEFAULTS={};
+let urlReady=false;
+
+const readField=n=>n.type==="checkbox"?(n.checked?"1":"0"):n.value;
+
+function snapshotDefaults(){
+  URL_FIELDS.forEach(([,id])=>{ URL_DEFAULTS[id]=readField(el(id)); });
+  URL_DEFAULTS.resort=el("resort").value;
+  URL_DEFAULTS.trips=encodeTrips();
+}
+
+const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd].join(".")).join("_");
+
+function decodeTrips(s){
+  const out=[];
+  for(const part of String(s).split("_")){
+    const [si,nights,wknd]=part.split(".").map(x=>parseInt(x,10));
+    if(![si,nights,wknd].every(Number.isFinite)) continue;
+    const n=clamp(nights,1,14);
+    out.push({si:clamp(si,0,SEASON_SHORT.length-1), nights:n, wknd:clamp(wknd,0,n)});
+  }
+  return out.length?out:null;
+}
+
+function writeURL(){
+  if(!urlReady) return;
+  const p=new URLSearchParams();
+  if(el("resort").value!==URL_DEFAULTS.resort) p.set("r",el("resort").value);
+  URL_FIELDS.forEach(([key,id])=>{
+    // While auto-sizing is on, #points is derived from the trips rather than
+    // chosen — pinning it in the link would freeze a number the recipient's
+    // own trip list should recompute.
+    if(id==="points"&&el("ptsAuto").checked) return;
+    const v=readField(el(id));
+    if(v!==URL_DEFAULTS[id]) p.set(key,v);
+  });
+  const t=encodeTrips();
+  if(t!==URL_DEFAULTS.trips) p.set("t",t);
+  const qs=p.toString();
+  history.replaceState(null,"",qs?"?"+qs:location.pathname);
+}
+
+function readURL(){
+  const p=new URLSearchParams(location.search);
+  if(!Array.from(p.keys()).length) return;
+
+  /* Resort first. syncResort-style setup resets the rack rate and rebuilds
+     the room list, so anything derived from the resort must land after it —
+     otherwise a shared rack rate gets clobbered by the resort default. */
+  if(p.has("r")){
+    const ri=clamp(parseInt(p.get("r"),10)||0,0,RESORTS.length-1);
+    RSEL.forEach(id=>{ el(id).value=String(ri); });
+    el("tRack").value=RACK[ri];
+    fillUnits();
+  }
+  if(p.has("t")){
+    const t=decodeTrips(p.get("t"));
+    if(t){ trips=t; renderTripRows(); }
+  }
+  for(const [key,id] of URL_FIELDS){
+    if(!p.has(key)) continue;
+    const node=el(id), raw=p.get(key);
+    if(node.type==="checkbox"){ node.checked=raw==="1"; continue; }
+    if(node.type==="number"){
+      const v=parseFloat(raw);
+      if(!Number.isFinite(v)) continue;
+      const lo=node.min===""?-Infinity:parseFloat(node.min);
+      const hi=node.max===""?Infinity:parseFloat(node.max);
+      node.value=String(clamp(v,lo,hi));
+      continue;
+    }
+    if(node.tagName==="SELECT"){
+      // Ignore an index the current resort does not actually have.
+      if(Array.from(node.options).some(o=>o.value===raw)) node.value=raw;
+      continue;
+    }
+    node.value=raw;
+  }
+  // A shared rack rate is per-resort state that render reads back out.
+  if(p.has("rk")) RACK[+el("resort").value]=Math.max(1,+el("tRack").value||1);
+}
+
+function copyLink(){
+  const msg=el("copyMsg");
+  const done=t=>{ msg.textContent=t; setTimeout(()=>{msg.textContent="";},2500); };
+  const url=location.href;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>done("Link copied"),()=>done(url));
+  } else {
+    done(url);
+  }
 }
 RSEL.forEach(id=>el(id).addEventListener("change",e=>syncResort(e.target.value)));
 
@@ -1986,6 +2105,14 @@ document.querySelectorAll("#chips .chip").forEach(c=>{
     applyFilter(c.dataset.mode);
   });
 });
+
+el("copyLink").addEventListener("click",copyLink);
+
+/* Order matters: capture the pristine defaults, then overlay whatever the
+   link carries, and only then let renders start writing the URL back. */
+snapshotDefaults();
+readURL();
+urlReady=true;
 
 renderRooms(); renderAll();
 </script>

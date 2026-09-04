@@ -11,11 +11,13 @@ import { JSDOM } from "jsdom";
 
 let cached = null;
 
-export function load({ fresh = false } = {}) {
-  if (cached && !fresh) return cached;
+export function load({ fresh = false, search = "" } = {}) {
+  if (cached && !fresh && !search) return cached;
 
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const dom = new JSDOM(html, {
+    // history.replaceState needs a real origin; about:blank throws SecurityError.
+    url: "https://dvc.test/" + search,
     runScripts: "dangerously",
     // The page pulls Google Fonts; tests neither need them nor should hit the network.
     resources: undefined,
@@ -42,7 +44,7 @@ export function load({ fresh = false } = {}) {
     },
   };
 
-  if (!fresh) cached = api;
+  if (!fresh && !search) cached = api;
   return api;
 }
 
