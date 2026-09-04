@@ -205,6 +205,17 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .panel li{margin-bottom:7px;font-size:.9rem}
 .panel li:last-child{margin-bottom:0}
 
+.trips-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;box-shadow:var(--shadow)}
+.trips-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.trips-table th{text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line)}
+.trips-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.trips-table td:last-child{text-align:right;padding-right:0;width:40px}
+.trips-table select,.trips-table input[type=number]{font:inherit;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.trips-table select{min-width:160px}
+.trips-table input[type=number]{width:70px}
+.btn-remove{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;transition:all .15s}
+.btn-remove:hover{background:var(--rust-tint);color:var(--rust)}
+
 footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;line-height:1.6}
 .disclaimer{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
   padding:18px 22px;margin:24px 0 8px;font-size:.82rem;line-height:1.6;color:var(--ink-soft);box-shadow:var(--shadow)}
@@ -241,15 +252,21 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     <div class="field"><label for="resort">Resort</label><select id="resort"></select></div>
     <div class="field" style="grid-column:span 2"><label for="unit">Room and view</label><select id="unit"></select></div>
 
-    <div class="field"><label for="tTrips">Trips per year</label><input id="tTrips" type="number" value="3" min="1" max="20" step="1"></div>
-    <div class="field"><label for="tNights">Nights per trip</label><input id="tNights" type="number" value="3" min="1" max="14" step="1"></div>
-    <div class="field"><label for="tWknd">Of those, weekend nights</label><input id="tWknd" type="number" value="2" min="0" max="14" step="1">
-      <div class="hint">Friday and Saturday cost more in both points and cash</div></div>
-    <div class="field"><label for="tSeason">Season you travel</label><select id="tSeason"></select></div>
     <div class="field"><label for="tRack">Published nightly rate</label><input id="tRack" type="number" value="573" min="100" step="10">
-      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week &mdash; the &ldquo;rack rate&rdquo;, before any discount. Defaults here are rough 2026 estimates; look up a real date and replace it. Weekend nights are taken as 15% higher, the season adjusts it, and your discount comes off the result.</div></div>
+      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week &mdash; the &ldquo;rack rate&rdquo;, before any discount. <strong>Defaults here are rough estimates, not sourced Disney figures</strong> &mdash; look up your real dates and replace this number. Weekend nights are taken as 15% higher, the season adjusts it, and your discount comes off the result.</div></div>
     <div class="field"><label for="tDisc">Discount you would get</label><input id="tDisc" type="number" value="35" min="0" max="60" step="5">
       <div class="hint">Percent. Florida resident runs 30% on 1&ndash;3 nights, 35% on 4+. Annual Pass adds 5.</div></div>
+    </div>
+
+    <div class="trips-list" id="tripsList">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <label style="font-size:.85rem;font-weight:600;color:var(--ink)">Your trips</label>
+        <button class="btn" id="addTrip" style="padding:6px 14px;font-size:.82rem">+ Add trip</button>
+      </div>
+      <table class="trips-table" id="tripsTable">
+        <thead><tr><th>Season</th><th>Nights</th><th>Weekend</th><th></th></tr></thead>
+        <tbody id="tripsBody"></tbody>
+      </table>
     </div>
 
   <div class="stayout" id="tripOut"></div>
@@ -1036,7 +1053,7 @@ function applyParse(){
   renderRank();
 }
 
-const SEASON_SHORT=["Sep","Jan &middot; early May","Late spring &middot; early Dec","Summer &middot; early Feb","Oct &ndash; late Nov","Spring &middot; Thanksgiving","Easter &middot; Christmas"];
+const SEASON_SHORT=["Sep 1&ndash;30","Jan &middot; May 1&ndash;14","May 15&ndash;Jun 10 &middot; Dec 1&ndash;23","Jun 11&ndash;Aug 31 &middot; Feb 1&ndash;15","Oct&ndash;Nov","Mar &middot; Apr &middot; Thanksgiving","Easter week &middot; Dec 24&ndash;31"];
 
 function renderMatrix(){
   const ri=+el("resort").value, r=RESORTS[ri], i=inputs(), mode=el("mMode").value, pat=+el("mPat").value;
@@ -1089,21 +1106,57 @@ const RACK=[573,780,760,720,650,700,520,850,700,500,900,500];
    against a normal fall week, from Disney's own 2026 season structure. */
 const CASH_SEASON=[0.97,0.91,1.00,0.93,1.00,1.16,1.45];
 
+let trips=[
+  {si:4, nights:3, wknd:2},
+  {si:3, nights:4, wknd:2},
+  {si:6, nights:5, wknd:2}
+];
+
+function renderTripRows(){
+  el("tripsBody").innerHTML=trips.map((tr,i)=>
+    "<tr>"+
+      "<td><select data-idx=\""+i+"\" data-f=\"si\">"+SEASON_SHORT.map((n,si)=>
+        "<option value=\""+si+"\""+(si===tr.si?" selected":"")+">"+n+"</option>").join("")+"</select></td>"+
+      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"nights\" value=\""+tr.nights+"\" min=\"1\" max=\"14\" step=\"1\"></td>"+
+      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"wknd\" value=\""+tr.wknd+"\" min=\"0\" max=\""+tr.nights+"\" step=\"1\"></td>"+
+      "<td><button class=\"btn-remove\" data-idx=\""+i+"\" title=\"Remove trip\">&times;</button></td>"+
+    "</tr>").join("");
+  el("tripsBody").querySelectorAll("select,input").forEach(inp=>{
+    inp.addEventListener("input",()=>{
+      const idx=+inp.dataset.idx, f=inp.dataset.f;
+      trips[idx][f]=+inp.value;
+      if(f==="nights") trips[idx].wknd=Math.min(trips[idx].wknd,trips[idx].nights);
+      renderAll();
+    });
+  });
+  el("tripsBody").querySelectorAll(".btn-remove").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(trips.length<=1) return;
+      trips.splice(+btn.dataset.idx,1);
+      renderTripRows(); renderAll();
+    });
+  });
+}
+
 function tripShape(){
-  const nights=Math.max(1,+el("tNights").value||1);
-  const wknd=Math.min(nights,Math.max(0,+el("tWknd").value||0));
-  return {nights, wknd, week:nights-wknd,
-          trips:Math.max(1,+el("tTrips").value||1),
-          si:+el("tSeason").value||0,
-          disc:Math.min(0.9,Math.max(0,(+el("tDisc").value||0)/100))};
+  const disc=Math.min(0.9,Math.max(0,(+el("tDisc").value||0)/100));
+  return trips.map(tr=>{
+    const nights=Math.max(1,tr.nights||1);
+    const wknd=Math.min(nights,Math.max(0,tr.wknd||0));
+    return {nights, wknd, week:nights-wknd, si:tr.si||0, disc};
+  });
 }
 function tripPoints(){
-  const t=tripShape(), ri=+el("resort").value;
+  const all=tripShape(), ri=+el("resort").value;
   const ci=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
   const ch=chartFor(ri,2027);
-  const per=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
-  const year=per*t.trips;
-  return {...t, ci, per, year, nightsYear:t.nights*t.trips,
+  let year=0, nightsYear=0;
+  const perTrip=all.map(t=>{
+    const per=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
+    year+=per; nightsYear+=t.nights;
+    return {...t, ci, per};
+  });
+  return {trips:perTrip, ci, year, nightsYear, disc:all[0].disc,
           size:Math.max(25,Math.ceil(year/25)*25)};
 }
 function syncSize(){
@@ -1115,17 +1168,20 @@ function syncSize(){
 function renderTrips(){
   const t=tripPoints(), ri=+el("resort").value, r=RESORTS[ri];
   const [room,view]=CHARTS[ri].cols[t.ci].split("|");
-  const pat=t.wknd+" weekend, "+t.week+" week"+(t.week===1?"":"")+"night"+(t.week===1?"":"s");
+  const tripLines=t.trips.map((tr,i)=>{
+    const sn=SEASON_SHORT[tr.si].replace(/&[a-z]+;/g," ").replace(/&ndash;/g,"–");
+    return "<div class=\"cline\"><span>Trip "+(i+1)+" &mdash; "+tr.nights+"n, "+sn+"</span><span>"+tr.per+" pts</span></div>";
+  }).join("");
   el("tripOut").innerHTML=
     "<div class=\"stayhead\">"+
       "<div class=\"staypts\">"+
         "<span class=\"big\">"+t.year+"</span>"+
-        "<span class=\"big-unit\">points a year &mdash; "+t.trips+" trips of "+t.nights+" nights ("+pat+") in a "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+"</span>"+
+        "<span class=\"big-unit\">points a year for "+t.trips.length+" trip"+(t.trips.length===1?"":"s")+" ("+t.nightsYear+" nights) in a "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+"</span>"+
       "</div>"+
       "<div class=\"staycost\">"+
-        "<h4>"+plain(r.name)+" &middot; "+SEASON_SHORT[t.si].replace(/&[a-z]+;/g," ")+"</h4>"+
-        "<div class=\"cline\"><span>Points per trip</span><span>"+t.per+"</span></div>"+
-        "<div class=\"cline\"><span>Nights per year</span><span>"+t.nightsYear+"</span></div>"+
+        "<h4>"+plain(r.name)+" &mdash; trip breakdown</h4>"+
+        tripLines+
+        "<div class=\"cline\" style=\"border-top:1px solid var(--line);margin-top:6px;padding-top:8px;font-weight:700\"><span>Total points per year</span><span>"+t.year+"</span></div>"+
         "<div class=\"cline\"><span>Contract size this needs</span><span>"+t.size+" points</span></div>"+
         "<div class=\"cline\"><span>A banked point is worth here</span><span>"+money2(bankedValue(ri))+"</span></div>"+
       "</div>"+
@@ -1143,19 +1199,23 @@ function studioCol(ri){
    divided by the points that night costs. Derived from the trip shape and discount
    set in the cash comparison — never entered by hand, because it is not a preference. */
 function bankedValue(ri){
-  const {nights,wknd,week,si,disc}=tripShape();
+  const all=tripShape();
   const ci=studioCol(ri), ch=chartFor(ri,2027);
-  const ppn=(week*ch[si][0][ci]+wknd*ch[si][1][ci])/nights;
-  const sr=RACK[ri]*CASH_SEASON[si];
-  const cash=(week*sr+wknd*sr*1.15)/nights*(1-disc);
-  return ppn>0?cash/ppn:0;
+  let totalPts=0, totalCash=0, totalNights=0;
+  for(const t of all){
+    const pts=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
+    const sr=RACK[ri]*CASH_SEASON[t.si];
+    const cash=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc);
+    totalPts+=pts; totalCash+=cash; totalNights+=t.nights;
+  }
+  return totalPts>0?totalCash/totalPts:0;
 }
 
 function renderCash(){
   const ri=+el("resort").value, r=RESORTS[ri], i=inputs();
   const rack=Math.max(1,+el("tRack").value||1); RACK[ri]=rack;
   const t=tripPoints();
-  const {nights,wknd,week,disc}=t, ptsYear=t.year, nightsYear=t.nightsYear;
+  const disc=t.disc, ptsYear=t.year, nightsYear=t.nightsYear;
   const size=Math.max(25,+el("points").value||t.size);
 
   const y=yearsLeft(r.exp);
@@ -1163,16 +1223,18 @@ function renderCash(){
   const uD=costPerPointYear(r.direct,i.cD,size,r.dues,y,i.g).total;
   const duesOnly=avgDues(r.dues,y,i.g);
 
-  const seasonRack=rack*CASH_SEASON[t.si];
-  const cashNight=(week*seasonRack+wknd*seasonRack*1.15)/nights*(1-disc);
+  let annCash=0;
+  for(const tr of t.trips){
+    const sr=rack*CASH_SEASON[tr.si];
+    annCash+=(tr.week*sr+tr.wknd*sr*1.15)*(1-disc);
+  }
+  const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
   const marginal=ptsYear*duesOnly/nightsYear;
 
-  const annCash=cashNight*nightsYear;
   const annR=ownNightR===null?null:ownNightR*nightsYear;
   const annD=ownNightD*nightsYear;
-  const best=ownNightR===null?ownNightD:ownNightR;
   const gap=annCash-(annR===null?annD:annR);
   const upfront=(r.resale===null?r.direct:r.resale)*size+(r.resale===null?i.cD:i.cR);
 
@@ -1197,13 +1259,13 @@ function renderCash(){
     "<div class=\"stayhead\">"+
       "<div class=\"staypts\">"+
         "<span class=\"big\">"+nightsYear+"</span>"+
-        "<span class=\"big-unit\">nights a year, costing "+ptsYear+" points &mdash; "+money(Math.round(seasonRack*(1-disc)))+" a weeknight in cash after your discount</span>"+
+        "<span class=\"big-unit\">nights a year across "+t.trips.length+" trip"+(t.trips.length===1?"":"s")+", costing "+ptsYear+" points &mdash; "+money(Math.round(cashNight))+" avg per night in cash after your discount</span>"+
       "</div>"+
       "<div class=\"staycost\">"+
         "<h4>The contract</h4>"+
         "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
         "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
-        "<div class=\"cline\"><span>Published rate this season</span><span>"+money(Math.round(seasonRack))+"/night</span></div>"+
+        "<div class=\"cline\"><span>Avg cash rate after discount</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
         "<div class=\"cline\"><span>Dues only, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
       "</div>"+
     "</div>"+
@@ -1872,8 +1934,11 @@ RSEL.forEach(id=>el(id).addEventListener("change",e=>syncResort(e.target.value))
   el("checkin").min=iso(NOW);
   el("checkin").max="2027-12-31";
 })();
-el("tSeason").innerHTML=SEASON_SHORT.map((n,i)=>"<option value=\""+i+"\">"+n+"</option>").join("");
-el("tSeason").value="4";
+renderTripRows();
+el("addTrip").addEventListener("click",()=>{
+  trips.push({si:4, nights:3, wknd:1});
+  renderTripRows(); renderAll();
+});
 el("tRack").value=RACK[8];
 fillUnits();
 el("fResort").innerHTML='<option value="-1">All resorts</option>'+
@@ -1896,7 +1961,7 @@ document.querySelectorAll("#rank thead th").forEach(th=>{
   el(id).addEventListener("input",renderAll));
 ["mMode","mPat"].forEach(id=>el(id).addEventListener("input",renderMatrix));
 ["wStart","wMode","wMax","wCols"].forEach(id=>el(id).addEventListener("input",renderWhen));
-["tTrips","tNights","tWknd","tSeason","tRack","tDisc","unit"].forEach(id=>
+["tRack","tDisc","unit"].forEach(id=>
   el(id).addEventListener("input",renderAll));
 ["lPts","lPpp","l26","l27"].forEach(id=>
   el(id).addEventListener("input",renderListing));
