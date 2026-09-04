@@ -11,10 +11,31 @@ import { JSDOM } from "jsdom";
 
 let cached = null;
 
+const SRC_TAG = /<script src="([^"]+)"><\/script>/g;
+
+// The data files are classic scripts that only declare top-level consts, so
+// inlining them produces byte-identical global state to letting jsdom fetch
+// them — but synchronously, which keeps every test free of async plumbing.
+// The real <script src> resolution is covered separately in data.test.mjs.
+export function inlineDataScripts(html, baseUrl) {
+  return html.replace(SRC_TAG, (whole, src) => {
+    const body = readFileSync(new URL("../" + src, baseUrl), "utf8");
+    return "<script>\n" + body + "\n</script>";
+  });
+}
+
+export function dataScriptPaths() {
+  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  return Array.from(html.matchAll(SRC_TAG)).map((m) => m[1]);
+}
+
 export function load({ fresh = false, search = "" } = {}) {
   if (cached && !fresh && !search) return cached;
 
-  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const html = inlineDataScripts(
+    readFileSync(new URL("../index.html", import.meta.url), "utf8"),
+    import.meta.url
+  );
   const dom = new JSDOM(html, {
     // history.replaceState needs a real origin; about:blank throws SecurityError.
     url: "https://dvc.test/" + search,
