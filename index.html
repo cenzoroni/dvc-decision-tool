@@ -131,7 +131,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 
 .stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .stayhead{display:grid;grid-template-columns:auto 1fr;gap:0}
-.duel{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.duel{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
 .duel .side{padding:24px 22px;text-align:center}
 .duel .side+.side{border-left:1px solid var(--line)}
 .duel .side h3{margin:0 0 14px;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:var(--ink-soft)}
@@ -142,6 +142,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .duel .side.win h3{color:var(--lagoon)}
 .duel .tagwin{display:inline-block;margin-top:10px;font-size:.66rem;font-weight:700;letter-spacing:.04em;
   background:var(--lagoon);color:#fff;padding:3px 10px;border-radius:6px}
+@media (max-width:900px){.duel{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
 .staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
 .staypts .big{color:var(--lagoon)}
@@ -213,6 +214,11 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .prov-tag.est{background:var(--amber-tint);color:var(--amber)}
 .prov-note{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:4px;line-height:1.45}
 
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-8px 0 24px}
+.presets-label{font-size:.79rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
+.disc-void{display:inline-block;margin-left:8px;font-size:.68rem;font-weight:700;padding:2px 7px;
+  border-radius:6px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
+
 .sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
 
@@ -265,8 +271,17 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
     <div class="field"><label for="tRack">Published nightly rate</label><input id="tRack" type="number" value="573" min="100" step="10">
       <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week &mdash; the &ldquo;rack rate&rdquo;, before any discount. <strong>Defaults here are rough estimates, not sourced Disney figures</strong> &mdash; look up your real dates and replace this number. Weekend nights are taken as 15% higher, the season adjusts it, and your discount comes off the result.</div></div>
-    <div class="field"><label for="tDisc">Discount you would get</label><input id="tDisc" type="number" value="35" min="0" max="60" step="5">
-      <div class="hint">Percent. Florida resident runs 30% on 1&ndash;3 nights, 35% on 4+. Annual Pass adds 5.</div></div>
+    <div class="field"><label for="tRent">Point rental rate</label><input id="tRent" type="number" value="20" min="5" max="60" step="1">
+      <div class="hint">Dollars per point to rent from an existing owner &mdash; the option that needs no purchase, no dues and no resale risk. Commonly $18&ndash;24. <strong>Estimate; verify current rates.</strong></div></div>
+    </div>
+
+    <div class="presets">
+      <span class="presets-label">Set every trip&rsquo;s discount to</span>
+      <button class="chip" data-disc="0">None &mdash; 0%</button>
+      <button class="chip" data-disc="30">Florida resident, 1&ndash;3 nights &mdash; 30%</button>
+      <button class="chip" data-disc="35">Florida resident, 4+ nights &mdash; 35%</button>
+      <button class="chip" data-disc="40">Florida resident + Annual Pass &mdash; 40%</button>
+      <div class="hint" style="flex-basis:100%;margin-top:2px">Most visitors get no room discount at all, so this starts at none. Discounts are set per trip below because Disney tiers them by length of stay, and they largely disappear over Easter and Christmas weeks.</div>
     </div>
 
     <div class="trips-list" id="tripsList">
@@ -275,7 +290,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
         <button class="btn" id="addTrip" style="padding:6px 14px;font-size:.82rem">+ Add trip</button>
       </div>
       <table class="trips-table" id="tripsTable">
-        <thead><tr><th>Season</th><th>Nights</th><th>Weekend</th><th></th></tr></thead>
+        <thead><tr><th>Season</th><th>Nights</th><th>Weekend</th><th>Discount %</th><th></th></tr></thead>
         <tbody id="tripsBody"></tbody>
       </table>
     </div>
@@ -295,7 +310,29 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 </section>
 
 <section>
-  <h2>3. Resale or direct?</h2>
+  <h2>3. Every resort side by side</h2>
+  <p class="lede">Sorted by resale cost per point-year, cheapest first. Click any heading to re-sort. The two right-hand columns are the comparable figures; everything to their left feeds them.</p>
+  <div class="tablescroll">
+    <table id="grid">
+      <thead><tr>
+        <th data-k="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
+        <th data-k="exp" tabindex="0">Deed ends <span class="arrow">&#9662;</span></th>
+        <th data-k="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
+        <th data-k="direct" tabindex="0">Direct $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="resale" tabindex="0">Resale $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="dues" tabindex="0">2026 dues <span class="arrow">&#9662;</span></th>
+        <th data-k="cD" tabindex="0">Direct $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="cR" tabindex="0">Resale $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="lR" tabindex="0">Resale, discounted <span class="arrow">&#9662;</span></th>
+      </tr></thead>
+      <tbody id="gridBody"></tbody>
+      <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>4. Resale or direct?</h2>
   <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds the average annual dues you will pay across that whole span.</p>
 
   <div class="controls">
@@ -307,7 +344,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
       <div class="hint">Percent. 2026 came in at 6.4%</div></div>
     <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
-      <div class="hint">Percent. Leave at 0 to treat every future dollar as equal; raise it to price money you spend in 2064 as worth less than money spent now.</div></div>
+      <div class="hint">Percent. Leave at 0 to treat every future dollar as equal; raise it to price money you spend decades out as worth less than money spent now. Above 0 the figures below switch to a levelized cost, which is why they rise.</div></div>
   </div>
 
   <div class="split">
@@ -344,7 +381,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 
 <section>
-  <h2>4. What the contract buys</h2>
+  <h2>5. What the contract buys</h2>
   <p class="lede">The same contract is a fortnight in September or four nights at Christmas. This is every room at the selected resort against every season, using the 2027 chart and the contract size set in the cost model &mdash; then the same grid priced in dollars per night, which is the form the direct-versus-resale question actually takes.</p>
 
   <div class="controls">
@@ -371,7 +408,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 
 <section>
-  <h2>5. When to go, and what a stay costs</h2>
+  <h2>6. When to go, and what a stay costs</h2>
   <p class="lede">Trip length down the side, dates across the top, for the room and resort chosen in step 1. Pick a check-in date and length and the matching cell is outlined, with the night-by-night breakdown underneath. A stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
 
   <div class="controls">
@@ -409,7 +446,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 
 <section>
-  <h2>6. Score a listing</h2>
+  <h2>7. Score a listing</h2>
   <p class="lede">Brokers quote price per point, but two contracts at the same price are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it. A contract carrying banked points hands you nights you would otherwise have to buy &mdash; by owning more points, or by taking them off another member. Either route has a price, and that is what this scorer credits them at &mdash; using each resort&rsquo;s own figure, derived from the trip shape and discount in step 1. A stripped contract quietly costs you a year.</p>
 
   <div class="controls">
@@ -426,7 +463,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 
 <section>
-  <h2>7. Ranked inventory</h2>
+  <h2>8. Ranked inventory</h2>
   <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
   <div class="refresh" style="border:2px dashed var(--lagoon);background:var(--lagoon-tint)">
@@ -476,27 +513,6 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 
 
-<section>
-  <h2>8. Every resort side by side</h2>
-  <p class="lede">Sorted by resale cost per point-year, cheapest first. Click any heading to re-sort. The two right-hand columns are the comparable figures; everything to their left feeds them.</p>
-  <div class="tablescroll">
-    <table id="grid">
-      <thead><tr>
-        <th data-k="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
-        <th data-k="exp" tabindex="0">Deed ends <span class="arrow">&#9662;</span></th>
-        <th data-k="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
-        <th data-k="direct" tabindex="0">Direct $/pt <span class="arrow">&#9662;</span></th>
-        <th data-k="resale" tabindex="0">Resale $/pt <span class="arrow">&#9662;</span></th>
-        <th data-k="dues" tabindex="0">2026 dues <span class="arrow">&#9662;</span></th>
-        <th data-k="cD" tabindex="0">Direct $/pt-yr <span class="arrow">&#9662;</span></th>
-        <th data-k="cR" tabindex="0">Resale $/pt-yr <span class="arrow">&#9662;</span></th>
-        <th data-k="lR" tabindex="0">Resale, discounted <span class="arrow">&#9662;</span></th>
-      </tr></thead>
-      <tbody id="gridBody"></tbody>
-      <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
-    </table>
-  </div>
-</section>
 
 
 
@@ -757,11 +773,19 @@ function renderMatrix(){
 /* Cash rates move by season too, and not in step with points. Rough multipliers
    against a normal fall week, from Disney's own 2026 season structure. */
 
+/* Discount is per trip, not global. Disney's resident and passholder rates are
+   tiered by length of stay and largely disappear over Easter and Christmas, so
+   one number applied to every trip mispriced exactly the trips people most
+   often own points for. Default is 0 — most visitors are not Florida residents,
+   and a pre-filled 35% quietly decided the own-vs-cash verdict for them. */
 let trips=[
-  {si:4, nights:3, wknd:2},
-  {si:3, nights:4, wknd:2},
-  {si:6, nights:5, wknd:2}
+  {si:4, nights:3, wknd:2, disc:0},
+  {si:3, nights:4, wknd:2, disc:0},
+  {si:6, nights:5, wknd:2, disc:0}
 ];
+
+// Seasons where Disney's resident/AP discounts effectively vanish.
+const NO_DISCOUNT_SEASONS=[6];
 
 function renderTripRows(){
   el("tripsBody").innerHTML=trips.map((tr,i)=>
@@ -770,6 +794,9 @@ function renderTripRows(){
         "<option value=\""+si+"\""+(si===tr.si?" selected":"")+">"+n+"</option>").join("")+"</select></td>"+
       "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"nights\" value=\""+tr.nights+"\" min=\"1\" max=\"14\" step=\"1\"></td>"+
       "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"wknd\" value=\""+tr.wknd+"\" min=\"0\" max=\""+tr.nights+"\" step=\"1\"></td>"+
+      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"disc\" value=\""+(tr.disc||0)+"\" min=\"0\" max=\"60\" step=\"5\">"+
+        (NO_DISCOUNT_SEASONS.includes(tr.si)&&(tr.disc||0)>0
+          ? "<span class=\"disc-void\" title=\"Disney's resident and passholder discounts do not apply in this season\">not offered</span>" : "")+"</td>"+
       "<td><button class=\"btn-remove\" data-idx=\""+i+"\" title=\"Remove trip\">&times;</button></td>"+
     "</tr>").join("");
   el("tripsBody").querySelectorAll("select,input").forEach(inp=>{
@@ -793,6 +820,9 @@ function renderTripRows(){
         tr.wknd=clamp(tr.wknd||0,0,tr.nights);
         if(+inp.value>tr.nights) inp.value=String(tr.wknd);
       }
+      if(f==="disc") tr.disc=clamp(tr.disc||0,0,60);
+      // The "not offered" marker depends on season and discount together.
+      if(f==="si"||f==="disc") renderTripRows();
       renderAll();
     });
   });
@@ -806,11 +836,14 @@ function renderTripRows(){
 }
 
 function tripShape(){
-  const disc=Math.min(0.9,Math.max(0,(+el("tDisc").value||0)/100));
   return trips.map(tr=>{
     const nights=Math.max(1,tr.nights||1);
     const wknd=Math.min(nights,Math.max(0,tr.wknd||0));
-    return {nights, wknd, week:nights-wknd, si:tr.si||0, disc};
+    const si=tr.si||0;
+    const asked=Math.min(0.9,Math.max(0,(tr.disc||0)/100));
+    // A discount the user entered for a peak week is not one Disney offers.
+    const disc=NO_DISCOUNT_SEASONS.includes(si)?0:asked;
+    return {nights, wknd, week:nights-wknd, si, disc, asked, discBlocked:asked>0&&disc===0};
   });
 }
 function tripPoints(){
@@ -900,11 +933,27 @@ function renderCash(){
   const uD=costPerPointYear(r.direct,i.cD,size,r.dues,y,i.g).total;
   const duesOnly=avgDues(r.dues,y,i.g);
 
-  let annCash=0;
+  /* Each trip carries its own discount, and peak-season trips carry none
+     regardless of what was entered. Aggregate the actual per-trip cash rather
+     than applying one blended rate across seasons that price differently. */
+  let annCash=0, annCashUndisc=0, blocked=0;
   for(const tr of t.trips){
     const sr=rack*CASH_SEASON[tr.si];
-    annCash+=(tr.week*sr+tr.wknd*sr*1.15)*(1-disc);
+    const gross=tr.week*sr+tr.wknd*sr*1.15;
+    annCash+=gross*(1-tr.disc);
+    annCashUndisc+=gross;
+    if(tr.discBlocked) blocked++;
   }
+  // Effective discount across the whole year, for display only.
+  const effDisc=annCashUndisc>0?1-annCash/annCashUndisc:0;
+
+  /* Renting points from an existing owner is the third real option and the
+     only one that needs no capital, carries no dues obligation and no resale
+     risk. Leaving it out overstated the case for buying to anyone unsure they
+     would use the points every year. */
+  const rentPP=Math.max(1,+el("tRent").value||1);
+  const annRent=ptsYear*rentPP;
+  const rentNight=nightsYear>0?annRent/nightsYear:0;
   const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
@@ -918,14 +967,24 @@ function renderCash(){
   const gap=annCash-(annR===null?annD:annR);
   const upfront=(r.resale===null?r.direct:r.resale)*size+(r.resale===null?i.cD:i.cR);
 
+  /* Payback period, not "return on capital". The old wording divided annual
+     savings by the purchase price and called the result a yearly return, which
+     reads as an investment yield beating an index fund. It is not one: the
+     money cannot be withdrawn or reinvested, it is not compounding, and the
+     asset it bought amortizes to zero at deed expiry — a fact already priced
+     into the very figure being compared. Payback years and lifetime savings
+     say the same thing without borrowing the vocabulary of an investment. */
+  const payback=gap>0?upfront/gap:null;
+  const lifeSave=gap>0?gap*y:null;
   const verdict = gap>0
-    ? ["good","Owning wins by <strong>"+money(gap)+"</strong> a year on these assumptions, against <strong>"+money(upfront)+"</strong> tied up in a contract you cannot easily sell. That is a return of "+(gap/upfront*100).toFixed(1)+"% a year on the capital, before you count the flexibility you give up."]
+    ? ["good","Owning wins by <strong>"+money(gap)+"</strong> a year on these assumptions. The <strong>"+money(upfront)+"</strong> you put in takes about <strong>"+payback.toFixed(1)+" years</strong> to pay back, and you only get it out again by selling the contract &mdash; which takes months and is not guaranteed to fetch today&rsquo;s price. Hold it to expiry in "+r.exp+" and the deed is worth nothing, which this figure already accounts for; on these assumptions you would be roughly "+money(lifeSave)+" ahead over that whole span."]
     : ["bad","Booking cash wins by <strong>"+money(-gap)+"</strong> a year here. At this usage the purchase price never earns itself back, and you would be locking up "+money(upfront)+" to spend more per night."];
 
   const cells=[
     {k:"Own it &mdash; bought resale", v:ownNightR, s:annR===null?"no resale market here":money(annR)+" a year"},
     {k:"Own it &mdash; bought direct", v:ownNightD, s:money(annD)+" a year"},
-    {k:"Book it &mdash; cash at "+(disc*100).toFixed(0)+"% off", v:cashNight, s:money(annCash)+" a year"}
+    {k:"Rent points from an owner", v:rentNight, s:money(annRent)+" a year"},
+    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount"), v:cashNight, s:money(annCash)+" a year"}
   ];
   const low=Math.min(...cells.filter(c=>c.v!==null).map(c=>c.v));
   el("cashOut").innerHTML=
@@ -939,18 +998,18 @@ function renderCash(){
     "<div class=\"stayhead\">"+
       "<div class=\"staypts\">"+
         "<span class=\"big\">"+nightsYear+"</span>"+
-        "<span class=\"big-unit\">nights a year across "+t.trips.length+" trip"+(t.trips.length===1?"":"s")+", costing "+ptsYear+" points &mdash; "+money(Math.round(cashNight))+" avg per night in cash after your discount</span>"+
+        "<span class=\"big-unit\">nights a year across "+t.trips.length+" trip"+(t.trips.length===1?"":"s")+", costing "+ptsYear+" points &mdash; "+money(Math.round(cashNight))+" avg per night in cash"+(effDisc>0.0005?" after your discount":"")+"</span>"+
       "</div>"+
       "<div class=\"staycost\">"+
         "<h4>The contract</h4>"+
         "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
         "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
-        "<div class=\"cline\"><span>Avg cash rate after discount</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
+        "<div class=\"cline\"><span>Avg cash rate"+(effDisc>0.0005?" after discount":"")+"</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
         "<div class=\"cline\"><span>Dues only this year, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s resident and passholder discounts cover set date windows &mdash; summer, late summer into early October, and parts of the holiday season &mdash; and largely vanish over spring break, Thanksgiving week and Christmas. Points cost the same premium whenever you go, so ownership is worth most exactly when the discounts are not there. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-disc)))+" a night after the same discount, which no villa contract can beat.</div>";
+    (blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1117,21 +1176,28 @@ const plain = s => s.replace(/&amp;/g,"&");
 
 function yearsLeft(exp){ return Math.max(0.5,(new Date(exp,0,31)-NOW)/(365.2425*24*3600*1000)); }
 
+/* Dues are billed annually, so every per-year figure counts whole years. Using
+   the raw fractional yearsLeft() for the purchase and a rounded count for the
+   dues meant levelized(d=0) never quite equalled costPerPointYear, contradicting
+   the invariant documented below. Both now use the same whole-year count. */
+const dueYears=yrs=>Math.max(1,Math.round(yrs));
+
 function avgDues(dues,yrs,g){
-  const n = Math.max(1,Math.round(yrs));
+  const n = dueYears(yrs);
   if(g===0) return dues;
   let sum=0; for(let t=0;t<n;t++) sum += dues*Math.pow(1+g,t);
   return sum/n;
 }
 function costPerPointYear(ppp,closing,pts,dues,yrs,g){
-  const acq=(ppp*pts+closing)/pts/yrs, d=avgDues(dues,yrs,g);
+  const n=dueYears(yrs);
+  const acq=(ppp*pts+closing)/pts/n, d=avgDues(dues,yrs,g);
   return {acq,dues:d,total:acq+d};
 }
 /* Levelized cost per point-year: present value of purchase plus all future dues,
    divided by the present-value annuity factor. At a 0% discount rate this reduces
    exactly to the simple amortized figure. */
 function levelized(ppp,closing,pts,dues,yrs,g,d){
-  const n=Math.max(1,Math.round(yrs));
+  const n=dueYears(yrs);
   let pvDues=0, af=0;
   for(let t=0;t<n;t++){ const df=Math.pow(1+d,-t); pvDues+=dues*Math.pow(1+g,t)*df; af+=df; }
   return (ppp + closing/pts + pvDues)/af;
@@ -1154,7 +1220,13 @@ function inputs(){
 
 function renderCalc(){
   const r=RESORTS[+el("resort").value], i=inputs(), yrs=yearsLeft(r.exp);
+  /* The discount rate now reaches the headline figures. It used to move only
+     one column of the comparison table nine sections below, so anyone who set
+     it and looked at the big number directly beneath the control saw no change
+     and reasonably concluded it had been accounted for. levelized() reduces
+     exactly to costPerPointYear at d=0, so the default is unaffected. */
   const D=costPerPointYear(r.direct,i.cD,i.pts,r.dues,yrs,i.g);
+  if(i.d>0) D.total=levelized(r.direct,i.cD,i.pts,r.dues,yrs,i.g,i.d);
   el("subD").textContent = plain(r.name)+" \u00B7 "+yrs.toFixed(1)+" years left";
   el("bigD").textContent = money2(D.total);
   el("ppD").textContent = money(r.direct);
@@ -1172,6 +1244,7 @@ function renderCalc(){
     return;
   }
   const R=costPerPointYear(r.resale,i.cR,i.pts,r.dues,yrs,i.g);
+  if(i.d>0) R.total=levelized(r.resale,i.cR,i.pts,r.dues,yrs,i.g,i.d);
   el("subR").textContent="August 2026 average \u00B7 "+yrs.toFixed(1)+" years left";
   el("bigR").textContent=money2(R.total);
   el("ppR").textContent=money2(r.resale);
@@ -1397,7 +1470,7 @@ function applyFilter(mode){
 
 const RSEL=["resort","resortStay","resortList"];
 const ROPTS=RESORTS.map((r,i)=>"<option value=\""+i+"\">"+plain(r.name)+"</option>").join("");
-RSEL.forEach(id=>{el(id).innerHTML=ROPTS;el(id).value="8";});
+RSEL.forEach(id=>{el(id).innerHTML=ROPTS;el(id).value="9";});
 function syncResort(v){
   RSEL.forEach(id=>{if(el(id).value!==v) el(id).value=v;});
   el("tRack").value=RACK[+v]; fillUnits(); renderAll();
@@ -1441,7 +1514,7 @@ function renderProvenance(){
    rendering garbage. */
 
 const URL_FIELDS=[
-  ["u","unit"], ["rk","tRack"], ["dc","tDisc"],
+  ["u","unit"], ["rk","tRack"], ["rn","tRent"],
   ["p","points"], ["pa","ptsAuto"], ["cd","closeD"], ["cr","closeR"],
   ["es","esc"], ["di","disc"], ["ci","checkin"], ["n","nights"]
 ];
@@ -1459,15 +1532,19 @@ function snapshotDefaults(){
   URL_DEFAULTS.trips=encodeTrips();
 }
 
-const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd].join(".")).join("_");
+const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd,t.disc||0].join(".")).join("_");
 
 function decodeTrips(s){
   const out=[];
   for(const part of String(s).split("_")){
-    const [si,nights,wknd]=part.split(".").map(x=>parseInt(x,10));
+    const [si,nights,wknd,disc]=part.split(".").map(x=>parseInt(x,10));
     if(![si,nights,wknd].every(Number.isFinite)) continue;
     const n=clamp(nights,1,14);
-    out.push({si:clamp(si,0,SEASON_SHORT.length-1), nights:n, wknd:clamp(wknd,0,n)});
+    out.push({
+      si:clamp(si,0,SEASON_SHORT.length-1), nights:n, wknd:clamp(wknd,0,n),
+      // Links predating per-trip discounts omit the fourth field.
+      disc:Number.isFinite(disc)?clamp(disc,0,60):0
+    });
   }
   return out.length?out:null;
 }
@@ -1569,10 +1646,20 @@ RSEL.forEach(id=>el(id).addEventListener("change",e=>syncResort(e.target.value))
 })();
 renderTripRows();
 el("addTrip").addEventListener("click",()=>{
-  trips.push({si:4, nights:3, wknd:1});
+  // Inherit the discount already in use so adding a trip does not silently
+  // reset the assumption the rest of the list is built on.
+  const inherit=trips.length?trips[trips.length-1].disc||0:0;
+  trips.push({si:4, nights:3, wknd:1, disc:inherit});
   renderTripRows(); renderAll();
 });
-el("tRack").value=RACK[8];
+document.querySelectorAll(".presets .chip").forEach(c=>{
+  c.addEventListener("click",()=>{
+    const d=+c.dataset.disc;
+    trips.forEach(t=>{ t.disc=d; });
+    renderTripRows(); renderAll();
+  });
+});
+el("tRack").value=RACK[9];
 fillUnits();
 el("fResort").innerHTML='<option value="-1">All resorts</option>'+
   RESORTS.map((r,i)=>ROFR[i]===undefined?"":'<option value="'+i+'">'+plain(r.name)+'</option>').join("");
@@ -1594,7 +1681,7 @@ document.querySelectorAll("#rank thead th").forEach(th=>{
   el(id).addEventListener("input",renderAll));
 ["mMode","mPat"].forEach(id=>el(id).addEventListener("input",renderMatrix));
 ["wStart","wMode","wMax","wCols"].forEach(id=>el(id).addEventListener("input",renderWhen));
-["tRack","tDisc","unit"].forEach(id=>
+["tRack","tRent","unit"].forEach(id=>
   el(id).addEventListener("input",renderAll));
 ["lPts","lPpp","l26","l27"].forEach(id=>
   el(id).addEventListener("input",renderListing));

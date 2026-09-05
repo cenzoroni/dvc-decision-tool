@@ -127,7 +127,7 @@ describe("render sweep: resort x room column x display mode", () => {
 describe("hostile inputs", () => {
   const numericControls = {
     tRack: ["0", "-50", "", "abc", "1e10", "-1e10"],
-    tDisc: ["0", "-50", "", "abc", "1e10", "-1e10"],
+    tRent: ["0", "-50", "", "abc", "1e10", "-1e10"],
     points: ["0", "-50", "", "abc", "1e10", "-1e10"],
     closeD: ["0", "-50", "", "abc", "1e10", "-1e10"],
     closeR: ["0", "-50", "", "abc", "1e10", "-1e10"],
@@ -190,8 +190,8 @@ describe("hostile inputs", () => {
 
   test("negative discount percent is clamped rather than inflating costs above 100%", () => {
     const { el, set } = load({ fresh: true });
-    set("tDisc", "-9999");
-    assertPageClean(el, "tDisc=-9999");
+    set("tRent", "-9999");
+    assertPageClean(el, "tRent=-9999");
   });
 });
 

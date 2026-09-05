@@ -33,14 +33,14 @@ describe("URL state — writing", () => {
 
   test("only changed values are written", () => {
     const p = load({ fresh: true });
-    p.set("tDisc", 20);
+    p.set("tRent", 25);
     const params = new URLSearchParams(p.window.location.search);
     assert.deepEqual(
       Array.from(params.keys()),
-      ["dc"],
-      `only the changed discount should appear, got "${p.window.location.search}"`
+      ["rn"],
+      `only the changed rental rate should appear, got "${p.window.location.search}"`
     );
-    assert.equal(params.get("dc"), "20");
+    assert.equal(params.get("rn"), "25");
   });
 
   test("#points is not pinned while auto-sizing is on", () => {
@@ -48,7 +48,7 @@ describe("URL state — writing", () => {
     assert.equal(p.el("ptsAuto").checked, true, "precondition: auto-size defaults on");
     // Changing the trips changes the derived #points value; it must stay out
     // of the link so the recipient's own trip list recomputes it.
-    p.set("tDisc", 25);
+    p.set("tRent", 25);
     assert.ok(
       !new URLSearchParams(p.window.location.search).has("p"),
       `#points must not be serialised while auto-sizing, got "${p.window.location.search}"`
@@ -72,7 +72,7 @@ describe("URL state — round trip", () => {
     test(`resort ${resortIdx} survives a round trip`, () => {
       const a = load({ fresh: true });
       a.set("resort", resortIdx, "change");
-      a.set("tDisc", 15);
+      a.set("tRent", 22);
       a.set("esc", 5.5);
       const qs = a.window.location.search;
 
@@ -83,7 +83,7 @@ describe("URL state — round trip", () => {
         `re-serialising resort ${resortIdx} should reproduce the same link`
       );
       assert.equal(b.el("resort").value, String(resortIdx), "resort should be restored");
-      assert.equal(b.el("tDisc").value, "15", "discount should be restored");
+      assert.equal(b.el("tRent").value, "22", "rental rate should be restored");
       assert.equal(b.el("esc").value, "5.5", "dues escalation should be restored");
       assertClean(b, `round trip resort=${resortIdx}`);
     });
