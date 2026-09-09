@@ -1061,7 +1061,8 @@ function bankedValue(ri){
   for(const t of all){
     const pts=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
     const sr=RACK[ri]*CASH_SEASON[t.si];
-    const cash=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc);
+    // What a point saves is the cash avoided, tax included — points are exempt.
+    const cash=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc)*(1+ROOM_TAX);
     totalPts+=pts; totalCash+=cash; totalNights+=t.nights;
   }
   return totalPts>0?totalCash/totalPts:0;
@@ -1096,8 +1097,11 @@ function renderCash(){
   for(const tr of t.trips){
     const sr=rack*CASH_SEASON[tr.si];
     const gross=tr.week*sr+tr.wknd*sr*1.15;
-    annCash+=gross*(1-tr.disc);
-    annCashUndisc+=gross;
+    /* Tax lands on the discounted rate, not the rack rate, and only a cash
+       booking pays it — a stay on points, owned or rented, is exempt at these
+       resorts. Omitting it flattered cash by 12.5% against both alternatives. */
+    annCash+=gross*(1-tr.disc)*(1+ROOM_TAX);
+    annCashUndisc+=gross*(1+ROOM_TAX);
     if(tr.discBlocked) blocked++;
   }
   // Effective discount across the whole year, for display only.
@@ -1171,7 +1175,7 @@ function renderCash(){
     {k:"Own it &mdash; bought resale", v:ownNightR, t0:todayR, s:annR===null?"no resale market here":money(annR)+" a year"},
     {k:"Own it &mdash; bought direct", v:ownNightD, t0:todayD, s:money(annD)+" a year"},
     {k:"Rent points from an owner", v:rentNight, t0:todayRent, s:money(annRent)+" a year"},
-    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount"), v:cashNight, t0:todayCash, s:money(annCash)+" a year"}
+    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount")+", plus tax", v:cashNight, t0:todayCash, s:money(annCash)+" a year"}
   ];
   const low=Math.min(...cells.filter(c=>c.v!==null).map(c=>c.v));
   el("cashOut").innerHTML=
@@ -1197,7 +1201,7 @@ function renderCash(){
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1677,7 +1681,7 @@ function renderAll(){
    the author's estimates — the distinction that matters most here, because
    the estimated ones sit on screen next to the sourced ones looking equally
    authoritative. */
-const DATASETS=[CHARTS_META,RESORTS_META,MARKET_META,ROFR_META,RACK_META,CASH_SEASON_META];
+const DATASETS=[CHARTS_META,RESORTS_META,MARKET_META,ROFR_META,RACK_META,ROOM_TAX_META,CASH_SEASON_META];
 
 function renderProvenance(){
   el("provBody").innerHTML=DATASETS.map(m=>

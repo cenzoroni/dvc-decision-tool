@@ -173,3 +173,51 @@ describe("year-one figures remain visible", () => {
       "the comparison must say what span it averages over");
   });
 });
+
+describe("room tax falls on cash only", () => {
+  test("a cash booking is taxed and a points stay is not", () => {
+    // Confirmed Sept 2026: Florida transient rental tax applies to a cash room
+    // booking at WDW but not to a DVC stay on points, whether the points are
+    // your own or rented from an owner. Omitting it flattered cash by 12.5%
+    // against both alternatives.
+    const p = load({ fresh: true });
+    p.set("escRoom", 0);            // isolate the tax from the escalation factor
+    const t = p.g("tripPoints")();
+    const tax = p.g("ROOM_TAX");
+    assert.equal(tax, 0.125, "the WDW room tax rate");
+
+    // Rental is points-based, so it must be exactly points x rate, untaxed.
+    p.set("tRent", 20);
+    const rent = Number(p.el("cashOut").textContent
+      .match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/)[1].replace(/,/g, ""));
+    assert.ok(Math.abs(rent - t.year * 20) <= 1,
+      `renting points must not be taxed: expected ${t.year * 20}, got ${rent}`);
+  });
+
+  test("removing the tax would make cash cheaper by exactly the tax", () => {
+    const p = load({ fresh: true });
+    p.set("escRoom", 0);
+    const cash = annual(p, "Book it");
+    // Reconstruct the pre-tax figure from the trip shape and check the ratio.
+    const t = p.g("tripPoints")();
+    const rack = Number(p.el("tRack").value);
+    const CS = p.g("CASH_SEASON");
+    let pre = 0;
+    for (const tr of Array.from(t.trips)) {
+      const sr = rack * CS[tr.si];
+      pre += (tr.week * sr + tr.wknd * sr * 1.15) * (1 - tr.disc);
+    }
+    assert.ok(Math.abs(cash / pre - 1.125) < 0.01,
+      `cash should sit 12.5% above the pre-tax figure, ratio was ${(cash / pre).toFixed(4)}`);
+  });
+
+  test("the tax is disclosed rather than silently applied", () => {
+    const { el } = load({ fresh: true });
+    assert.match(el("cashOut").textContent, /plus tax/,
+      "the cash option should say it includes tax");
+    const prov = el("provBody").textContent;
+    assert.match(prov, /Room tax on cash bookings/, "the tax needs its own provenance row");
+    assert.match(prov, /point stays are exempt|not taxed/i,
+      "provenance should state that points stays are exempt");
+  });
+});
