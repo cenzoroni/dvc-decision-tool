@@ -8,22 +8,81 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <style>
+/* Light is the base palette. Dark redefines only the colour tokens, never the
+   rules that use them, so the two themes cannot drift apart.
+
+   Three states to cover: an explicit choice stamps data-theme on <html>; the
+   default "system" setting stamps nothing and is decided by prefers-color-scheme.
+   Both dark branches are needed so the toggle wins in either direction. */
 :root{
+  color-scheme:light;
   --ink:#2D3748;
-  --ink-soft:#718096;
+  --ink-soft:#657484;
+  --on-ink:#FFFFFF;
+  --ink-hover:#4A5568;
   --paper:#F7F8FA;
   --surface:#FFFFFF;
   --line:#E2E8F0;
   --line-soft:#EDF2F7;
-  --lagoon:#2B8A6E;
+  --lagoon:#257C62;
+  --lagoon-hover:#1C6049;
   --lagoon-tint:#E6F6F0;
+  --on-lagoon:#FFFFFF;
   --rust:#C53030;
   --rust-tint:#FFF5F5;
-  --amber:#B7791F;
+  --amber:#9F6917;
   --amber-tint:#FEFCF3;
   --radius:10px;
   --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+}
+
+/* Accents are lifted and desaturated for dark: the light greens and reds are
+   tuned for dark-on-light and drop under 4.5:1 when the ground inverts. Tints
+   become low-alpha washes of the accent rather than near-white pastels. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#E6EAF0;
+    --ink-soft:#9AA6B8;
+    --on-ink:#0F141B;
+    --ink-hover:#C9D3E0;
+    --paper:#11161D;
+    --surface:#1A212B;
+    --line:#2C3644;
+    --line-soft:#232C38;
+    --lagoon:#4ECFA4;
+    --lagoon-hover:#6FDDB8;
+    --lagoon-tint:#173029;
+    --on-lagoon:#08130F;
+    --rust:#FF8A80;
+    --rust-tint:#33201F;
+    --amber:#E8B54B;
+    --amber-tint:#302713;
+    --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
+    --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#E6EAF0;
+  --ink-soft:#9AA6B8;
+  --on-ink:#0F141B;
+  --ink-hover:#C9D3E0;
+  --paper:#11161D;
+  --surface:#1A212B;
+  --line:#2C3644;
+  --line-soft:#232C38;
+  --lagoon:#4ECFA4;
+  --lagoon-hover:#6FDDB8;
+  --lagoon-tint:#173029;
+  --on-lagoon:#08130F;
+  --rust:#FF8A80;
+  --rust-tint:#33201F;
+  --amber:#E8B54B;
+  --amber-tint:#302713;
+  --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -51,7 +110,7 @@ h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72re
 .field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:9px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);transition:border-color .15s,box-shadow .15s}
 .field select:hover,.field input:hover{border-color:var(--ink-soft)}
-.field select:focus,.field input:focus{border-color:var(--lagoon);background:#fff;box-shadow:0 0 0 3px var(--lagoon-tint)}
+.field select:focus,.field input:focus{border-color:var(--lagoon);background:var(--surface);box-shadow:0 0 0 3px var(--lagoon-tint)}
 .field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible{
   outline:2px solid var(--lagoon);outline-offset:2px}
 .hint{font-size:.74rem;color:var(--ink-soft);margin-top:4px}
@@ -79,8 +138,8 @@ h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72re
 table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
 th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft)}
 th:first-child,td:first-child{text-align:left;white-space:nowrap}
-thead th{background:var(--ink);color:#fff;font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none;letter-spacing:.02em}
-thead th:hover{background:#4A5568}
+thead th{background:var(--ink);color:var(--on-ink);font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none;letter-spacing:.02em}
+thead th:hover{background:var(--ink-hover)}
 thead th .arrow{opacity:.45;font-size:.7rem}
 tbody tr:hover{background:var(--line-soft)}
 td.save{color:var(--lagoon);font-weight:700}
@@ -91,7 +150,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .chip{font:inherit;font-size:.83rem;padding:7px 16px;border:1px solid var(--line);
   background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer;transition:all .15s}
 .chip:hover{border-color:var(--lagoon);color:var(--lagoon)}
-.chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:#fff;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:var(--on-lagoon);font-weight:500}
 
 .resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s}
 .resort:hover{box-shadow:var(--shadow-md)}
@@ -142,7 +201,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .duel .side.win .big{color:var(--lagoon)}
 .duel .side.win h3{color:var(--lagoon)}
 .duel .tagwin{display:inline-block;margin-top:10px;font-size:.66rem;font-weight:700;letter-spacing:.04em;
-  background:var(--lagoon);color:#fff;padding:3px 10px;border-radius:6px}
+  background:var(--lagoon);color:var(--on-lagoon);padding:3px 10px;border-radius:6px}
 @media (max-width:900px){.duel{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
 .staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
@@ -181,18 +240,18 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow)}
 .refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
   padding:12px;border:1px solid var(--line);border-radius:8px;resize:vertical;color:var(--ink);background:var(--paper);transition:border-color .15s,box-shadow .15s}
-.refresh textarea:focus{border-color:var(--lagoon);background:#fff;box-shadow:0 0 0 3px var(--lagoon-tint)}
+.refresh textarea:focus{border-color:var(--lagoon);background:var(--surface);box-shadow:0 0 0 3px var(--lagoon-tint)}
 .refresh .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
 .btn{font:inherit;font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:8px;cursor:pointer;
-  border:1px solid var(--lagoon);background:var(--lagoon);color:#fff;transition:all .15s}
+  border:1px solid var(--lagoon);background:var(--lagoon);color:var(--on-lagoon);transition:all .15s}
 .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
-.btn:hover{background:#237a5e;border-color:#237a5e}
+.btn:hover{background:var(--lagoon-hover);border-color:var(--lagoon-hover)}
 .btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
 #parseMsg{font-size:.83rem;color:var(--ink-soft)}
 #parseMsg.good{color:var(--lagoon);font-weight:500}
 #parseMsg.bad{color:var(--rust);font-weight:500}
 .matrix{width:100%;border-collapse:collapse;font-size:.83rem;min-width:640px}
-.matrix th{background:var(--ink);color:#fff;font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;letter-spacing:.02em}
+.matrix th{background:var(--ink);color:var(--on-ink);font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;letter-spacing:.02em}
 .matrix th:hover{background:var(--ink)}
 .matrix th:first-child{text-align:left;width:34%;padding-left:14px}
 .matrix td{text-align:center;padding:7px 6px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
@@ -259,9 +318,31 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 @media (max-width:720px){.split{grid-template-columns:1fr}
   .col + .col{border-left:0;border-top:1px solid var(--line)}
   .grid2{grid-template-columns:1fr}}
-@media print{body{background:#fff}.chips{display:none}.resort,.verdict{break-inside:avoid}}
+/* Print always uses the light palette: a dark theme on paper wastes ink and
+   the shadows and tints do not survive the trip. Forcing the tokens rather than
+   individual rules keeps every component consistent. */
+@media print{
+  :root,:root[data-theme="dark"]{
+    color-scheme:light;
+    --ink:#1a1a1a; --ink-soft:#555; --on-ink:#fff; --ink-hover:#333;
+    --paper:#fff; --surface:#fff; --line:#bbb; --line-soft:#ddd;
+    --lagoon:#1a6b52; --lagoon-hover:#1a6b52; --lagoon-tint:#eef6f2; --on-lagoon:#fff;
+    --rust:#a02020; --rust-tint:#fbeeee; --amber:#8a6512; --amber-tint:#f8f3e6;
+    --shadow:none; --shadow-md:none;
+  }
+  body{background:#fff}
+  .chips,.presets,.sharerow,#themeToggle{display:none}
+  .resort,.verdict,.sens{break-inside:avoid}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script>
+/* Deliberately tiny, dependency-free and inline: this has to run before the
+   first paint or a stored preference flashes the opposite theme. Stamping
+   nothing when no choice is stored leaves prefers-color-scheme in charge. */
+(function(){try{var t=localStorage.getItem("dvc-theme");
+if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -314,6 +395,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
   <div class="sharerow">
     <button class="btn ghost" id="copyLink">Copy link to this scenario</button>
+    <button class="btn ghost" id="themeToggle" aria-pressed="false">Dark mode</button>
     <span id="copyMsg"></span>
   </div>
 </section>
@@ -624,8 +706,8 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   if(!missing.length) return;
   const b=document.createElement("div");
   b.setAttribute("role","alert");
-  b.style.cssText="margin:24px 22px;padding:18px 22px;border:1px solid #C53030;border-radius:10px;"+
-    "background:#FFF5F5;color:#2D3748;font:16px/1.55 system-ui,sans-serif;max-width:1060px";
+  b.style.cssText="margin:24px 22px;padding:18px 22px;border:1px solid var(--rust);border-radius:10px;"+
+    "background:var(--rust-tint);color:var(--ink);font:16px/1.55 system-ui,sans-serif;max-width:1060px";
   b.innerHTML="<strong>The data files did not load.</strong> This page needs "+
     "<code>data/charts.js</code>, <code>data/resorts.js</code> and <code>data/market.js</code> "+
     "alongside it. Missing: "+missing.join(", ")+".";
@@ -1753,6 +1835,28 @@ document.querySelectorAll("#chips .chip").forEach(c=>{
 });
 
 el("copyLink").addEventListener("click",copyLink);
+
+/* Theme: an explicit choice persists and wins; absent one, the system decides
+   and we keep following it if it changes mid-session. */
+const prefersDark=()=>window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches;
+const currentTheme=()=>document.documentElement.getAttribute("data-theme")||(prefersDark()?"dark":"light");
+function syncThemeButton(){
+  const dark=currentTheme()==="dark", b=el("themeToggle");
+  b.textContent=dark?"Light mode":"Dark mode";
+  b.setAttribute("aria-pressed",dark?"true":"false");
+}
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme",t);
+  try{localStorage.setItem("dvc-theme",t);}catch(e){}
+  syncThemeButton();
+}
+el("themeToggle").addEventListener("click",()=>applyTheme(currentTheme()==="dark"?"light":"dark"));
+if(window.matchMedia){
+  const mq=window.matchMedia("(prefers-color-scheme:dark)");
+  const onChange=()=>{ if(!document.documentElement.getAttribute("data-theme")) syncThemeButton(); };
+  if(mq.addEventListener) mq.addEventListener("change",onChange);
+}
+syncThemeButton();
 
 /* Order matters: capture the pristine defaults, then overlay whatever the
    link carries, and only then let renders start writing the URL back. */
