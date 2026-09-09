@@ -32,6 +32,7 @@
   --rust-tint:#FFF5F5;
   --amber:#9F6917;
   --amber-tint:#FEFCF3;
+  --shade-rgb:37,124,98;
   --radius:10px;
   --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
@@ -59,6 +60,7 @@
     --rust-tint:#33201F;
     --amber:#E8B54B;
     --amber-tint:#302713;
+    --shade-rgb:78,207,164;
     --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
     --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
   }
@@ -81,6 +83,7 @@
   --rust-tint:#33201F;
   --amber:#E8B54B;
   --amber-tint:#302713;
+  --shade-rgb:78,207,164;
   --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
   --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
 }
@@ -293,6 +296,9 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .sens-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
 @media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}}
 
+.skey{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.skey-label{font-size:.74rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
+.skey-cell{font-size:.7rem;padding:3px 9px;border-radius:5px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
 .sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
 
@@ -632,7 +638,32 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>10. What resale actually costs you</h2>
+  <h2>10. What this model leaves out</h2>
+  <p class="lede">Every one of these would change the numbers above, and none of them are in the model. They are listed rather than estimated because guessing at them would make the figures look more complete than they are.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Costs that are missing</h3>
+      <ul>
+        <li><strong>Financing.</strong> Every figure here assumes you pay cash. Disney&rsquo;s in-house financing on direct contracts has historically run in the low-to-mid teens, and resale buyers who finance pay their own lender. Because direct buyers finance more often, leaving interest out flatters direct specifically.</li>
+        <li><strong>Getting out.</strong> Selling means a broker commission, closing costs, and months of waiting, with no guarantee of today&rsquo;s price and a right of first refusal that can pull the sale. The payback figure assumes you simply hold to expiry.</li>
+        <li><strong>Special assessments.</strong> Roof, structural and storm-damage work can land on top of annual dues, outside the escalation rate entirely. Infrequent, but real, and unbudgeted here.</li>
+        <li><strong>Everything that is not the room.</strong> Airfare, tickets, food and parking are identical whichever way you book, so they are excluded &mdash; but they mean three short trips cost meaningfully more than one long one, which this model treats as equivalent.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>What owning takes away</h3>
+      <ul>
+        <li><strong>The money stops working elsewhere.</strong> A five-figure sum in a contract is a five-figure sum not invested. The comparison here counts what you save on rooms, not what the capital might have earned instead.</li>
+        <li><strong>Skipping a year is not free.</strong> A cash booker who does not travel pays nothing. An owner still owes dues, every year, whether or not they go.</li>
+        <li><strong>You are committed to one resort family.</strong> A cash booker picks whatever is best value that year, moderate or deluxe, Disney or not. Points nudge you toward using points.</li>
+        <li><strong>The asset expires.</strong> At the deed&rsquo;s end date it is worth nothing. That is already priced into the cost-per-point-year figures, but it is worth saying plainly.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>11. What resale actually costs you</h2>
   <div class="grid2">
     <div class="panel">
       <h3>The booking restriction</h3>
@@ -785,12 +816,16 @@ const MONTHS=["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov",
    Deliberately shape-agnostic so a markup change on the broker's side does not break it. */
 function parseListings(text){
   const ids=[...text.matchAll(/\b[A-Z]{2}[A-Z0-9]\d{4}\b/g)];
-  const out=[]; let skipped=0, pending=0, foreign=0;
+  /* Listing IDs are unique, so a repeat means the paste overlapped — someone
+     copied two pages, or grabbed the same block twice. Counting it once keeps
+     the ranked table honest about how much inventory was really found. */
+  const out=[], seen=new Set(); let skipped=0, pending=0, foreign=0, dupes=0;
   for(let k=0;k<ids.length;k++){
     const id=ids[k][0];
     const seg=text.slice(ids[k].index+id.length, k+1<ids.length?ids[k+1].index:text.length);
     const ri=PREFIX[id.slice(0,2)];
     if(ri===undefined){foreign++;continue;}
+    if(seen.has(id)){dupes++;continue;}
     if(/pending|offer accepted|under contract/i.test(seg)){pending++;continue;}
     const mm=seg.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i);
     if(!mm){skipped++;continue;}
@@ -802,15 +837,16 @@ function parseListings(text){
     const ppp=after.map(num).find(v=>v>=40&&v<=600);
     if(!(pts>0&&pts<=5000)||ppp===undefined||!isFinite(a26)||!isFinite(a27)){skipped++;continue;}
     const uy=mm[0].slice(0,3); 
+    seen.add(id);
     out.push([ri,id,pts,a26,a27,uy.charAt(0).toUpperCase()+uy.slice(1).toLowerCase(),ppp]);
   }
-  return {out,skipped,pending,foreign};
+  return {out,skipped,pending,foreign,dupes};
 }
 
 function applyParse(){
   const msg=el("parseMsg"), txt=el("pasteBox").value||"";
   if(txt.trim().length<20){msg.className="bad";msg.textContent="Nothing to parse yet.";return;}
-  const {out,skipped,pending,foreign}=parseListings(txt);
+  const {out,skipped,pending,foreign,dupes}=parseListings(txt);
   if(!out.length){msg.className="bad";msg.textContent="No listings recognised. Copy the table rows themselves, including the listing IDs.";return;}
   LISTINGS=out;
   const resorts=new Set(out.map(x=>x[0])).size;
@@ -818,10 +854,20 @@ function applyParse(){
   msg.textContent=out.length+" buyable listings across "+resorts+" resorts"+
     (pending?", "+pending+" pending skipped":"")+
     (foreign?", "+foreign+" non-WDW skipped":"")+
+    (dupes?", "+dupes+" duplicate"+(dupes===1?"":"s")+" merged":"")+
     (skipped?", "+skipped+" unreadable":"")+".";
   renderRank();
 }
 
+
+/* Colour intensity alone cannot carry meaning (WCAG 1.4.1). Every shaded cell
+   also states its band in a title, the numeric value is always printed in the
+   cell, and each matrix carries a visible key rather than a sentence buried in
+   a footnote. */
+const BANDS=["cheapest","below average","about average","above average","priciest"];
+const shadeKey=()=>"<div class=\"skey\"><span class=\"skey-label\">Shading</span>"+
+  BANDS.map((b,idx)=>"<span class=\"skey-cell\" style=\"background:rgba(var(--shade-rgb),"+
+    (0.06+0.32*(idx/(BANDS.length-1))).toFixed(3)+")\">"+b+"</span>").join("")+"</div>";
 
 function renderMatrix(){
   const ri=+el("resort").value, r=RESORTS[ri], i=inputs(), mode=el("mMode").value, pat=+el("mPat").value;
@@ -839,10 +885,14 @@ function renderMatrix(){
     vals.push(mode==="nights"?i.pts/n:mode==="pts"?n:n*(mode==="resale"?(cR||cD):mode==="direct"?cD:(cD-(cR||cD))));
   }));
   const lo=Math.min(...vals), hi=Math.max(...vals);
-  const shade=v=>{
-    const t=hi===lo?0.35:(mode==="nights"?(v-lo)/(hi-lo):1-(v-lo)/(hi-lo));
-    return "background:rgba(31,111,92,"+(0.06+0.32*t).toFixed(3)+")";
-  };
+  /* One polarity across the whole page: darker always means costs you more.
+     This matrix used to shade the opposite way from the one in the next
+     section, so a reader who had just learned "dark = good" misread the
+     second table at a glance. `nights` is inverted because more nights per
+     year is better, not worse. */
+  const badness=v=>hi===lo?0.35:(mode==="nights"?1-(v-lo)/(hi-lo):(v-lo)/(hi-lo));
+  const shade=v=>"background:rgba(var(--shade-rgb),"+(0.06+0.32*badness(v)).toFixed(3)+")";
+  const band=v=>BANDS[Math.min(BANDS.length-1,Math.floor(badness(v)*BANDS.length))];
 
   el("mtxBody").innerHTML=ordered.map(({c,ci})=>{
     const [room,view]=c.split("|");
@@ -853,7 +903,7 @@ function renderMatrix(){
         if(mode==="nights"){ v=i.pts/n; txt=v<1?"&mdash;":v.toFixed(v<10?1:0); }
         else if(mode==="pts"){ v=n; txt=n.toFixed(n<10?1:0); }
         else { const u=mode==="resale"?(cR||cD):mode==="direct"?cD:(cD-(cR||cD)); v=n*u; txt=money(v); }
-        return "<td style=\""+shade(v)+"\">"+txt+"</td>";
+        return "<td style=\""+shade(v)+"\" title=\""+band(v)+"\">"+txt+"</td>";
       }).join("")+"</tr>";
   }).join("");
 
@@ -865,7 +915,7 @@ function renderMatrix(){
     direct:"What one night costs you as an owner who bought direct, at "+money2(cD)+" per point-year.",
     prem:"The extra you pay per night for having bought direct rather than resale. Multiply by the nights you would actually take each year to see the annual cost of that choice."
   }[mode];
-  el("mtxNote").innerHTML=label+" 2027 chart. Darker cells are better value.";
+  el("mtxNote").innerHTML=label+" 2027 chart."+shadeKey();
 }
 
 /* Rough 2026 rack rates, deluxe studio, standard view, weeknight. Starting points only. */
@@ -1223,7 +1273,7 @@ function renderWhen(){
                 : mode==="range" ? (v.lo===v.hi?Math.round(v.lo):Math.round(v.lo)+"&ndash;"+Math.round(v.hi))
                 : mode==="cheap" ? Math.round(v.lo)
                 : Math.round(v.avg)+(wide?"<span style=\"color:var(--rust);font-weight:700\">*</span>":"");
-      return "<td style=\"background:rgba(140,58,43,"+(0.05+0.30*t).toFixed(3)+")"+
+      return "<td title=\""+BANDS[Math.min(BANDS.length-1,Math.floor(t*BANDS.length))]+"\" style=\"background:rgba(var(--shade-rgb),"+(0.05+0.30*t).toFixed(3)+")"+
         (hot?";outline:3px solid var(--lagoon);outline-offset:-3px;font-weight:700":"")+"\">"+txt+"</td>";
     }).join("")+"</tr>";
   }).join("");
@@ -1237,10 +1287,10 @@ function renderWhen(){
      mode==="range"?"Points for the stay, cheapest to priciest start date":
      "Points for the stay, averaged over every eligible start date")+
     " &mdash; "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+" at "+plain(r.name)+", "+dn+
-    ". 2027 chart. Darker cells cost more; blank cells run past the published chart. "+
+    ". 2027 chart. Blank cells run past the published chart. "+
     (byMonth
       ? "<strong>Months are not pricing periods.</strong> Disney&rsquo;s seasons cut mid-month &mdash; season 6 ends 20 March and season 7 runs only 21&ndash;28 March &mdash; so a monthly figure can average two very different prices. An asterisk marks a column where the cheapest and priciest start differ by more than 12%; switch the columns to point-chart seasons, or to the cheapest-to-priciest view, to see it."
-      : "These are Disney&rsquo;s actual pricing bands, so every start date inside a column carries the same nightly rate. Variation left within a column comes only from which weekdays the stay covers.")+hl;
+      : "These are Disney&rsquo+shadeKey();s actual pricing bands, so every start date inside a column carries the same nightly rate. Variation left within a column comes only from which weekdays the stay covers.")+hl;
 }
 
 let rankKey="score", rankDir=-1;
