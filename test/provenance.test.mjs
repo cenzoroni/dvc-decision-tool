@@ -76,17 +76,26 @@ describe("provenance", () => {
     });
   });
 
-  test("the rack rates and seasonality are flagged estimated", () => {
-    // These are the two the handoff singled out: they are the author's guesses
-    // and they render alongside sourced figures, so mislabelling them is the
-    // specific failure this test exists to prevent.
+  test("seasonality is still flagged estimated", () => {
+    // Rack rates were replaced with published figures in Sept 2026, so they are
+    // no longer estimated. The seasonality multipliers still are: they were
+    // spot-checked against real rates and held up, but Disney's cash seasons do
+    // not align with the point-chart seasons they are indexed to.
     const byLabel = Object.fromEntries(g("DATASETS").map((m) => [m.label, m]));
-    const rack = byLabel["Estimated nightly rack rates"];
     const seasonality = byLabel["Cash rate seasonality"];
-    assert.ok(rack, "rack rate provenance should be present");
     assert.ok(seasonality, "seasonality provenance should be present");
-    assert.equal(rack.estimated, true, "rack rates must be flagged as estimated");
-    assert.equal(seasonality.estimated, true, "cash seasonality must be flagged as estimated");
+    assert.equal(seasonality.estimated, true, "cash seasonality must stay flagged as estimated");
+  });
+
+  test("rack rates are sourced, and say where from and with what caveats", () => {
+    const byLabel = Object.fromEntries(g("DATASETS").map((m) => [m.label, m]));
+    const rack = byLabel["Nightly rack rates"];
+    assert.ok(rack, "rack rate provenance should be present");
+    assert.equal(rack.estimated, false, "rack rates come from published tables now");
+    assert.match(rack.source, /pre-tax|tax/i,
+      "the tax basis must be stated — published figures include 12.5% and the model needs them net");
+    assert.match(rack.note, /Polynesian/,
+      "the Polynesian view substitution must be disclosed");
   });
 
   test("the point charts are flagged sourced", () => {

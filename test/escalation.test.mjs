@@ -114,22 +114,33 @@ describe("sensitivity strip", () => {
   });
 
   test("a verdict that flips inside the range says so", () => {
-    // Light usage with a heavy discount is genuinely borderline: cash wins if
-    // room rates never rise, owning wins if they rise at all. That the answer
-    // depends entirely on an unknowable assumption is the single most useful
-    // thing the page can tell someone.
-    const p = load({ fresh: true });
-    p.g("trips").length = 0;
-    p.g("trips").push({ si: 4, nights: 3, wknd: 0, disc: 40 });
-    p.g("renderTripRows")(); p.g("renderAll")();
-
-    const cells = Array.from(p.el("cashOut").querySelectorAll(".sens-cell"));
-    const owns = cells.filter((c) => c.classList.contains("owns")).length;
-    const cash = cells.filter((c) => c.classList.contains("cash")).length;
-    assert.ok(owns > 0 && cash > 0,
-      `this scenario should straddle the range, got ${owns} own / ${cash} cash`);
-    assert.match(p.el("cashOut").textContent, /answer flips/,
-      "a straddling verdict must be labelled as assumption-dependent");
+    // Some scenario is always borderline — cash wins if room rates never rise,
+    // owning wins if they rise at all — and that the answer turns entirely on
+    // an unknowable assumption is the most useful thing the page can say.
+    // The scenario is searched for rather than hardcoded so that updating the
+    // rack rates cannot silently retire this test.
+    let straddled = null;
+    outer:
+    for (const rack of [250, 300, 350, 400, 450]) {
+      for (const disc of [0, 20, 40]) {
+        const p = load({ fresh: true });
+        p.g("trips").length = 0;
+        p.g("trips").push({ si: 4, nights: 3, wknd: 0, disc });
+        p.g("renderTripRows")();
+        p.set("tRack", rack);
+        p.g("renderAll")();
+        const cells = Array.from(p.el("cashOut").querySelectorAll(".sens-cell"));
+        const owns = cells.filter((c) => c.classList.contains("owns")).length;
+        const cash = cells.filter((c) => c.classList.contains("cash")).length;
+        if (owns > 0 && cash > 0) { straddled = { p, rack, disc, owns, cash }; break outer; }
+      }
+    }
+    assert.ok(straddled,
+      "no scenario in the swept range straddled the escalation assumptions — " +
+      "either the sensitivity strip stopped working or the sweep needs widening");
+    assert.match(straddled.p.el("cashOut").textContent, /answer flips/,
+      `rack=${straddled.rack} disc=${straddled.disc}% straddles ` +
+      `(${straddled.owns} own / ${straddled.cash} cash) but is not labelled as assumption-dependent`);
   });
 
   test("a robust verdict is not labelled as flipping", () => {

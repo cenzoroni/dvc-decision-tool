@@ -1037,9 +1037,16 @@ function renderTrips(){
     "</div>";
 }
 
+/* The representative studio, used as the cash-rate baseline and as the
+   denominator for a banked point's worth. "Value" and "Club Level" are skipped:
+   Value is a scarce cut-price category at Animal Kingdom that Disney does not
+   even publish a cash rate for, and Club Level is an upcharge — taking either
+   as the baseline misprices every banked point at that resort. */
 function studioCol(ri){
   const c=CHARTS[ri].cols;
-  let i=c.findIndex(x=>/^Deluxe Studio/.test(x));
+  const plain=x=>/^(Deluxe |Longhouse Deluxe )?Studio/.test(x)&&!/\|(Value|Club Level)/.test(x);
+  let i=c.findIndex(plain);
+  if(i<0) i=c.findIndex(x=>/^Deluxe Studio/.test(x));
   if(i<0) i=c.findIndex(x=>/Studio|Cabin/.test(x));
   return i<0?0:i;
 }
