@@ -137,6 +137,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .duel .side h3{margin:0 0 14px;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:var(--ink-soft)}
 .duel .side .big{font-size:clamp(1.9rem,5vw,2.9rem)}
 .duel .side .sub2{display:block;margin-top:8px;font-size:.76rem;color:var(--ink-soft);line-height:1.35}
+.duel .side .yr1{display:inline-block;margin-top:5px;font-size:.72rem;opacity:.85}
 .duel .side.win{background:var(--lagoon-tint)}
 .duel .side.win .big{color:var(--lagoon)}
 .duel .side.win h3{color:var(--lagoon)}
@@ -218,6 +219,20 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .presets-label{font-size:.79rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
 .disc-void{display:inline-block;margin-left:8px;font-size:.68rem;font-weight:700;padding:2px 7px;
   border-radius:6px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
+
+.sens{margin:0;padding:18px 24px;border-top:1px solid var(--line);background:var(--paper)}
+.sens-head{font-size:.83rem;color:var(--ink);margin-bottom:12px;font-weight:500}
+.sens-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sens-cell{padding:10px 8px;border-radius:8px;text-align:center;border:1px solid var(--line);background:var(--surface)}
+.sens-cell.owns{background:var(--lagoon-tint);border-color:var(--lagoon-tint)}
+.sens-cell.cash{background:var(--rust-tint);border-color:var(--rust-tint)}
+.sens-cell.now{border-color:var(--ink);border-width:2px;padding:9px 7px}
+.sens-pct{display:block;font-size:.72rem;color:var(--ink-soft);margin-bottom:3px}
+.sens-val{display:block;font-size:.8rem;font-weight:700}
+.sens-cell.owns .sens-val{color:var(--lagoon)}
+.sens-cell.cash .sens-val{color:var(--rust)}
+.sens-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
+@media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}}
 
 .sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
@@ -305,7 +320,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 
 <section>
   <h2>2. Own, or just book a room?</h2>
-  <p class="lede">The gate question. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
+  <p class="lede">The gate question, compared over the whole life of the deed: dues, cash rates and rental rates all escalate together, so no side is held frozen while the others move. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
   <div class="stayout" id="cashOut"></div>
 </section>
 
@@ -343,6 +358,8 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     <div class="field"><label for="closeR">Resale closing + admin</label><input id="closeR" type="number" value="1200" min="0" step="50"></div>
     <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
       <div class="hint">Percent. 2026 came in at 6.4%</div></div>
+    <div class="field"><label for="escRoom">Room rates increase per year</label><input id="escRoom" type="number" value="4.5" min="0" max="12" step="0.25">
+      <div class="hint">Percent. Cash rooms get more expensive too, and over a deed lasting decades that matters as much as dues. Starts equal to the dues rate &mdash; the neutral assumption that neither side outruns the other. <strong>Estimate; no sourced figure.</strong> Set it to 0 to hold cash rates flat forever.</div></div>
     <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
       <div class="hint">Percent. Leave at 0 to treat every future dollar as equal; raise it to price money you spend decades out as worth less than money spent now. Above 0 the figures below switch to a levelized cost, which is why they rise.</div></div>
   </div>
@@ -936,7 +953,7 @@ function renderCash(){
   /* Each trip carries its own discount, and peak-season trips carry none
      regardless of what was entered. Aggregate the actual per-trip cash rather
      than applying one blended rate across seasons that price differently. */
-  let annCash=0, annCashUndisc=0, blocked=0;
+  let annCash=0; let annCashUndisc=0, blocked=0;
   for(const tr of t.trips){
     const sr=rack*CASH_SEASON[tr.si];
     const gross=tr.week*sr+tr.wknd*sr*1.15;
@@ -952,11 +969,30 @@ function renderCash(){
      risk. Leaving it out overstated the case for buying to anyone unsure they
      would use the points every year. */
   const rentPP=Math.max(1,+el("tRent").value||1);
-  const annRent=ptsYear*rentPP;
+
+  /* The ownership figures average dues across the whole remaining deed, so the
+     things they are compared against must cover the same span. Holding cash
+     rates and rental rates flat for forty years while dues compounded was not a
+     conservative simplification — it was a different question asked of one side
+     of the comparison, and it moved the verdict on its own.
+
+     avgDues(1, y, rate) is the mean of (1+rate)^t over the same whole-year
+     count, so it converts a today figure into its lifetime average. */
+  const infl=avgDues(1,y,i.gRoom);
+  const annCashToday=annCash;
+  const annRentToday=ptsYear*rentPP;
+  annCash=annCashToday*infl;
+  const annRent=annRentToday*infl;
+
   const rentNight=nightsYear>0?annRent/nightsYear:0;
   const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
+  // Year-one figures, so the abstract lifetime average is not the only view.
+  const todayR=uR===null?null:ptsYear*(costPerPointYear(r.resale,i.cR,size,r.dues,y,0).acq+r.dues)/nightsYear;
+  const todayD=ptsYear*(costPerPointYear(r.direct,i.cD,size,r.dues,y,0).acq+r.dues)/nightsYear;
+  const todayRent=nightsYear>0?annRentToday/nightsYear:0;
+  const todayCash=nightsYear>0?annCashToday/nightsYear:0;
   /* What a night actually costs an existing owner THIS year, so it uses this
      year's dues. The lifetime-averaged figure belongs in the cost-per-point-year
      comparison, not here — using it overstated the marginal cost by ~3x. */
@@ -964,8 +1000,20 @@ function renderCash(){
 
   const annR=ownNightR===null?null:ownNightR*nightsYear;
   const annD=ownNightD*nightsYear;
-  const gap=annCash-(annR===null?annD:annR);
+  const ownAnnual=annR===null?annD:annR;
+  const gap=annCash-ownAnnual;
   const upfront=(r.resale===null?r.direct:r.resale)*size+(r.resale===null?i.cD:i.cR);
+
+  /* The single largest lever on this verdict is a rate nobody knows: how fast
+     Disney's room rates rise over the next few decades. Showing one number
+     computed from one guess hides that. The strip below prices the same
+     decision across a plausible range, so the reader can see whether the
+     answer is robust or whether it hangs entirely on the assumption. */
+  const sens=[0,2,3,4.5,6].map(pct=>{
+    const g2=annCashToday*avgDues(1,y,pct/100)-ownAnnual;
+    return {pct, gap:g2, owns:g2>0};
+  });
+  const flips=sens.some(x=>x.owns)&&sens.some(x=>!x.owns);
 
   /* Payback period, not "return on capital". The old wording divided annual
      savings by the purchase price and called the result a yearly return, which
@@ -981,10 +1029,10 @@ function renderCash(){
     : ["bad","Booking cash wins by <strong>"+money(-gap)+"</strong> a year here. At this usage the purchase price never earns itself back, and you would be locking up "+money(upfront)+" to spend more per night."];
 
   const cells=[
-    {k:"Own it &mdash; bought resale", v:ownNightR, s:annR===null?"no resale market here":money(annR)+" a year"},
-    {k:"Own it &mdash; bought direct", v:ownNightD, s:money(annD)+" a year"},
-    {k:"Rent points from an owner", v:rentNight, s:money(annRent)+" a year"},
-    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount"), v:cashNight, s:money(annCash)+" a year"}
+    {k:"Own it &mdash; bought resale", v:ownNightR, t0:todayR, s:annR===null?"no resale market here":money(annR)+" a year"},
+    {k:"Own it &mdash; bought direct", v:ownNightD, t0:todayD, s:money(annD)+" a year"},
+    {k:"Rent points from an owner", v:rentNight, t0:todayRent, s:money(annRent)+" a year"},
+    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount"), v:cashNight, t0:todayCash, s:money(annCash)+" a year"}
   ];
   const low=Math.min(...cells.filter(c=>c.v!==null).map(c=>c.v));
   el("cashOut").innerHTML=
@@ -992,7 +1040,8 @@ function renderCash(){
       "<div class=\"side"+(c.v!==null&&Math.abs(c.v-low)<0.01?" win":"")+"\">"+
         "<h3>"+c.k+"</h3>"+
         "<span class=\"big\">"+(c.v===null?"&mdash;":money(Math.round(c.v)))+"</span>"+
-        "<span class=\"sub2\">per night<br>"+c.s+"</span>"+
+        "<span class=\"sub2\">per night, averaged over "+y.toFixed(0)+" years<br>"+c.s+
+          (c.t0!==null&&c.t0!==undefined?"<br><span class=\"yr1\">"+money(Math.round(c.t0))+" a night in year one</span>":"")+"</span>"+
         (c.v!==null&&Math.abs(c.v-low)<0.01?"<span class=\"tagwin\">CHEAPEST</span>":"")+
       "</div>").join("")+"</div>"+
     "<div class=\"stayhead\">"+
@@ -1004,12 +1053,12 @@ function renderCash(){
         "<h4>The contract</h4>"+
         "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
         "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
-        "<div class=\"cline\"><span>Avg cash rate"+(effDisc>0.0005?" after discount":"")+"</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
+        "<div class=\"cline\"><span>Cash rate today"+(effDisc>0.0005?" after discount":"")+"</span><span>"+money(Math.round(todayCash))+"/night</span></div>"+"<div class=\"cline\"><span>Cash rate averaged to "+r.exp+"</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
         "<div class=\"cline\"><span>Dues only this year, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    (blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1214,6 +1263,7 @@ function inputs(){
     cD:clamp(+el("closeD").value||0,0,1e6),
     cR:clamp(+el("closeR").value||0,0,1e6),
     g:clamp((+el("esc").value||0)/100,0,0.12),
+    gRoom:clamp((+el("escRoom").value||0)/100,0,0.12),
     d:clamp((+el("disc").value||0)/100,0,0.12)
   };
 }
@@ -1514,7 +1564,7 @@ function renderProvenance(){
    rendering garbage. */
 
 const URL_FIELDS=[
-  ["u","unit"], ["rk","tRack"], ["rn","tRent"],
+  ["u","unit"], ["rk","tRack"], ["rn","tRent"], ["er","escRoom"],
   ["p","points"], ["pa","ptsAuto"], ["cd","closeD"], ["cr","closeR"],
   ["es","esc"], ["di","disc"], ["ci","checkin"], ["n","nights"]
 ];
@@ -1677,7 +1727,7 @@ document.querySelectorAll("#rank thead th").forEach(th=>{
   th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
 });
 
-["points","ptsAuto","closeD","closeR","esc","disc"].forEach(id=>
+["points","ptsAuto","closeD","closeR","esc","escRoom","disc"].forEach(id=>
   el(id).addEventListener("input",renderAll));
 ["mMode","mPat"].forEach(id=>el(id).addEventListener("input",renderMatrix));
 ["wStart","wMode","wMax","wCols"].forEach(id=>el(id).addEventListener("input",renderWhen));

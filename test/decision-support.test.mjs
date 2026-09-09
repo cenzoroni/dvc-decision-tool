@@ -149,15 +149,33 @@ describe("renting points", () => {
     assert.match(el("cashOut").textContent, /Rent points from an owner/);
   });
 
-  test("its cost tracks the rate and the points needed", () => {
+  test("year-one cost is exactly points x rate", () => {
     const p = load({ fresh: true });
     p.set("tRent", 20);
+    p.set("escRoom", 0);          // hold rates flat so lifetime == year one
     const t = p.g("tripPoints")();
     const expected = t.year * 20;
     const m = p.el("cashOut").textContent.match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/);
     assert.ok(m, "the annual rental cost should render");
     assert.ok(Math.abs(Number(m[1].replace(/,/g, "")) - expected) <= 1,
       `expected ~$${expected.toFixed(0)} a year, got $${m[1]}`);
+  });
+
+  test("rental escalates over the deed like everything else", () => {
+    // Renting was previously held flat for decades while dues compounded,
+    // which is the same apples-to-oranges error the cash side had.
+    const flat = load({ fresh: true });
+    flat.set("tRent", 20); flat.set("escRoom", 0);
+    const a = Number(flat.el("cashOut").textContent
+      .match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/)[1].replace(/,/g, ""));
+
+    const rising = load({ fresh: true });
+    rising.set("tRent", 20); rising.set("escRoom", 4.5);
+    const b = Number(rising.el("cashOut").textContent
+      .match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/)[1].replace(/,/g, ""));
+
+    assert.ok(b > a * 1.5,
+      `escalated rental (${b}) should be materially above flat (${a}) over a multi-decade deed`);
   });
 });
 
