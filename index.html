@@ -434,7 +434,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>2. Own, or just book a room?</h2>
-  <p class="lede">The gate question, compared over the whole life of the deed: dues, cash rates and rental rates all escalate together, so no side is held frozen while the others move. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
+  <p class="lede">The gate question, in today&rsquo;s dollars: the purchase is spread over the life of the deed and added to dues, then set against what the same nights cost to rent or to book. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
   <div class="stayout" id="cashOut"></div>
 </section>
 
@@ -484,7 +484,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>5. Resale or direct?</h2>
-  <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds the average annual dues you will pay across that whole span.</p>
+  <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds annual dues, all in today&rsquo;s dollars.</p>
 
   <div class="controls">
     <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
@@ -495,9 +495,9 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
       <div class="hint">Percent. 2026 came in at 6.4%</div></div>
     <div class="field"><label for="escRoom">Room rates increase per year</label><input id="escRoom" type="number" value="4.5" min="0" max="12" step="0.25">
-      <div class="hint">Percent. Cash rooms get more expensive too, and over a deed lasting decades that matters as much as dues. Starts equal to the dues rate &mdash; the neutral assumption that neither side outruns the other. <strong>Estimate; no sourced figure.</strong> Set it to 0 to hold cash rates flat forever.</div></div>
+      <div class="hint">Percent. Everything on this page is in today&rsquo;s dollars, so only the <em>gap</em> between this and the dues rate reaches the numbers: if dues rise faster than rooms, owning slowly loses ground; if rooms rise faster, it gains. Equal rates &mdash; the default &mdash; mean neither outruns the other and every figure stays flat. <strong>Estimate; no sourced figure.</strong></div></div>
     <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
-      <div class="hint">Percent. Leave at 0 to treat every future dollar as equal; raise it to price money you spend decades out as worth less than money spent now. Above 0 the figures below switch to a levelized cost, which is why they rise.</div></div>
+      <div class="hint">Percent, above inflation. Leave at 0 to treat every future dollar as equal; raise it to price money you spend decades out as worth less than money spent now. Above 0 the figures below switch to a levelized cost, which is why they rise.</div></div>
   </div>
 
   <div class="split">
@@ -1178,47 +1178,38 @@ function renderCash(){
      would use the points every year. */
   const rentPP=Math.max(1,+el("tRent").value||1);
 
-  /* The ownership figures average dues across the whole remaining deed, so the
-     things they are compared against must cover the same span. Holding cash
-     rates and rental rates flat for forty years while dues compounded was not a
-     conservative simplification — it was a different question asked of one side
-     of the comparison, and it moved the verdict on its own.
-
-     avgDues(1, y, rate) is the mean of (1+rate)^t over the same whole-year
-     count, so it converts a today figure into its lifetime average. */
-  const infl=avgDues(1,y,i.gRoom);
+  /* Today's dollars throughout. Cash and rental are flat at this year's rate;
+     ownership carries the purchase plus dues at their real growth rate, so the
+     four panels are directly comparable and none of them is a number nobody
+     will ever pay. */
   const annCashToday=annCash;
-  const annRentToday=ptsYear*rentPP;
-  annCash=annCashToday*infl;
-  const annRent=annRentToday*infl;
+  const annRent=ptsYear*rentPP;
 
   const rentNight=nightsYear>0?annRent/nightsYear:0;
   const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
-  // Year-one figures, so the abstract lifetime average is not the only view.
-  const todayR=uR===null?null:ptsYear*(costPerPointYear(r.resale,i.cR,size,r.dues,y,0).acq+r.dues)/nightsYear;
-  const todayD=ptsYear*(costPerPointYear(r.direct,i.cD,size,r.dues,y,0).acq+r.dues)/nightsYear;
-  const todayRent=nightsYear>0?annRentToday/nightsYear:0;
-  const todayCash=nightsYear>0?annCashToday/nightsYear:0;
+  const todayCash=cashNight;
   /* What a night actually costs an existing owner THIS year, so it uses this
-     year's dues. The lifetime-averaged figure belongs in the cost-per-point-year
-     comparison, not here — using it overstated the marginal cost by ~3x. */
+     year's dues rather than the deed average. */
   const marginal=ptsYear*r.dues/nightsYear;
 
   const annR=ownNightR===null?null:ownNightR*nightsYear;
   const annD=ownNightD*nightsYear;
   const ownAnnual=annR===null?annD:annR;
   const gap=annCash-ownAnnual;
-  const upfront=(r.resale===null?r.direct:r.resale)*size+(r.resale===null?i.cD:i.cR);
+  const ppp=r.resale===null?r.direct:r.resale, closing=r.resale===null?i.cD:i.cR;
+  const upfront=ppp*size+closing;
 
-  /* The single largest lever on this verdict is a rate nobody knows: how fast
-     Disney's room rates rise over the next few decades. Showing one number
-     computed from one guess hides that. The strip below prices the same
-     decision across a plausible range, so the reader can see whether the
-     answer is robust or whether it hangs entirely on the assumption. */
+  /* The single largest lever on this verdict is a rate nobody knows: whether
+     dues outrun room rates or fall behind them over the coming decades. In
+     today's dollars that is the only escalation left in the model, so the
+     strip prices the same decision across a range of room-rate assumptions
+     against the dues rate set below — cash stays flat, and ownership's real
+     dues burden moves. */
   const sens=[0,2,3,4.5,6].map(pct=>{
-    const g2=annCashToday*avgDues(1,y,pct/100)-ownAnnual;
+    const own2=ptsYear*costPerPointYear(ppp,closing,size,r.dues,y,realDues(i.gNom,pct)).total;
+    const g2=annCashToday-own2;
     return {pct, gap:g2, owns:g2>0};
   });
   const flips=sens.some(x=>x.owns)&&sens.some(x=>!x.owns);
@@ -1231,7 +1222,7 @@ function renderCash(){
   const beAll=[];
   for(let bt=1;bt<=beMax;bt++){
     cOwn+=size*r.dues*Math.pow(1+i.g,bt-1);
-    cCash+=annCashToday*Math.pow(1+i.gRoom,bt-1);
+    cCash+=annCashToday;
     if(beYear===null&&cOwn<=cCash) beYear=bt;
     beAll.push({t:bt,own:cOwn,cash:cCash});
   }
@@ -1258,11 +1249,14 @@ function renderCash(){
           "</tr>").join("")+
         "</tbody>"+
       "</table>"+
-      "<div class=\"be-note\">Cumulative spending, "+size+" points at "+
+      "<div class=\"be-note\">Cumulative spending in today&rsquo;s dollars, "+size+" points at "+
         (r.resale!==null?money2(r.resale)+"/pt resale":money(r.direct)+"/pt direct")+
-        ". Dues start at "+money2(r.dues)+"/pt and escalate "+((i.g*100).toFixed(1))+"%/yr; cash room rates escalate "+((i.gRoom*100).toFixed(1))+"%/yr. "+
+        ". Dues start at "+money2(r.dues)+"/pt"+
+        (Math.abs(i.g)<0.0005?" and hold steady against room rates":
+          " and "+(i.g>0?"outrun":"fall behind")+" room rates by "+(Math.abs(i.g)*100).toFixed(1)+"% a year")+
+        "; cash is flat at this year&rsquo;s rate. "+
         (beYear!==null
-          ?"After the crossover, ownership saves more each year as room rates compound faster than dues."
+          ?"Every year after the crossover is money you would otherwise have handed to the front desk."
           :"Annual cash savings are too small to recover the purchase price before the deed expires.")+
         " At deed end in "+r.exp+", you will have spent "+money(Math.round(beEnd.own))+" owning versus "+money(Math.round(beEnd.cash))+" on cash — "+
         (beEnd.cash-beEnd.own>=0?"a lifetime savings of "+money(Math.round(beEnd.cash-beEnd.own))+"."
@@ -1284,19 +1278,22 @@ function renderCash(){
     : ["bad","Booking cash wins by <strong>"+money(-gap)+"</strong> a year here. At this usage the purchase price never earns itself back, and you would be locking up "+money(upfront)+" to spend more per night."];
 
   const cells=[
-    {k:"Own it &mdash; bought resale", v:ownNightR, t0:todayR, s:annR===null?"no resale market here":money(annR)+" a year"},
-    {k:"Own it &mdash; bought direct", v:ownNightD, t0:todayD, s:money(annD)+" a year"},
-    {k:"Rent points from an owner", v:rentNight, t0:todayRent, s:money(annRent)+" a year"},
-    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount")+", plus tax", v:cashNight, t0:todayCash, s:money(annCash)+" a year"}
+    {k:"Own it &mdash; bought resale", v:ownNightR, s:annR===null?"no resale market here":money(annR)+" a year"},
+    {k:"Own it &mdash; bought direct", v:ownNightD, s:money(annD)+" a year"},
+    {k:"Rent points from an owner", v:rentNight, s:money(annRent)+" a year"},
+    {k:"Book it &mdash; cash"+(effDisc>0.0005?" at "+(effDisc*100).toFixed(0)+"% off":", no discount")+", plus tax", v:cashNight, s:money(annCash)+" a year"}
   ];
   const low=Math.min(...cells.filter(c=>c.v!==null).map(c=>c.v));
+  // Ownership spreads the purchase over the deed; the others are simply this year's price.
+  const ownNote=Math.abs(i.g)<0.0005?"purchase spread over "+y.toFixed(0)+" years, plus dues":
+    "purchase spread over "+y.toFixed(0)+" years, plus dues "+(i.g>0?"outrunning":"trailing")+" room rates by "+(Math.abs(i.g)*100).toFixed(1)+"%/yr";
   el("cashOut").innerHTML=
-    "<div class=\"duel\">"+cells.map(c=>
+    "<div class=\"duel\">"+cells.map((c,idx)=>
       "<div class=\"side"+(c.v!==null&&Math.abs(c.v-low)<0.01?" win":"")+"\">"+
         "<h3>"+c.k+"</h3>"+
         "<span class=\"big\">"+(c.v===null?"&mdash;":money(Math.round(c.v)))+"</span>"+
-        "<span class=\"sub2\">per night, averaged over "+y.toFixed(0)+" years<br>"+c.s+
-          (c.t0!==null&&c.t0!==undefined?"<br><span class=\"yr1\">"+money(Math.round(c.t0))+" a night in year one</span>":"")+"</span>"+
+        "<span class=\"sub2\">per night, in today&rsquo;s dollars<br>"+c.s+
+          (idx<2&&c.v!==null?"<br><span class=\"yr1\">"+ownNote+"</span>":"")+"</span>"+
         (c.v!==null&&Math.abs(c.v-low)<0.01?"<span class=\"tagwin\">CHEAPEST</span>":"")+
       "</div>").join("")+"</div>"+
     "<div class=\"stayhead\">"+
@@ -1308,12 +1305,12 @@ function renderCash(){
         "<h4>The contract</h4>"+
         "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
         "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
-        "<div class=\"cline\"><span>Cash rate today"+(effDisc>0.0005?" after discount":"")+"</span><span>"+money(Math.round(todayCash))+"/night</span></div>"+"<div class=\"cline\"><span>Cash rate averaged to "+r.exp+"</span><span>"+money(Math.round(cashNight))+"/night</span></div>"+
+        "<div class=\"cline\"><span>Cash rate"+(effDisc>0.0005?" after discount":"")+", plus tax</span><span>"+money(Math.round(todayCash))+"/night</span></div>"+
         "<div class=\"cline\"><span>Dues only this year, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Each column holds dues at "+(i.gNom*100).toFixed(1)+"%/yr and asks what happens if room rates rise at that pace instead &mdash; in today&rsquo;s dollars only the gap between the two matters. Whether dues outrun room rates is an assumption, not a figure anyone publishes, and nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 /* The same trip shape run against every resort at once. Each resort is priced
@@ -1340,7 +1337,7 @@ function renderComparison(){
       const sr=RACK[ri]*CASH_SEASON[t.si];
       annCashToday+=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc)*(1+ROOM_TAX);
     }
-    const annCash=annCashToday*avgDues(1,y,i.gRoom);
+    const annCash=annCashToday;
     const ownAnnual=ptsYear*costPerPointYear(ppp,closing,size,r.dues,y,i.g).total;
     const cashNight=nightsYear>0?annCash/nightsYear:0;
     const ownNight=nightsYear>0?ownAnnual/nightsYear:0;
@@ -1350,7 +1347,7 @@ function renderComparison(){
     let cOwn=upfront, cCash=0, beYear=null;
     for(let bt=1;bt<=beMax;bt++){
       cOwn+=size*r.dues*Math.pow(1+i.g,bt-1);
-      cCash+=annCashToday*Math.pow(1+i.gRoom,bt-1);
+      cCash+=annCashToday;
       if(beYear===null&&cOwn<=cCash) beYear=bt;
     }
     return {ri,name:plain(r.name),modeLabel:r.modeLabel,yrs:y,ptsYear,size,upfront,
@@ -1380,7 +1377,7 @@ function renderComparison(){
     "</tr>";
   }).join("");
 
-  el("compareFoot").innerHTML="Each resort is priced in its representative deluxe studio at its own estimated rack rate, using the trips from step 1 and the 2027 chart. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
+  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its representative deluxe studio at its own estimated rack rate, using the trips from step 1 and the 2027 chart. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
 
   document.querySelectorAll("#compare thead th").forEach(th=>{
     const a=th.querySelector(".arrow"); if(!a) return;
@@ -1585,16 +1582,27 @@ function levelized(ppp,closing,pts,dues,yrs,g,d){
    life of the deed — an unbounded one overflows to Infinity, and the direct-minus-
    resale gap then renders as NaN. Clamp where the untrusted value enters. */
 const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+/* Everything on the page is in today's dollars. Cash rates and rental rates
+   are therefore flat, and the only escalation that survives is the REAL growth
+   of dues — how much faster (or slower) they rise than room rates. That is `g`.
+   The two nominal inputs stay on screen because people think in nominal terms,
+   but only their gap reaches the model: 4.5%/4.5% and 7%/7% are the same
+   scenario. A nominal average over four decades was the one number readers
+   consistently mistook for a price. */
 function inputs(){
+  const gNom=clamp((+el("esc").value||0)/100,0,0.12);
+  const gRoom=clamp((+el("escRoom").value||0)/100,0,0.12);
   return {
     pts:clamp(+el("points").value||150,1,1000),
     cD:clamp(+el("closeD").value||0,0,1e6),
     cR:clamp(+el("closeR").value||0,0,1e6),
-    g:clamp((+el("esc").value||0)/100,0,0.12),
-    gRoom:clamp((+el("escRoom").value||0)/100,0,0.12),
+    gNom, gRoom,
+    g:(1+gNom)/(1+gRoom)-1,
     d:clamp((+el("disc").value||0)/100,0,0.12)
   };
 }
+// Real dues growth for an alternative room-rate assumption, same nominal dues.
+const realDues=(gNom,gRoomPct)=>(1+gNom)/(1+gRoomPct/100)-1;
 
 function renderCalc(){
   const r=RESORTS[+el("resort").value], i=inputs(), yrs=yearsLeft(r.exp);

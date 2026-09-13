@@ -161,21 +161,14 @@ describe("renting points", () => {
       `expected ~$${expected.toFixed(0)} a year, got $${m[1]}`);
   });
 
-  test("rental escalates over the deed like everything else", () => {
-    // Renting was previously held flat for decades while dues compounded,
-    // which is the same apples-to-oranges error the cash side had.
-    const flat = load({ fresh: true });
-    flat.set("tRent", 20); flat.set("escRoom", 0);
-    const a = Number(flat.el("cashOut").textContent
+  test("rental is flat in today's dollars, whatever room rates do", () => {
+    // A nominal inflation of rent over the deed was the same mistake as
+    // inflating cash: it produced a per-night figure nobody will ever pay.
+    const read = (p) => Number(p.el("cashOut").textContent
       .match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/)[1].replace(/,/g, ""));
-
-    const rising = load({ fresh: true });
-    rising.set("tRent", 20); rising.set("escRoom", 4.5);
-    const b = Number(rising.el("cashOut").textContent
-      .match(/Rent points from an owner[\s\S]*?\$([\d,]+) a year/)[1].replace(/,/g, ""));
-
-    assert.ok(b > a * 1.5,
-      `escalated rental (${b}) should be materially above flat (${a}) over a multi-decade deed`);
+    const flat = load({ fresh: true });   flat.set("tRent", 20);   flat.set("escRoom", 0);
+    const rising = load({ fresh: true }); rising.set("tRent", 20); rising.set("escRoom", 6);
+    assert.equal(read(flat), read(rising));
   });
 });
 

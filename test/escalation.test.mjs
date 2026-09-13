@@ -1,10 +1,12 @@
-// Dues, cash rates and rental rates must all span the same horizon.
+// Everything is in today's dollars.
 //
-// The ownership figures average dues across the whole remaining deed. Cash and
-// rental were held at today's rate, flat, forever. That was not a conservative
-// simplification — it asked a different question of one side of the comparison,
-// and over a 40-year deed at 4.5% it understated the cash side roughly 3x,
-// which was enough to decide the verdict on its own.
+// An earlier version inflated cash and rental rates nominally over the deed and
+// averaged them, so a Grand Floridian studio showed as "$2,948 a night" — the
+// arithmetic was right and every reader took it for a price. Now cash and
+// rental sit flat at this year's rate, and the only escalation left in the
+// model is the REAL growth of dues: how much faster or slower they rise than
+// room rates. The two nominal inputs stay on screen, but only their gap
+// reaches the numbers.
 
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
@@ -39,60 +41,57 @@ describe("the escalation control is actually wired", () => {
   });
 });
 
-describe("both sides span the same horizon", () => {
-  test("cash escalates when room rates do", () => {
-    const flat = load({ fresh: true });
-    flat.set("escRoom", 0);
-    const a = annual(flat, "Book it");
-
-    const rising = load({ fresh: true });
-    rising.set("escRoom", 4.5);
-    const b = annual(rising, "Book it");
-
-    assert.ok(b > a * 1.5,
-      `cash should compound over a multi-decade deed: flat ${a}, escalating ${b}`);
+describe("everything is in today's dollars", () => {
+  test("cash does not move with room-rate escalation", () => {
+    const flat = load({ fresh: true }); flat.set("escRoom", 0);
+    const rising = load({ fresh: true }); rising.set("escRoom", 6);
+    assert.equal(annual(flat, "Book it"), annual(rising, "Book it"),
+      "cash is this year's price; inflating it nominally produced a number nobody pays");
   });
 
-  test("rental escalates too", () => {
-    const flat = load({ fresh: true });
-    flat.set("escRoom", 0);
-    const a = annual(flat, "Rent points from an owner");
-
-    const rising = load({ fresh: true });
-    rising.set("escRoom", 4.5);
-    const b = annual(rising, "Rent points from an owner");
-
-    assert.ok(b > a * 1.5, `rental should compound too: flat ${a}, escalating ${b}`);
+  test("rental does not move either", () => {
+    const flat = load({ fresh: true }); flat.set("escRoom", 0);
+    const rising = load({ fresh: true }); rising.set("escRoom", 6);
+    assert.equal(annual(flat, "Rent points from an owner"), annual(rising, "Rent points from an owner"));
   });
 
-  test("ownership does not move with room rates — only its own dues do", () => {
-    // The purchase is locked in today's dollars; only dues escalate. This is
-    // the actual economic argument for owning, and it should be visible as
-    // ownership holding steady while the alternatives climb.
-    const a = load({ fresh: true }); a.set("escRoom", 0);
-    const b = load({ fresh: true }); b.set("escRoom", 6);
-    assert.equal(annual(a, "Own it &mdash; bought resale".replace("&mdash;", "—")),
-                 annual(b, "Own it —"),
-      "ownership cost should be independent of room-rate inflation");
+  test("only the gap between dues and room-rate growth reaches ownership", () => {
+    // 3%/3% and 7%/7% are the same real scenario and must render identically;
+    // 4.5% dues against 0% rooms is dues outrunning rooms, and must cost more
+    // than 4.5% against 4.5%.
+    const a = load({ fresh: true }); a.set("esc", 3); a.set("escRoom", 3);
+    const b = load({ fresh: true }); b.set("esc", 7); b.set("escRoom", 7);
+    assert.equal(annual(a, "Own it —"), annual(b, "Own it —"),
+      "equal nominal rates are one scenario regardless of level");
+
+    const neutral = load({ fresh: true }); neutral.set("esc", 4.5); neutral.set("escRoom", 4.5);
+    const duesWin = load({ fresh: true }); duesWin.set("esc", 4.5); duesWin.set("escRoom", 0);
+    assert.ok(annual(duesWin, "Own it —") > annual(neutral, "Own it —"),
+      "dues outrunning room rates should make owning dearer in real terms");
   });
 
-  test("zero escalation reproduces the plain year-one figure", () => {
+  test("rental is exactly points x rate, whatever the escalation inputs say", () => {
     const p = load({ fresh: true });
-    p.set("escRoom", 0);
+    p.set("escRoom", 6);
     p.set("tRent", 20);
     const t = p.g("tripPoints")();
-    assert.ok(Math.abs(annual(p, "Rent points from an owner") - t.year * 20) <= 1,
-      "with no escalation the lifetime average must equal the year-one cost");
+    assert.ok(Math.abs(annual(p, "Rent points from an owner") - t.year * 20) <= 1);
   });
 
-  test("the default holds neither side frozen", () => {
-    // Equal default rates encode "no view on which outruns the other", which is
-    // the neutral prior. Zero on one side is not neutral — it is a claim.
+  test("the default is the neutral scenario", () => {
+    // Equal rates encode "no view on which outruns the other". Zero on one
+    // side is not neutral — it is a claim.
     const { el } = load({ fresh: true });
-    assert.ok(+el("escRoom").value > 0,
-      "room rates must not default to frozen while dues compound");
+    assert.ok(+el("escRoom").value > 0);
     assert.equal(+el("escRoom").value, +el("esc").value,
       "the neutral default is for both to escalate at the same rate");
+  });
+
+  test("no figure on the page is a nominal multi-decade average", () => {
+    const { el } = load({ fresh: true });
+    const txt = el("cashOut").textContent;
+    assert.ok(!/averaged over \d+ years/.test(txt), "the lifetime-average framing is gone");
+    assert.match(txt, /today.s dollars/, "the page says what its dollars are");
   });
 });
 
@@ -157,20 +156,29 @@ describe("sensitivity strip", () => {
   });
 });
 
-describe("year-one figures remain visible", () => {
-  test("each option shows its first-year cost alongside the average", () => {
-    // The lifetime average is the right basis for the decision but is abstract;
-    // the year-one number is what someone actually recognises.
-    const { el } = load({ fresh: true });
-    const yr1 = el("cashOut").querySelectorAll(".yr1");
-    assert.ok(yr1.length >= 3, `expected a year-one figure per option, got ${yr1.length}`);
-    for (const n of yr1) assert.match(n.textContent, /\$[\d,]+ a night in year one/);
+describe("the cash panel is a checkable price", () => {
+  test("the cash figure is exactly this year's rate for the trips, taxed", () => {
+    // Read off the per-trip lines, which show each trip's season-adjusted rate
+    // before tax, and reconcile against the headline. This is the number a
+    // reader compares with a Disney quote, so it has to be a real price.
+    const p = load({ fresh: true });
+    const trips = p.g("trips");
+    const rack = Number(p.el("tRack").value), tax = p.g("ROOM_TAX"), cs = p.g("CASH_SEASON");
+    let expected = 0, nights = 0;
+    for (const t of trips) {
+      const sr = rack * cs[t.si];
+      expected += ((t.nights - t.wknd) * sr + t.wknd * sr * 1.15) * (1 + tax);
+      nights += t.nights;
+    }
+    const shown = p.el("cashOut").textContent.match(/Book it[\s\S]*?\$([\d,]+)per night/);
+    assert.ok(shown, "cash panel should render a per-night figure");
+    assert.ok(Math.abs(Number(shown[1].replace(/,/g, "")) - expected / nights) <= 1,
+      `expected ~$${(expected / nights).toFixed(0)}, got $${shown[1]}`);
   });
 
-  test("the averaging window is stated, not implied", () => {
+  test("ownership explains where its number comes from", () => {
     const { el } = load({ fresh: true });
-    assert.match(el("cashOut").textContent, /averaged over \d+ years/,
-      "the comparison must say what span it averages over");
+    assert.match(el("cashOut").textContent, /purchase spread over \d+ years, plus dues/);
   });
 });
 
