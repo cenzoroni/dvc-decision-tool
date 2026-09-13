@@ -1,0 +1,8 @@
+{
+  "projects": { "default": "altavilla-dev" },
+  "targets": {
+    "altavilla-dev": {
+      "hosting": { "dvc": ["altavilla-dvc"] }
+    }
+  }
+}
