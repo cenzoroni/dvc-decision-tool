@@ -339,6 +339,16 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
 @media (max-width:720px){.split{grid-template-columns:1fr}
   .col + .col{border-left:0;border-top:1px solid var(--line)}
   .grid2{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .stayhead{grid-template-columns:1fr}
+  .staypts{border-right:0;border-bottom:1px solid var(--line);min-width:0}
+  .staycost .cline{font-size:.84rem;gap:10px}
+  .trips-table select{min-width:0;width:100%}
+  .trips-table{font-size:.82rem}
+  .be-tbl{font-size:.78rem}
+  .be-tbl th,.be-tbl td{padding:6px 8px 6px 0}
+  .be-head .big{font-size:1.5rem}
+}
 /* Print always uses the light palette: a dark theme on paper wastes ink and
    the shadows and tints do not survive the trip. Forcing the tokens rather than
    individual rules keeps every component consistent. */
