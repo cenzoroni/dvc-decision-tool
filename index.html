@@ -296,6 +296,21 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .sens-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
 @media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}}
 
+.breakeven{margin:0;padding:18px 24px;border-top:1px solid var(--line);background:var(--paper);overflow-x:auto}
+.be-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.be-head .big{font-size:clamp(1.6rem,4vw,2.2rem)}
+.be-head .big-unit{font-size:.82rem;color:var(--ink-soft);max-width:44ch}
+.be-tbl{width:100%;border-collapse:collapse;font-size:.83rem}
+.be-tbl th{text-align:left;font-size:.72rem;font-weight:500;color:var(--ink-soft);padding:6px 12px 6px 0;border-bottom:1px solid var(--line)}
+.be-tbl td{padding:7px 12px 7px 0;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+.be-tbl td:nth-child(n+2){text-align:right}
+.be-tbl th:nth-child(n+2){text-align:right}
+.be-tbl tr.be-row{background:var(--lagoon-tint);font-weight:700}
+.be-tbl tr.be-row td{border-bottom-color:var(--lagoon)}
+.be-tbl td.be-pos{color:var(--lagoon);font-weight:600}
+.be-tbl td.be-neg{color:var(--rust)}
+.be-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
+
 .skey{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
 .skey-label{font-size:.74rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
 .skey-cell{font-size:.7rem;padding:3px 9px;border-radius:5px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
@@ -338,7 +353,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   }
   body{background:#fff}
   .chips,.presets,.sharerow,#themeToggle{display:none}
-  .resort,.verdict,.sens{break-inside:avoid}
+  .resort,.verdict,.sens,.breakeven{break-inside:avoid}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -1158,6 +1173,53 @@ function renderCash(){
   });
   const flips=sens.some(x=>x.owns)&&sens.some(x=>!x.owns);
 
+  const beMax=Math.max(1,Math.ceil(y));
+  let cOwn=upfront, cCash=0;
+  const bePicks=new Set([1,3,5,10,15,20,30].filter(x=>x<=beMax));
+  bePicks.add(beMax);
+  let beYear=null;
+  const beAll=[];
+  for(let bt=1;bt<=beMax;bt++){
+    cOwn+=size*r.dues*Math.pow(1+i.g,bt-1);
+    cCash+=annCashToday*Math.pow(1+i.gRoom,bt-1);
+    if(beYear===null&&cOwn<=cCash) beYear=bt;
+    beAll.push({t:bt,own:cOwn,cash:cCash});
+  }
+  if(beYear!==null) bePicks.add(beYear);
+  if(beYear!==null&&beYear>1) bePicks.add(beYear-1);
+  const beMilestones=[...bePicks].sort((a,b)=>a-b).map(t=>({...beAll[t-1],diff:beAll[t-1].cash-beAll[t-1].own}));
+  const beEnd=beAll[beAll.length-1];
+  const beHTML=
+    "<div class=\"breakeven\">"+
+      "<div class=\"be-head\">"+
+        "<span class=\"big\">"+(beYear!==null?"Year "+beYear:"Never")+"</span>"+
+        "<span class=\"big-unit\">"+(beYear!==null
+          ?"break-even point — when cumulative ownership costs drop below what you would have spent booking cash"
+          :"ownership does not break even against cash within the "+beMax+"-year deed")+"</span>"+
+      "</div>"+
+      "<table class=\"be-tbl\">"+
+        "<thead><tr><th>After</th><th>Spent owning</th><th>Spent booking cash</th><th>Ownership edge</th></tr></thead>"+
+        "<tbody>"+beMilestones.map(m=>
+          "<tr"+(m.t===beYear?" class=\"be-row\"":"")+">"+
+            "<td>Year "+m.t+(m.t===beMax?" (deed end)":"")+"</td>"+
+            "<td>"+money(Math.round(m.own))+"</td>"+
+            "<td>"+money(Math.round(m.cash))+"</td>"+
+            "<td class=\""+(m.diff>=0?"be-pos":"be-neg")+"\">"+(m.diff>=0?"+":"−")+money(Math.round(Math.abs(m.diff)))+"</td>"+
+          "</tr>").join("")+
+        "</tbody>"+
+      "</table>"+
+      "<div class=\"be-note\">Cumulative spending, "+size+" points at "+
+        (r.resale!==null?money2(r.resale)+"/pt resale":money(r.direct)+"/pt direct")+
+        ". Dues start at "+money2(r.dues)+"/pt and escalate "+((i.g*100).toFixed(1))+"%/yr; cash room rates escalate "+((i.gRoom*100).toFixed(1))+"%/yr. "+
+        (beYear!==null
+          ?"After the crossover, ownership saves more each year as room rates compound faster than dues."
+          :"Annual cash savings are too small to recover the purchase price before the deed expires.")+
+        " At deed end in "+r.exp+", you will have spent "+money(Math.round(beEnd.own))+" owning versus "+money(Math.round(beEnd.cash))+" on cash — "+
+        (beEnd.cash-beEnd.own>=0?"a lifetime savings of "+money(Math.round(beEnd.cash-beEnd.own))+"."
+          :"a net cost of "+money(Math.round(beEnd.own-beEnd.cash))+" more than cash.")+
+      "</div>"+
+    "</div>";
+
   /* Payback period, not "return on capital". The old wording divided annual
      savings by the purchase price and called the result a yearly return, which
      reads as an investment yield beating an index fund. It is not one: the
@@ -1201,7 +1263,7 @@ function renderCash(){
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
