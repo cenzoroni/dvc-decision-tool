@@ -262,7 +262,7 @@ describe("multi-trip model", () => {
     // Edit the first trip row's season and nights via the real controls.
     const row0 = el("tripsBody").querySelectorAll("tr")[0];
     const seasonSelect = row0.querySelector('select[data-f="si"]');
-    seasonSelect.value = "6";
+    seasonSelect.value = "6.1"; // season 6, second band: Dec 24-31
     seasonSelect.dispatchEvent(new window.Event("input", { bubbles: true }));
 
     const nightsInput = el("tripsBody").querySelectorAll("tr")[0].querySelector('input[data-f="nights"]');

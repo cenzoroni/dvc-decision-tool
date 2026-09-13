@@ -1025,14 +1025,32 @@ function renderMatrix(){
    one number applied to every trip mispriced exactly the trips people most
    often own points for. Default is 0 — most visitors are not Florida residents,
    and a pre-filled 35% quietly decided the own-vs-cash verdict for them. */
+/* A trip names a date band, not just a season. Disney prices Easter week and
+   Christmas week identically, so the chart lumps them into one season — but
+   nobody thinks of them as the same trip, and the hero has to know which one
+   to pin. `b` indexes into that season's date ranges; pricing ignores it. */
 let trips=[
-  {si:4, nights:3, wknd:2, disc:0},
-  {si:3, nights:4, wknd:2, disc:0},
-  {si:6, nights:5, wknd:2, disc:0}
+  {si:4, b:0, nights:3, wknd:2, disc:0},
+  {si:3, b:1, nights:4, wknd:2, disc:0},
+  {si:6, b:1, nights:5, wknd:2, disc:0}
 ];
 
 // Seasons where Disney's resident/AP discounts effectively vanish.
 const NO_DISCOUNT_SEASONS=[6];
+
+const HOLIDAY_BANDS={"321-328":"Easter week","1124-1126":"Thanksgiving","1224-1231":"Christmas week"};
+const MONTH_ABBR=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function bandLabel(si,b){
+  const r=SEASONS[2027][si].r, [a,z]=r[Math.min(Math.max(0,b|0),r.length-1)];
+  const m1=Math.floor(a/100)-1, d1=a%100, m2=Math.floor(z/100)-1, d2=z%100;
+  const dates=MONTH_ABBR[m1]+" "+d1+"–"+(m1===m2?"":MONTH_ABBR[m2]+" ")+d2;
+  const h=HOLIDAY_BANDS[a+"-"+z];
+  return h?dates+" · "+h:dates;
+}
+// Every date range of every season, in calendar order, for the trip picker.
+const BAND_OPTIONS=SEASONS[2027].flatMap((s,si)=>s.r.map(([a],b)=>({si,b,a})))
+  .sort((x,y)=>x.a-y.a);
+const bandCount=si=>SEASONS[2027][si].r.length;
 
 /* A preset is "on" only while every trip still carries its discount. Editing
    one trip's discount by hand breaks the match and un-presses the chip, which
@@ -1047,8 +1065,8 @@ function renderTripRows(){
   syncPresetChips();
   el("tripsBody").innerHTML=trips.map((tr,i)=>
     "<tr>"+
-      "<td><select data-idx=\""+i+"\" data-f=\"si\">"+SEASON_SHORT.map((n,si)=>
-        "<option value=\""+si+"\""+(si===tr.si?" selected":"")+">"+n+"</option>").join("")+"</select></td>"+
+      "<td><select data-idx=\""+i+"\" data-f=\"si\">"+BAND_OPTIONS.map(o=>
+        "<option value=\""+o.si+"."+o.b+"\""+(o.si===tr.si&&o.b===(tr.b||0)?" selected":"")+">"+bandLabel(o.si,o.b)+"</option>").join("")+"</select></td>"+
       "<td data-l=\"Nights\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"nights\" value=\""+tr.nights+"\" min=\"1\" max=\"14\" step=\"1\"></td>"+
       "<td data-l=\"Weekend\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"wknd\" value=\""+tr.wknd+"\" min=\"0\" max=\""+tr.nights+"\" step=\"1\"></td>"+
       "<td data-l=\"Discount %\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"disc\" value=\""+(tr.disc||0)+"\" min=\"0\" max=\"60\" step=\"5\">"+
@@ -1059,7 +1077,14 @@ function renderTripRows(){
   el("tripsBody").querySelectorAll("select,input").forEach(inp=>{
     inp.addEventListener("input",()=>{
       const idx=+inp.dataset.idx, f=inp.dataset.f, tr=trips[idx];
-      tr[f]=+inp.value;
+      if(f==="si"){
+        // The option value is "season.band"; a bare season means its first band.
+        const [si,b]=String(inp.value).split(".").map(x=>parseInt(x,10));
+        tr.si=clamp(si||0,0,SEASONS[2027].length-1);
+        tr.b=clamp(b||0,0,bandCount(tr.si)-1);
+      } else {
+        tr[f]=+inp.value;
+      }
       /* Clamp both directions, not just when nights changes. Editing weekend
          nights directly could push wknd past nights: the maths clamped it on
          read, but the row kept displaying the impossible value and encodeTrips
@@ -1096,11 +1121,11 @@ function tripShape(){
   return trips.map(tr=>{
     const nights=Math.max(1,tr.nights||1);
     const wknd=Math.min(nights,Math.max(0,tr.wknd||0));
-    const si=tr.si||0;
+    const si=tr.si||0, b=clamp(tr.b||0,0,bandCount(si)-1);
     const asked=Math.min(0.9,Math.max(0,(tr.disc||0)/100));
     // A discount the user entered for a peak week is not one Disney offers.
     const disc=NO_DISCOUNT_SEASONS.includes(si)?0:asked;
-    return {nights, wknd, week:nights-wknd, si, disc, asked, discBlocked:asked>0&&disc===0};
+    return {nights, wknd, week:nights-wknd, si, b, disc, asked, discBlocked:asked>0&&disc===0};
   });
 }
 function tripPoints(){
@@ -1128,7 +1153,7 @@ function renderTrips(){
   const typed=parseFloat(el("tRack").value);
   const rack=Number.isFinite(typed)&&typed>0?typed:RACK[ri];
   const tripLines=t.trips.map((tr,i)=>{
-    const sn=SEASON_SHORT[tr.si].replace(/&[a-z]+;/g," ").replace(/&ndash;/g,"–");
+    const sn=bandLabel(tr.si,tr.b);
     // The season and weekend multipliers make the entered rate a baseline, not the price.
     const sr=rack*CASH_SEASON[tr.si];
     const night=(tr.week*sr+tr.wknd*sr*1.15)*(1-tr.disc)/tr.nights;
@@ -1449,27 +1474,23 @@ function renderHero(){
   const ch=chartFor(ri,yr);
   const day=md=>Math.round((new Date(yr,Math.floor(md/100)-1,md%100)-new Date(yr,0,1))/864e5);
   const segs=[];
-  SEASONS[yr].forEach((s,si)=>s.r.forEach(([a,b])=>segs.push({si,a:day(a),b:day(b)+1})));
+  SEASONS[yr].forEach((s,si)=>s.r.forEach(([a,z],b)=>segs.push({si,b,a:day(a),b2:day(z)+1})));
   segs.sort((x,y)=>x.a-y.a);
-  const total=segs[segs.length-1].b;
+  const total=segs[segs.length-1].b2;
   const pts=si=>ch[si][0][ci];
   const lo=Math.min(...segs.map(s=>pts(s.si))), hi=Math.max(...segs.map(s=>pts(s.si)));
   const t=si=>hi===lo?0.4:(pts(si)-lo)/(hi-lo);
 
-  const bySeason={};
-  trips.forEach(tr=>{ (bySeason[tr.si]=bySeason[tr.si]||[]).push(tr); });
-  const longest={};
-  segs.forEach((s,idx)=>{
-    const cur=longest[s.si];
-    if(cur===undefined||(s.b-s.a)>(segs[cur].b-segs[cur].a)) longest[s.si]=idx;
-  });
+  // Trips pin to the exact date band they name, keyed "season.band".
+  const byBand={};
+  tripShape().forEach(tr=>{ const k=tr.si+"."+tr.b; (byBand[k]=byBand[k]||[]).push(tr); });
 
-  const strip=segs.map((s,idx)=>{
-    const name=plain(SEASONS[yr][s.si].n).replace(/&ndash;/g,"–");
-    const list=longest[s.si]===idx?bySeason[s.si]||[]:[];
+  const strip=segs.map(s=>{
+    const name=bandLabel(s.si,s.b);
+    const list=byBand[s.si+"."+s.b]||[];
     const pins=list.map((tr,j)=>
       "<span class=\"ys-trip\" style=\"left:"+((j+1)/(list.length+1)*100).toFixed(1)+"%\">"+tr.nights+" night"+(tr.nights===1?"":"s")+"</span>").join("");
-    return "<div class=\"ys-seg\" style=\"width:"+((s.b-s.a)/total*100).toFixed(3)+"%;background:rgba(var(--shade-rgb),"+
+    return "<div class=\"ys-seg\" style=\"width:"+((s.b2-s.a)/total*100).toFixed(3)+"%;background:rgba(var(--shade-rgb),"+
       (0.08+0.54*t(s.si)).toFixed(3)+")\" title=\""+name+": "+pts(s.si)+" points a weeknight\">"+pins+"</div>";
   }).join("");
   const months=MONTH_SHORT.map((m,i)=>
@@ -2014,18 +2035,19 @@ function snapshotDefaults(){
   URL_DEFAULTS.trips=encodeTrips();
 }
 
-const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd,t.disc||0].join(".")).join("_");
+const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd,t.disc||0,t.b||0].join(".")).join("_");
 
 function decodeTrips(s){
   const out=[];
   for(const part of String(s).split("_")){
-    const [si,nights,wknd,disc]=part.split(".").map(x=>parseInt(x,10));
+    const [si,nights,wknd,disc,b]=part.split(".").map(x=>parseInt(x,10));
     if(![si,nights,wknd].every(Number.isFinite)) continue;
-    const n=clamp(nights,1,14);
+    const n=clamp(nights,1,14), s2=clamp(si,0,SEASON_SHORT.length-1);
     out.push({
-      si:clamp(si,0,SEASON_SHORT.length-1), nights:n, wknd:clamp(wknd,0,n),
-      // Links predating per-trip discounts omit the fourth field.
-      disc:Number.isFinite(disc)?clamp(disc,0,60):0
+      si:s2, nights:n, wknd:clamp(wknd,0,n),
+      // Older links omit the discount (4th) and band (5th) fields.
+      disc:Number.isFinite(disc)?clamp(disc,0,60):0,
+      b:Number.isFinite(b)?clamp(b,0,bandCount(s2)-1):0
     });
   }
   return out.length?out:null;
@@ -2131,7 +2153,7 @@ el("addTrip").addEventListener("click",()=>{
   // Inherit the discount already in use so adding a trip does not silently
   // reset the assumption the rest of the list is built on.
   const inherit=trips.length?trips[trips.length-1].disc||0:0;
-  trips.push({si:4, nights:3, wknd:1, disc:inherit});
+  trips.push({si:4, b:0, nights:3, wknd:1, disc:inherit});
   renderTripRows(); renderAll();
 });
 document.querySelectorAll(".presets .chip").forEach(c=>{
