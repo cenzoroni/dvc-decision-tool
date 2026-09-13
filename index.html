@@ -318,7 +318,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
 
 .trips-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;box-shadow:var(--shadow)}
-.trips-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.trips-table{width:100%;min-width:0;border-collapse:collapse;font-size:.88rem}
 .trips-table th{background:transparent;text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line);position:static;cursor:default}
 .trips-table th:hover{background:transparent}
 .trips-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
@@ -344,8 +344,19 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .stayhead{grid-template-columns:1fr}
   .staypts{border-right:0;border-bottom:1px solid var(--line);min-width:0}
   .staycost .cline{font-size:.84rem;gap:10px}
-  .trips-table select{min-width:0;width:100%}
-  .trips-table{font-size:.82rem}
+  /* Five columns cannot share 350px. Each trip becomes a small block: the
+     season on its own line, the three numbers beneath it with their own
+     labels, since the header row no longer sits above them. */
+  .trips-table thead{display:none}
+  .trips-table,.trips-table tbody{display:block}
+  .trips-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px 10px;align-items:end;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .trips-table tr:last-child{border-bottom:0}
+  .trips-table td{display:block;padding:0;border:0;width:auto;min-width:0;text-align:left}
+  .trips-table td:first-child{grid-column:1/-1}
+  .trips-table td[data-l]::before{content:attr(data-l);display:block;font-size:.72rem;color:var(--ink-soft);margin-bottom:4px}
+  .trips-table select,.trips-table input[type=number]{min-width:0;width:100%}
+  .trips-table td:last-child{text-align:right;width:auto}
+  .trips-table .disc-void{display:block;margin:4px 0 0}
   .be-tbl{font-size:.78rem}
   .be-tbl th,.be-tbl td{padding:6px 8px 6px 0}
   .be-head .big{font-size:1.5rem}
@@ -999,9 +1010,9 @@ function renderTripRows(){
     "<tr>"+
       "<td><select data-idx=\""+i+"\" data-f=\"si\">"+SEASON_SHORT.map((n,si)=>
         "<option value=\""+si+"\""+(si===tr.si?" selected":"")+">"+n+"</option>").join("")+"</select></td>"+
-      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"nights\" value=\""+tr.nights+"\" min=\"1\" max=\"14\" step=\"1\"></td>"+
-      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"wknd\" value=\""+tr.wknd+"\" min=\"0\" max=\""+tr.nights+"\" step=\"1\"></td>"+
-      "<td><input type=\"number\" data-idx=\""+i+"\" data-f=\"disc\" value=\""+(tr.disc||0)+"\" min=\"0\" max=\"60\" step=\"5\">"+
+      "<td data-l=\"Nights\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"nights\" value=\""+tr.nights+"\" min=\"1\" max=\"14\" step=\"1\"></td>"+
+      "<td data-l=\"Weekend\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"wknd\" value=\""+tr.wknd+"\" min=\"0\" max=\""+tr.nights+"\" step=\"1\"></td>"+
+      "<td data-l=\"Discount %\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"disc\" value=\""+(tr.disc||0)+"\" min=\"0\" max=\"60\" step=\"5\">"+
         (NO_DISCOUNT_SEASONS.includes(tr.si)&&(tr.disc||0)>0
           ? "<span class=\"disc-void\" title=\"Disney's resident and passholder discounts do not apply in this season\">not offered</span>" : "")+"</td>"+
       "<td><button class=\"btn-remove\" data-idx=\""+i+"\" title=\"Remove trip\">&times;</button></td>"+
