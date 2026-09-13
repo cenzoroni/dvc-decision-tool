@@ -13,29 +13,33 @@
 
    Three states to cover: an explicit choice stamps data-theme on <html>; the
    default "system" setting stamps nothing and is decided by prefers-color-scheme.
-   Both dark branches are needed so the toggle wins in either direction. */
+   Both dark branches are needed so the toggle wins in either direction.
+
+   The neutrals carry a faint green cast in both themes — the page is about a
+   place with lagoons and live oaks, not a spreadsheet — and the one accent is
+   the same lagoon green throughout. */
 :root{
   color-scheme:light;
-  --ink:#2D3748;
-  --ink-soft:#657484;
+  --ink:#22302B;
+  --ink-soft:#5B6964;
   --on-ink:#FFFFFF;
-  --ink-hover:#4A5568;
-  --paper:#F7F8FA;
+  --ink-hover:#3A4944;
+  --paper:#F4F5F1;
   --surface:#FFFFFF;
-  --line:#E2E8F0;
-  --line-soft:#EDF2F7;
+  --line:#D9DED8;
+  --line-soft:#E8ECE6;
   --lagoon:#257C62;
   --lagoon-hover:#1C6049;
   --lagoon-tint:#E6F6F0;
   --on-lagoon:#FFFFFF;
-  --rust:#C53030;
-  --rust-tint:#FFF5F5;
-  --amber:#9F6917;
-  --amber-tint:#FEFCF3;
+  --rust:#B8322C;
+  --rust-tint:#FBEFEE;
+  --amber:#8F6114;
+  --amber-tint:#FBF6E9;
   --shade-rgb:37,124,98;
-  --radius:10px;
-  --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+  --radius:8px;
+  --shadow:0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 10px 30px -12px rgba(34,48,43,.28), 0 2px 6px rgba(0,0,0,.05);
 }
 
 /* Accents are lifted and desaturated for dark: the light greens and reds are
@@ -44,49 +48,53 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --ink:#E6EAF0;
-    --ink-soft:#9AA6B8;
-    --on-ink:#0F141B;
-    --ink-hover:#C9D3E0;
-    --paper:#11161D;
-    --surface:#1A212B;
-    --line:#2C3644;
-    --line-soft:#232C38;
+    --ink:#E7ECE8;
+    --ink-soft:#9DAAA3;
+    --on-ink:#101614;
+    --ink-hover:#C6D0CA;
+    --paper:#111614;
+    --surface:#191F1C;
+    --line:#2A332E;
+    --line-soft:#222A26;
     --lagoon:#4ECFA4;
     --lagoon-hover:#6FDDB8;
-    --lagoon-tint:#173029;
+    --lagoon-tint:#163027;
     --on-lagoon:#08130F;
     --rust:#FF8A80;
     --rust-tint:#33201F;
     --amber:#E8B54B;
     --amber-tint:#302713;
     --shade-rgb:78,207,164;
-    --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
-    --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
+    --shadow:0 1px 2px rgba(0,0,0,.5);
+    --shadow-md:0 14px 34px -12px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --ink:#E6EAF0;
-  --ink-soft:#9AA6B8;
-  --on-ink:#0F141B;
-  --ink-hover:#C9D3E0;
-  --paper:#11161D;
-  --surface:#1A212B;
-  --line:#2C3644;
-  --line-soft:#232C38;
+  --ink:#E7ECE8;
+  --ink-soft:#9DAAA3;
+  --on-ink:#101614;
+  --ink-hover:#C6D0CA;
+  --paper:#111614;
+  --surface:#191F1C;
+  --line:#2A332E;
+  --line-soft:#222A26;
   --lagoon:#4ECFA4;
   --lagoon-hover:#6FDDB8;
-  --lagoon-tint:#173029;
+  --lagoon-tint:#163027;
   --on-lagoon:#08130F;
   --rust:#FF8A80;
   --rust-tint:#33201F;
   --amber:#E8B54B;
   --amber-tint:#302713;
   --shade-rgb:78,207,164;
-  --shadow:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
-  --shadow-md:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
+  --shadow:0 1px 2px rgba(0,0,0,.5);
+  --shadow-md:0 14px 34px -12px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
 }
+
+/* Type scale: 1.25 from a 16px base. 12.8 / 16 / 20 / 25 / 31.25 / 39 / 48.8.
+   Serif carries only the headings and the big numbers; everything else is
+   the sans, so the serif reads as a voice rather than a texture. */
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
@@ -96,58 +104,81 @@ body{
 }
 .wrap{max-width:1060px;margin:0 auto;padding:0 22px 90px}
 
-.mast{padding:56px 0 36px;border-bottom:1px solid var(--line)}
+.mast{padding:52px 0 0}
 .mast h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;
-  font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px}
-.mast p{margin:0;color:var(--ink-soft);font-size:1.1rem;line-height:1.55}
-.asof{margin-top:16px;font-size:.82rem;color:var(--ink-soft)}
+  font-size:clamp(2.4rem,5.5vw,3.05rem);line-height:1.05;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance;max-width:20ch}
+.mast p{margin:0;color:var(--ink-soft);font-size:1.25rem;line-height:1.5;max-width:44ch;text-wrap:pretty}
+.mast .asof{margin-top:0;font-size:.8rem;max-width:none}
 
-section{padding:48px 0 12px;border-bottom:1px solid var(--line)}
+/* The hero: a year on Disney's point chart. Segments are seasons, sized by
+   their real day counts and shaded by what one night costs in the chosen
+   room, with the reader's own trips pinned to the seasons they fall in. */
+.hero{margin:36px 0 0;padding-bottom:40px;border-bottom:1px solid var(--line)}
+.yearstrip{display:flex;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.ys-seg{position:relative;flex:0 0 auto;min-width:0;border-right:1px solid var(--paper)}
+.ys-seg:last-child{border-right:0}
+.ys-trip{position:absolute;top:50%;transform:translate(-50%,-50%);
+  background:var(--lagoon);color:var(--on-lagoon);font-size:.8rem;font-weight:700;
+  padding:4px 10px;border-radius:14px;white-space:nowrap;box-shadow:var(--shadow)}
+.ys-months{display:flex;font-size:.8rem;color:var(--ink-soft);margin-top:6px}
+.ys-months span{flex:0 0 auto;min-width:0;overflow:hidden;white-space:nowrap;padding-left:4px;border-left:1px solid var(--line)}
+.ys-cap{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-soft);margin-top:14px}
+.ys-cap b{color:var(--ink);font-weight:500}
+.ys-key{display:inline-flex;align-items:center;gap:6px}
+.ys-key i{display:inline-block;width:34px;height:10px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(var(--shade-rgb),.08),rgba(var(--shade-rgb),.62))}
+
+section{padding:52px 0 16px;border-bottom:1px solid var(--line)}
 section:last-of-type{border-bottom:0}
-h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.72rem;margin:0 0 8px;letter-spacing:-.01em}
-.lede{margin:0 0 28px;color:var(--ink-soft);max-width:66ch;line-height:1.65}
+h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.95rem;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;text-wrap:balance}
+.lede{margin:0 0 26px;color:var(--ink-soft);max-width:62ch;line-height:1.6;text-wrap:pretty}
 
+/* Controls sit on a band between two rules rather than in a box: they are
+   the page's instrument panel, not a piece of content to be framed. */
 .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:18px 22px;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:28px;box-shadow:var(--shadow)}
-.field label{display:block;font-size:.79rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+  padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:28px}
+.field label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
 .field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:9px 12px;
-  border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+  border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);transition:border-color .15s,box-shadow .15s}
 .field select:hover,.field input:hover{border-color:var(--ink-soft)}
-.field select:focus,.field input:focus{border-color:var(--lagoon);background:var(--surface);box-shadow:0 0 0 3px var(--lagoon-tint)}
-.field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible{
+.field select:focus,.field input:focus{border-color:var(--lagoon);box-shadow:0 0 0 3px var(--lagoon-tint)}
+.field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible,th[data-c]:focus-visible,th[data-r]:focus-visible{
   outline:2px solid var(--lagoon);outline-offset:2px}
-.hint{font-size:.74rem;color:var(--ink-soft);margin-top:4px}
+.hint{font-size:.76rem;color:var(--ink-soft);margin-top:5px;line-height:1.45}
 
-.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow-md)}
-.col{padding:30px 28px 26px}
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.col{padding:28px 28px 24px}
 .col + .col{border-left:1px solid var(--line)}
 .col.resale{background:var(--lagoon-tint)}
-.col h3{margin:0 0 2px;font-size:.9rem;font-weight:700}
-.col .sub{margin:0 0 20px;font-size:.8rem;color:var(--ink-soft)}
-.big{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(2.4rem,6.6vw,3.5rem);
+.col h3{margin:0 0 2px;font-size:.95rem;font-weight:700}
+.col .sub{margin:0 0 18px;font-size:.8rem;color:var(--ink-soft)}
+.big{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(2.4rem,6.6vw,3.05rem);
   line-height:1;letter-spacing:-.02em;display:block}
-.big-unit{font-size:.8rem;font-family:"DM Sans",sans-serif;color:var(--ink-soft);display:block;margin-top:7px;max-width:26ch}
+.big-unit{font-size:.8rem;font-family:"DM Sans",sans-serif;color:var(--ink-soft);display:block;margin-top:7px;max-width:28ch}
 .col.resale .big{color:var(--lagoon)}
-.lines{margin-top:22px;border-top:1px solid var(--line-soft);padding-top:12px}
+.lines{margin-top:20px;border-top:1px solid var(--line-soft);padding-top:12px}
 .line{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.88rem}
 .line span:last-child{font-weight:500;white-space:nowrap}
 .line.total{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;font-weight:700}
 
-.verdict{margin-top:22px;padding:18px 22px;background:var(--surface);
-  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem;box-shadow:var(--shadow)}
+.verdict{margin-top:20px;padding:18px 22px;background:var(--surface);
+  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem}
 .verdict.warn{border-left-color:var(--rust)}
 
-.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
 th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft)}
-th:first-child,td:first-child{text-align:left;white-space:nowrap}
-thead th{background:var(--ink);color:var(--on-ink);font-weight:500;font-size:.76rem;position:sticky;top:0;cursor:pointer;user-select:none;letter-spacing:.02em}
-thead th:hover{background:var(--ink-hover)}
+th:first-child,td:first-child{text-align:left}
+thead th:first-child,tbody td:first-child{white-space:nowrap}
+/* Sortable headers are a rule, not a bar: the data is the dark thing on the page. */
+thead th{background:var(--surface);color:var(--ink);font-weight:500;font-size:.8rem;position:sticky;top:0;cursor:pointer;user-select:none;
+  border-bottom:2px solid var(--ink)}
+thead th:hover{background:var(--line-soft)}
 thead th .arrow{opacity:.45;font-size:.7rem}
 tbody tr:hover{background:var(--line-soft)}
 td.save{color:var(--lagoon);font-weight:700}
 td.na{color:var(--ink-soft)}
-tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding-top:12px}
+tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding-top:12px;white-space:normal}
 
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .chip{font:inherit;font-size:.83rem;padding:7px 16px;border:1px solid var(--line);
@@ -155,27 +186,27 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .chip:hover{border-color:var(--lagoon);color:var(--lagoon)}
 .chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:var(--on-lagoon);font-weight:500}
 
-.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s}
-.resort:hover{box-shadow:var(--shadow-md)}
+.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;transition:border-color .15s}
+.resort:hover{border-color:var(--ink-soft)}
 .resort[hidden]{display:none}
 .resort summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
 .resort summary::-webkit-details-marker{display:none}
 .resort summary::after{content:"+";margin-left:auto;font-size:1.25rem;color:var(--ink-soft);line-height:1}
 .resort[open] summary::after{content:"\2212"}
 .resort[open] summary{border-bottom:1px solid var(--line-soft)}
-.rname{font-family:"DM Serif Display",Georgia,serif;font-size:1.18rem;letter-spacing:-.01em}
-.meta{font-size:.79rem;color:var(--ink-soft)}
-.modes{font-size:.79rem;color:var(--ink);font-weight:500}
-.tag{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
+.rname{font-family:"DM Serif Display",Georgia,serif;font-size:1.25rem;letter-spacing:-.01em}
+.meta{font-size:.8rem;color:var(--ink-soft)}
+.modes{font-size:.8rem;color:var(--ink);font-weight:500}
+.tag{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
 .tag.ok{background:var(--lagoon-tint);color:var(--lagoon)}
 .tag.soon{background:var(--amber-tint);color:var(--amber)}
 .rbody{padding:6px 20px 22px}
 .rnote{font-size:.88rem;color:var(--ink-soft);margin:12px 0 18px;max-width:74ch}
 .alert{font-size:.83rem;background:var(--amber-tint);border-left:3px solid var(--amber);
-  padding:9px 14px;border-radius:var(--radius);margin:0 0 18px;max-width:74ch}
+  padding:9px 14px;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 18px;max-width:74ch}
 
 .rooms{width:100%;border-collapse:collapse;font-size:.86rem;min-width:0;margin-bottom:6px}
-.rooms th{background:transparent;color:var(--ink-soft);font-size:.74rem;font-weight:500;
+.rooms th{background:transparent;color:var(--ink-soft);font-size:.76rem;font-weight:500;
   text-align:left;padding:6px 10px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
 .rooms th:hover{background:transparent}
 .rooms td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -185,27 +216,30 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;border-top:1px solid var(--line)}
 .block{padding:18px 20px 4px 0}
 .block + .block{border-left:1px solid var(--line-soft);padding-left:20px}
-.block h4{margin:0 0 10px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.02rem}
+.block h4{margin:0 0 10px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.1rem}
 .block ul{margin:0 0 12px;padding-left:16px}
 .block li{font-size:.85rem;margin-bottom:6px;line-height:1.45}
-.block .cat{font-size:.72rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
+.block .cat{font-size:.76rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
 .block p.none{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px}
 
-.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+/* One lifted surface on the page: the own-or-book verdict. Everything else
+   that shares this container is framed with a rule only. */
+.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+#cashOut{box-shadow:var(--shadow-md)}
 .stayhead{display:grid;grid-template-columns:auto 1fr;gap:0}
 .duel{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
-.duel .side{padding:24px 22px;text-align:center}
+.duel .side{padding:26px 20px 24px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .duel .side+.side{border-left:1px solid var(--line)}
-.duel .side h3{margin:0 0 14px;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:var(--ink-soft)}
-.duel .side .big{font-size:clamp(1.9rem,5vw,2.9rem)}
-.duel .side .sub2{display:block;margin-top:8px;font-size:.76rem;color:var(--ink-soft);line-height:1.35}
-.duel .side .yr1{display:inline-block;margin-top:5px;font-size:.72rem;opacity:.85}
+.duel .side h3{margin:0 0 14px;font-size:.8rem;font-weight:500;color:var(--ink-soft);text-wrap:balance}
+.duel .side .big{font-size:clamp(1.8rem,4.2vw,2.45rem)}
+.duel .side .sub2{display:block;margin-top:8px;font-size:.8rem;color:var(--ink-soft);line-height:1.4}
+.duel .side .yr1{display:inline-block;margin-top:5px;font-size:.74rem;opacity:.85}
 .duel .side.win{background:var(--lagoon-tint)}
-.duel .side.win .big{color:var(--lagoon)}
-.duel .side.win h3{color:var(--lagoon)}
-.duel .tagwin{display:inline-block;margin-top:10px;font-size:.66rem;font-weight:700;letter-spacing:.04em;
-  background:var(--lagoon);color:var(--on-lagoon);padding:3px 10px;border-radius:6px}
-@media (max-width:900px){.duel{grid-template-columns:repeat(2,1fr)}}
+.duel .side.win .big{color:var(--lagoon);font-size:clamp(2.6rem,6vw,3.6rem)}
+.duel .side.win h3{color:var(--lagoon);font-weight:700}
+.duel .tagwin{display:inline-block;margin-top:auto;padding-top:12px;font-size:.7rem;font-weight:700;letter-spacing:.04em;color:var(--lagoon)}
+@media (max-width:900px){.duel{grid-template-columns:repeat(2,1fr)}
+  .duel .side:nth-child(3){border-left:0}.duel .side:nth-child(n+3){border-top:1px solid var(--line)}}
 @media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
 .staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
 .staypts .big{color:var(--lagoon)}
@@ -215,8 +249,8 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .staycost .cline span:last-child{font-weight:700;white-space:nowrap}
 .staycost h4{margin:0 0 10px;font-size:.85rem;font-weight:700}
 .nights{width:100%;border-collapse:collapse;font-size:.83rem;min-width:0}
-.nights caption{text-align:left;padding:16px 24px 8px;font-size:.78rem;color:var(--ink-soft);caption-side:top}
-.nights th{background:transparent;color:var(--ink-soft);font-size:.72rem;font-weight:500;text-align:left;
+.nights caption{text-align:left;padding:16px 24px 8px;font-size:.8rem;color:var(--ink-soft);caption-side:top}
+.nights th{background:transparent;color:var(--ink-soft);font-size:.76rem;font-weight:500;text-align:left;
   padding:6px 24px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
 .nights th:hover{background:transparent}
 .nights th:first-child,.nights td:first-child{padding-left:24px}
@@ -228,8 +262,8 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .staywarn.bad{background:var(--rust-tint)}
 .staywarn.good{background:var(--lagoon-tint)}
 .weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px 24px;
-  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow)}
-.wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.79rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+  border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px}
+.wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
 .wrow label b{color:var(--ink);font-weight:700}
 .wrow input[type=range]{width:100%;accent-color:var(--lagoon)}
 #rank th:first-child,#rank td:first-child{width:62px;padding-right:8px}
@@ -240,68 +274,73 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 #rank td.neg{color:var(--rust)}
 #rank a{color:var(--lagoon);text-decoration:none;border-bottom:1px solid var(--lagoon-tint);transition:border-color .15s}
 #rank a:hover{border-bottom-color:var(--lagoon)}
-.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow)}
+#compare td:first-child{white-space:normal;min-width:15ch}
+#compare td:first-child .meta{display:block;font-size:.72rem;line-height:1.25;margin-top:2px}
+.refresh{border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px}
 .refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  padding:12px;border:1px solid var(--line);border-radius:8px;resize:vertical;color:var(--ink);background:var(--paper);transition:border-color .15s,box-shadow .15s}
-.refresh textarea:focus{border-color:var(--lagoon);background:var(--surface);box-shadow:0 0 0 3px var(--lagoon-tint)}
+  padding:12px;border:1px solid var(--line);border-radius:6px;resize:vertical;color:var(--ink);background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.refresh textarea:focus{border-color:var(--lagoon);box-shadow:0 0 0 3px var(--lagoon-tint)}
 .refresh .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
-.btn{font:inherit;font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:8px;cursor:pointer;
+.btn{font:inherit;font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:6px;cursor:pointer;
   border:1px solid var(--lagoon);background:var(--lagoon);color:var(--on-lagoon);transition:all .15s}
 .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
 .btn:hover{background:var(--lagoon-hover);border-color:var(--lagoon-hover)}
-.btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
+.btn.ghost:hover{background:transparent;border-color:var(--ink-soft);color:var(--ink)}
 #parseMsg{font-size:.83rem;color:var(--ink-soft)}
 #parseMsg.good{color:var(--lagoon);font-weight:500}
 #parseMsg.bad{color:var(--rust);font-weight:500}
 .matrix{width:100%;border-collapse:collapse;font-size:.83rem;min-width:640px}
-.matrix th{background:var(--ink);color:var(--on-ink);font-weight:500;font-size:.72rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;letter-spacing:.02em}
-.matrix th:hover{background:var(--ink)}
+.matrix th{background:var(--surface);color:var(--ink);font-weight:500;font-size:.74rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;border-bottom:2px solid var(--ink)}
+.matrix th:hover{background:var(--surface)}
 .matrix th:first-child{text-align:left;width:34%;padding-left:14px}
 .matrix td{text-align:center;padding:7px 6px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
 .matrix td:first-child{text-align:left;padding-left:14px;white-space:normal}
 .matrix tbody tr:hover td:first-child{font-weight:700}
 .matrix .rv{color:var(--ink-soft);font-size:.76rem}
-.mlegend{font-size:.78rem;color:var(--ink-soft);padding:12px 14px 0;max-width:78ch}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow)}
-.panel h3{margin:0 0 10px;font-size:1rem}
+.mlegend{font-size:.8rem;color:var(--ink-soft);padding:12px 14px 0;max-width:78ch}
+
+/* The closing essays are columns of text with a rule above, not boxes. */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
+.panel{padding:18px 0 8px;border-top:1px solid var(--line)}
+.panel h3{margin:0 0 12px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.25rem}
 .panel ul{margin:0;padding-left:18px}
-.panel li{margin-bottom:7px;font-size:.9rem}
+.panel li{margin-bottom:8px;font-size:.9rem;line-height:1.5}
 .panel li:last-child{margin-bottom:0}
 
 #provTable{min-width:0}
 #provTable td{text-align:left;vertical-align:top}
 #provTable td:nth-child(3){white-space:nowrap}
-.prov-tag{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;
+.prov-tag{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;
   background:var(--lagoon-tint);color:var(--lagoon)}
 .prov-tag.est{background:var(--amber-tint);color:var(--amber)}
 .prov-note{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:4px;line-height:1.45}
 
 .presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-8px 0 24px}
-.presets-label{font-size:.79rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
-.disc-void{display:inline-block;margin-left:8px;font-size:.68rem;font-weight:700;padding:2px 7px;
-  border-radius:6px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
+.presets-label{font-size:.8rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
+.disc-void{display:inline-block;margin-left:8px;font-size:.7rem;font-weight:700;padding:2px 7px;
+  border-radius:4px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
 
 .sens{margin:0;padding:18px 24px;border-top:1px solid var(--line);background:var(--paper)}
 .sens-head{font-size:.83rem;color:var(--ink);margin-bottom:12px;font-weight:500}
 .sens-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.sens-cell{padding:10px 8px;border-radius:8px;text-align:center;border:1px solid var(--line);background:var(--surface)}
+.sens-cell{padding:10px 8px;border-radius:6px;text-align:center;border:1px solid var(--line);background:var(--surface)}
 .sens-cell.owns{background:var(--lagoon-tint);border-color:var(--lagoon-tint)}
 .sens-cell.cash{background:var(--rust-tint);border-color:var(--rust-tint)}
 .sens-cell.now{border-color:var(--ink);border-width:2px;padding:9px 7px}
-.sens-pct{display:block;font-size:.72rem;color:var(--ink-soft);margin-bottom:3px}
+.sens-pct{display:block;font-size:.74rem;color:var(--ink-soft);margin-bottom:3px}
 .sens-val{display:block;font-size:.8rem;font-weight:700}
 .sens-cell.owns .sens-val{color:var(--lagoon)}
 .sens-cell.cash .sens-val{color:var(--rust)}
 .sens-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
-@media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}.sens-cell:last-child{grid-column:1/-1}}
 
-.breakeven{margin:0;padding:18px 24px;border-top:1px solid var(--line);background:var(--paper);overflow-x:auto}
+.breakeven{margin:0;padding:22px 24px;border-top:1px solid var(--line);background:var(--surface);overflow-x:auto}
 .be-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
-.be-head .big{font-size:clamp(1.6rem,4vw,2.2rem)}
+.be-head .big{font-size:clamp(1.8rem,4.2vw,2.45rem)}
 .be-head .big-unit{font-size:.82rem;color:var(--ink-soft);max-width:44ch}
-.be-tbl{width:100%;border-collapse:collapse;font-size:.83rem}
-.be-tbl th{text-align:left;font-size:.72rem;font-weight:500;color:var(--ink-soft);padding:6px 12px 6px 0;border-bottom:1px solid var(--line)}
+.be-tbl{width:100%;border-collapse:collapse;font-size:.83rem;min-width:0}
+.be-tbl th{text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:6px 12px 6px 0;border-bottom:1px solid var(--line);background:transparent;position:static;cursor:default}
+.be-tbl th:hover{background:transparent}
 .be-tbl td{padding:7px 12px 7px 0;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
 .be-tbl td:nth-child(n+2){text-align:right}
 .be-tbl th:nth-child(n+2){text-align:right}
@@ -313,25 +352,25 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 
 .skey{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
 .skey-label{font-size:.74rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
-.skey-cell{font-size:.7rem;padding:3px 9px;border-radius:5px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.skey-cell{font-size:.7rem;padding:3px 9px;border-radius:4px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
 .sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
 
-.trips-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;box-shadow:var(--shadow)}
+.trips-list{padding:4px 0 10px;border-bottom:1px solid var(--line);margin-bottom:28px}
 .trips-table{width:100%;min-width:0;border-collapse:collapse;font-size:.88rem}
 .trips-table th{background:transparent;text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line);position:static;cursor:default}
 .trips-table th:hover{background:transparent}
 .trips-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.trips-table tr:last-child td{border-bottom:0}
 .trips-table td:last-child{text-align:right;padding-right:0;width:40px}
-.trips-table select,.trips-table input[type=number]{font:inherit;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.trips-table select,.trips-table input[type=number]{font:inherit;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
 .trips-table select{min-width:160px}
 .trips-table input[type=number]{width:70px}
 .btn-remove{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;transition:all .15s}
 .btn-remove:hover{background:var(--rust-tint);color:var(--rust)}
 
 footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;line-height:1.6}
-.disclaimer{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-  padding:18px 22px;margin:24px 0 8px;font-size:.82rem;line-height:1.6;color:var(--ink-soft);box-shadow:var(--shadow)}
+.disclaimer{margin:0 0 16px;font-size:.8rem;line-height:1.6;color:var(--ink-soft)}
 .disclaimer strong{font-weight:600;color:var(--ink)}
 
 @media (max-width:860px){.blocks{grid-template-columns:1fr}
@@ -339,7 +378,9 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .block{padding-right:0}}
 @media (max-width:720px){.split{grid-template-columns:1fr}
   .col + .col{border-left:0;border-top:1px solid var(--line)}
-  .grid2{grid-template-columns:1fr}}
+  .grid2{grid-template-columns:1fr}
+  .yearstrip{height:60px}
+  .ys-months span:nth-child(even){visibility:hidden}}
 @media (max-width:640px){
   .stayhead{grid-template-columns:1fr}
   .staypts{border-right:0;border-bottom:1px solid var(--line);min-width:0}
@@ -360,6 +401,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .be-tbl{font-size:.78rem}
   .be-tbl th,.be-tbl td{padding:6px 8px 6px 0}
   .be-head .big{font-size:1.5rem}
+  .ys-trip{font-size:.72rem;padding:3px 7px}
 }
 /* Print always uses the light palette: a dark theme on paper wastes ink and
    the shadows and tints do not survive the trip. Forcing the tokens rather than
@@ -375,7 +417,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   }
   body{background:#fff}
   .chips,.presets,.sharerow,#themeToggle{display:none}
-  .resort,.verdict,.sens,.breakeven{break-inside:avoid}
+  .resort,.verdict,.sens,.breakeven,.hero{break-inside:avoid}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -392,24 +434,20 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <header class="mast">
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
-  <p>A free calculator that answers three questions: whether to own, whether to buy resale or direct, and which contract to buy.</p>
-  <p class="asof">Point charts, dues, and direct prices current as of September&nbsp;2026</p>
+  <p>Whether to own, whether to buy resale or direct, and which contract &mdash; worked out from how your family actually travels.</p>
+  <div class="hero" id="hero"></div>
 </header>
-
-<div class="disclaimer">
-  <strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.
-</div>
 
 <section>
   <h2>1. How your family travels</h2>
-  <p class="lede">Everything below is derived from this. Set how you actually travel and what you would otherwise pay for a room, and the rest of the page answers whether to own, which way to buy, and which contract to buy.</p>
+  <p class="lede">Everything below is derived from this: how you travel, and what you would otherwise pay for the room.</p>
 
   <div class="controls">
     <div class="field"><label for="resort">Resort</label><select id="resort"></select></div>
     <div class="field" style="grid-column:span 2"><label for="unit">Room and view</label><select id="unit"></select></div>
 
     <div class="field"><label for="tRack">Published nightly rate</label><input id="tRack" type="number" value="573" min="100" step="10">
-      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week &mdash; the &ldquo;rack rate&rdquo;, before any discount. <strong>Defaults here are rough estimates, not sourced Disney figures</strong> &mdash; look up your real dates and replace this number. Weekend nights are taken as 15% higher, the season adjusts it, and your discount comes off the result.</div></div>
+      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week. Each trip&rsquo;s season scales it, weekend nights add 15%, and your discount comes off after. <strong>The default is an estimate</strong> &mdash; look up your real dates.</div></div>
     <div class="field"><label for="tRent">Point rental rate</label><input id="tRent" type="number" value="20" min="5" max="60" step="1">
       <div class="hint">Dollars per point to rent from an existing owner &mdash; the option that needs no purchase, no dues and no resale risk. Commonly $18&ndash;24. <strong>Estimate; verify current rates.</strong></div></div>
     </div>
@@ -445,13 +483,13 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>2. Own, or just book a room?</h2>
-  <p class="lede">The gate question, in today&rsquo;s dollars: the purchase is spread over the life of the deed and added to dues, then set against what the same nights cost to rent or to book. Owning only saves against what you would <em>otherwise pay</em>, and as a Florida resident you can already book these villas at 30&ndash;35% off &mdash; 40% with an Annual Pass. Disney&rsquo;s discounts step down for stays of one to three nights, which is where short trips lose ground. If cash wins here, nothing further down matters.</p>
+  <p class="lede">The gate question, in today&rsquo;s dollars. Owning only saves against what you would <em>otherwise pay</em> &mdash; and a Florida resident already books these villas at 30&ndash;40% off. If cash wins here, nothing further down matters.</p>
   <div class="stayout" id="cashOut"></div>
 </section>
 
 <section>
   <h2>3. Your trips at every resort</h2>
-  <p class="lede">The same trips priced across every resort. Point charts, rack rates and dues all differ, so a family travelling the same way gets a different answer at each one. Sorted by break-even year, soonest first &mdash; a resort that never breaks even is one where cash wins for the life of the deed. Click any heading to re-sort.</p>
+  <p class="lede">The same trips priced at every resort. Point charts, rack rates and dues all differ, so the same family gets a different answer at each one. Sorted by break-even year; click any heading to re-sort.</p>
   <div class="tablescroll">
     <table id="compare">
       <thead><tr>
@@ -473,7 +511,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>4. Every resort side by side</h2>
-  <p class="lede">Sorted by resale cost per point-year, cheapest first. Click any heading to re-sort. The two right-hand columns are the comparable figures; everything to their left feeds them.</p>
+  <p class="lede">Every contract reduced to one figure: what a point costs per year of deed, all in. Sorted cheapest first.</p>
   <div class="tablescroll">
     <table id="grid">
       <thead><tr>
@@ -495,7 +533,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>5. Resale or direct?</h2>
-  <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds annual dues, all in today&rsquo;s dollars.</p>
+  <p class="lede">Same rooms, same booking windows, same dues. Only the purchase price differs, spread here over the years left on the deed.</p>
 
   <div class="controls">
     <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
@@ -506,9 +544,9 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
       <div class="hint">Percent. 2026 came in at 6.4%</div></div>
     <div class="field"><label for="escRoom">Room rates increase per year</label><input id="escRoom" type="number" value="4.5" min="0" max="12" step="0.25">
-      <div class="hint">Percent. Everything on this page is in today&rsquo;s dollars, so only the <em>gap</em> between this and the dues rate reaches the numbers: if dues rise faster than rooms, owning slowly loses ground; if rooms rise faster, it gains. Equal rates &mdash; the default &mdash; mean neither outruns the other and every figure stays flat. <strong>Estimate; no sourced figure.</strong></div></div>
+      <div class="hint">Percent. The page is in today&rsquo;s dollars, so only the <em>gap</em> between this and the dues rate matters: dues outrunning rooms makes owning dearer, equal rates keep every figure flat. <strong>Estimate.</strong></div></div>
     <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
-      <div class="hint">Percent, above inflation. Leave at 0 to treat every future dollar as equal; raise it to price money you spend decades out as worth less than money spent now. Above 0 the figures below switch to a levelized cost, which is why they rise.</div></div>
+      <div class="hint">Percent, above inflation. At 0 every future dollar counts equally; above 0 the figures switch to a levelized cost.</div></div>
   </div>
 
   <div class="split">
@@ -546,7 +584,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>6. What the contract buys</h2>
-  <p class="lede">The same contract is a fortnight in September or four nights at Christmas. This is every room at the selected resort against every season, using the 2027 chart and the contract size set in the cost model &mdash; then the same grid priced in dollars per night, which is the form the direct-versus-resale question actually takes.</p>
+  <p class="lede">The same contract is a fortnight in September or four nights at Christmas. Every room against every season, on the 2027 chart.</p>
 
   <div class="controls">
     <div class="field"><label for="mMode">Show</label><select id="mMode">
@@ -573,7 +611,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>7. When to go, and what a stay costs</h2>
-  <p class="lede">Trip length down the side, dates across the top, for the room and resort chosen in step 1. Pick a check-in date and length and the matching cell is outlined, with the night-by-night breakdown underneath. A stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
+  <p class="lede">Trip length down the side, dates across the top. Pick a check-in date and the matching cell is outlined, with the night-by-night breakdown beneath &mdash; a stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
 
   <div class="controls">
     <div class="field"><label for="resortStay">Resort</label><select id="resortStay"></select></div>
@@ -611,7 +649,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>8. Score a listing</h2>
-  <p class="lede">Brokers quote price per point, but two contracts at the same price are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it. A contract carrying banked points hands you nights you would otherwise have to buy &mdash; by owning more points, or by taking them off another member. Either route has a price, and that is what this scorer credits them at &mdash; using each resort&rsquo;s own figure, derived from the trip shape and discount in step 1. A stripped contract quietly costs you a year.</p>
+  <p class="lede">Two contracts at the same price per point are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it: banked points are nights you would otherwise buy, and a stripped contract quietly costs you a year.</p>
 
   <div class="controls">
     <div class="field"><label for="resortList">Resort</label><select id="resortList"></select></div>
@@ -682,7 +720,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>10. Resort reference</h2>
-  <p class="lede">Rooms, transportation, dining and amenities for each one. Filter by how you would actually get to a park &mdash; for most owners this matters more day to day than the theming does.</p>
+  <p class="lede">Rooms, transport, dining and amenities. Filter by how you would actually get to a park &mdash; day to day that matters more than the theming.</p>
   <div class="chips" id="chips">
     <button class="chip" data-mode="all" aria-pressed="true">All resorts</button>
     <button class="chip" data-mode="walk" aria-pressed="false">Walk to a park</button>
@@ -698,7 +736,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section>
   <h2>11. What this model leaves out</h2>
-  <p class="lede">Every one of these would change the numbers above, and none of them are in the model. They are listed rather than estimated because guessing at them would make the figures look more complete than they are.</p>
+  <p class="lede">Each of these would move the numbers above, and none is in the model &mdash; listed rather than guessed at, so the figures do not look more complete than they are.</p>
   <div class="grid2">
     <div class="panel">
       <h3>Costs that are missing</h3>
@@ -765,7 +803,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <section id="provenance">
   <h2>Where these numbers come from</h2>
-  <p class="lede">Not every figure on this page is equally solid. Sourced data is transcribed from published Disney figures; estimated data is a starting point that you should replace with a real lookup before trusting any conclusion drawn from it.</p>
+  <p class="lede">Sourced figures are transcribed from published Disney data. Estimated ones are a starting point &mdash; replace them with a real lookup before trusting a conclusion built on them.</p>
   <div class="tablescroll">
     <table id="provTable">
       <thead><tr><th>Dataset</th><th>Basis</th><th>Captured</th><th>Source</th></tr></thead>
@@ -775,6 +813,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <footer>
+  <p class="disclaimer"><strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.</p>
   <p>Figures are current as of early September 2026 and move constantly. Direct prices for sold-out resorts &mdash; Animal Kingdom, Bay Lake Tower, Beach Club, BoardWalk, Boulder Ridge, Copper Creek, Old Key West, Saratoga Springs and Grand Floridian &mdash; are real list prices, but Disney only sells inventory it has reclaimed, so availability is sporadic and you take the use year and point total on offer. Restaurants open, close and refurbish constantly; verify anything you are planning a trip around, along with point charts and room capacities, against Disney&rsquo;s current listings.</p>
   <p style="margin-top:16px">This site is not affiliated with, endorsed by, or connected to The Walt Disney Company or Disney Vacation Development, Inc. All trademarks belong to their respective owners. This tool provides estimates for informational purposes only and does not constitute financial or investment advice.</p>
 </footer>
@@ -1399,6 +1438,52 @@ function renderComparison(){
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+/* The year on Disney's chart. Each segment is a real date band from the
+   2027 point chart, sized by its day count and shaded by what one weeknight
+   costs in the chosen room; the reader's trips are pinned to the longest band
+   of their season. It is the page's thesis drawn rather than stated: the same
+   room is a different price depending on where in the year you stand. */
+function renderHero(){
+  const ri=+el("resort").value, r=RESORTS[ri], yr=2027;
+  const ci=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
+  const ch=chartFor(ri,yr);
+  const day=md=>Math.round((new Date(yr,Math.floor(md/100)-1,md%100)-new Date(yr,0,1))/864e5);
+  const segs=[];
+  SEASONS[yr].forEach((s,si)=>s.r.forEach(([a,b])=>segs.push({si,a:day(a),b:day(b)+1})));
+  segs.sort((x,y)=>x.a-y.a);
+  const total=segs[segs.length-1].b;
+  const pts=si=>ch[si][0][ci];
+  const lo=Math.min(...segs.map(s=>pts(s.si))), hi=Math.max(...segs.map(s=>pts(s.si)));
+  const t=si=>hi===lo?0.4:(pts(si)-lo)/(hi-lo);
+
+  const bySeason={};
+  trips.forEach(tr=>{ (bySeason[tr.si]=bySeason[tr.si]||[]).push(tr); });
+  const longest={};
+  segs.forEach((s,idx)=>{
+    const cur=longest[s.si];
+    if(cur===undefined||(s.b-s.a)>(segs[cur].b-segs[cur].a)) longest[s.si]=idx;
+  });
+
+  const strip=segs.map((s,idx)=>{
+    const name=plain(SEASONS[yr][s.si].n).replace(/&ndash;/g,"–");
+    const list=longest[s.si]===idx?bySeason[s.si]||[]:[];
+    const pins=list.map((tr,j)=>
+      "<span class=\"ys-trip\" style=\"left:"+((j+1)/(list.length+1)*100).toFixed(1)+"%\">"+tr.nights+" night"+(tr.nights===1?"":"s")+"</span>").join("");
+    return "<div class=\"ys-seg\" style=\"width:"+((s.b-s.a)/total*100).toFixed(3)+"%;background:rgba(var(--shade-rgb),"+
+      (0.08+0.54*t(s.si)).toFixed(3)+")\" title=\""+name+": "+pts(s.si)+" points a weeknight\">"+pins+"</div>";
+  }).join("");
+  const months=MONTH_SHORT.map((m,i)=>
+    "<span style=\"width:"+(new Date(yr,i+1,0).getDate()/total*100).toFixed(3)+"%\">"+m+"</span>").join("");
+  const [room,view]=CHARTS[ri].cols[ci].split("|");
+  const n=trips.length;
+  el("hero").innerHTML=
+    "<div class=\"yearstrip\">"+strip+"</div>"+
+    "<div class=\"ys-months\">"+months+"</div>"+
+    "<div class=\"ys-cap\"><span><b>"+plain(r.name)+"</b>, "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+
+      " on the 2027 point chart &mdash; "+lo+" to "+hi+" points a weeknight <span class=\"ys-key\"><i></i></span> &mdash; with your "+n+" trip"+(n===1?"":"s")+" pinned.</span>"+
+    "<span class=\"asof\">Charts, dues and prices as of September 2026</span></div>";
+}
+
 /* Render a season's real date bands from the chart data, so headers can never
    drift out of step with the pricing. */
 function bandDates(si,yr){
@@ -1874,7 +1959,7 @@ function syncResort(v){
 }
 
 function renderAll(){
-  syncSize(); renderTrips(); renderCash(); renderComparison(); renderCalc(); renderGrid();
+  syncSize(); renderHero(); renderTrips(); renderCash(); renderComparison(); renderCalc(); renderGrid();
   renderStay(); renderListing(); renderRank(); renderMatrix(); renderWhen();
   writeURL();
 }
