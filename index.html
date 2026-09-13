@@ -319,7 +319,8 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 
 .trips-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;box-shadow:var(--shadow)}
 .trips-table{width:100%;border-collapse:collapse;font-size:.88rem}
-.trips-table th{text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line)}
+.trips-table th{background:transparent;text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line);position:static;cursor:default}
+.trips-table th:hover{background:transparent}
 .trips-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
 .trips-table td:last-child{text-align:right;padding-right:0;width:40px}
 .trips-table select,.trips-table input[type=number]{font:inherit;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
@@ -438,7 +439,29 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section>
-  <h2>3. Every resort side by side</h2>
+  <h2>3. Your trips at every resort</h2>
+  <p class="lede">The same trips priced across every resort. Point charts, rack rates and dues all differ, so a family travelling the same way gets a different answer at each one. Sorted by break-even year, soonest first &mdash; a resort that never breaks even is one where cash wins for the life of the deed. Click any heading to re-sort.</p>
+  <div class="tablescroll">
+    <table id="compare">
+      <thead><tr>
+        <th data-c="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
+        <th data-c="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
+        <th data-c="ptsYear" tabindex="0">Pts/yr <span class="arrow">&#9662;</span></th>
+        <th data-c="upfront" tabindex="0">Upfront <span class="arrow">&#9662;</span></th>
+        <th data-c="ownNight" tabindex="0">Own $/night <span class="arrow">&#9662;</span></th>
+        <th data-c="cashNight" tabindex="0">Cash $/night <span class="arrow">&#9662;</span></th>
+        <th data-c="gap" tabindex="0">Saves/yr <span class="arrow">&#9662;</span></th>
+        <th data-c="beYear" tabindex="0">Break-even <span class="arrow">&#9662;</span></th>
+        <th data-c="lifetime" tabindex="0">At deed end <span class="arrow">&#9662;</span></th>
+      </tr></thead>
+      <tbody id="compareBody"></tbody>
+      <tfoot><tr><td colspan="9" id="compareFoot"></td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>4. Every resort side by side</h2>
   <p class="lede">Sorted by resale cost per point-year, cheapest first. Click any heading to re-sort. The two right-hand columns are the comparable figures; everything to their left feeds them.</p>
   <div class="tablescroll">
     <table id="grid">
@@ -460,7 +483,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section>
-  <h2>4. Resale or direct?</h2>
+  <h2>5. Resale or direct?</h2>
   <p class="lede">The purchase price is the only thing that differs between the two routes &mdash; same rooms, same booking windows, same dues. The model amortizes the purchase over the years left on the deed and adds the average annual dues you will pay across that whole span.</p>
 
   <div class="controls">
@@ -511,7 +534,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>5. What the contract buys</h2>
+  <h2>6. What the contract buys</h2>
   <p class="lede">The same contract is a fortnight in September or four nights at Christmas. This is every room at the selected resort against every season, using the 2027 chart and the contract size set in the cost model &mdash; then the same grid priced in dollars per night, which is the form the direct-versus-resale question actually takes.</p>
 
   <div class="controls">
@@ -538,7 +561,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>6. When to go, and what a stay costs</h2>
+  <h2>7. When to go, and what a stay costs</h2>
   <p class="lede">Trip length down the side, dates across the top, for the room and resort chosen in step 1. Pick a check-in date and length and the matching cell is outlined, with the night-by-night breakdown underneath. A stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
 
   <div class="controls">
@@ -576,7 +599,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>7. Score a listing</h2>
+  <h2>8. Score a listing</h2>
   <p class="lede">Brokers quote price per point, but two contracts at the same price are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it. A contract carrying banked points hands you nights you would otherwise have to buy &mdash; by owning more points, or by taking them off another member. Either route has a price, and that is what this scorer credits them at &mdash; using each resort&rsquo;s own figure, derived from the trip shape and discount in step 1. A stripped contract quietly costs you a year.</p>
 
   <div class="controls">
@@ -593,7 +616,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>8. Ranked inventory</h2>
+  <h2>9. Ranked inventory</h2>
   <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
   <div class="refresh" style="border:2px dashed var(--lagoon);background:var(--lagoon-tint)">
@@ -647,7 +670,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>9. Resort reference</h2>
+  <h2>10. Resort reference</h2>
   <p class="lede">Rooms, transportation, dining and amenities for each one. Filter by how you would actually get to a park &mdash; for most owners this matters more day to day than the theming does.</p>
   <div class="chips" id="chips">
     <button class="chip" data-mode="all" aria-pressed="true">All resorts</button>
@@ -663,7 +686,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section>
-  <h2>10. What this model leaves out</h2>
+  <h2>11. What this model leaves out</h2>
   <p class="lede">Every one of these would change the numbers above, and none of them are in the model. They are listed rather than estimated because guessing at them would make the figures look more complete than they are.</p>
   <div class="grid2">
     <div class="panel">
@@ -688,7 +711,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section>
-  <h2>11. What resale actually costs you</h2>
+  <h2>12. What resale actually costs you</h2>
   <div class="grid2">
     <div class="panel">
       <h3>The booking restriction</h3>
@@ -961,7 +984,17 @@ let trips=[
 // Seasons where Disney's resident/AP discounts effectively vanish.
 const NO_DISCOUNT_SEASONS=[6];
 
+/* A preset is "on" only while every trip still carries its discount. Editing
+   one trip's discount by hand breaks the match and un-presses the chip, which
+   is the honest state: the list no longer reflects that preset. */
+function syncPresetChips(){
+  const uniform=trips.length&&trips.every(t=>(t.disc||0)===(trips[0].disc||0))?(trips[0].disc||0):null;
+  document.querySelectorAll(".presets .chip").forEach(c=>
+    c.setAttribute("aria-pressed",uniform!==null&&+c.dataset.disc===uniform?"true":"false"));
+}
+
 function renderTripRows(){
+  syncPresetChips();
   el("tripsBody").innerHTML=trips.map((tr,i)=>
     "<tr>"+
       "<td><select data-idx=\""+i+"\" data-f=\"si\">"+SEASON_SHORT.map((n,si)=>
@@ -1042,9 +1075,16 @@ function syncSize(){
 function renderTrips(){
   const t=tripPoints(), ri=+el("resort").value, r=RESORTS[ri];
   const [room,view]=CHARTS[ri].cols[t.ci].split("|");
+  const typed=parseFloat(el("tRack").value);
+  const rack=Number.isFinite(typed)&&typed>0?typed:RACK[ri];
   const tripLines=t.trips.map((tr,i)=>{
     const sn=SEASON_SHORT[tr.si].replace(/&[a-z]+;/g," ").replace(/&ndash;/g,"–");
-    return "<div class=\"cline\"><span>Trip "+(i+1)+" &mdash; "+tr.nights+"n, "+sn+"</span><span>"+tr.per+" pts</span></div>";
+    // The season and weekend multipliers make the entered rate a baseline, not the price.
+    const sr=rack*CASH_SEASON[tr.si];
+    const night=(tr.week*sr+tr.wknd*sr*1.15)*(1-tr.disc)/tr.nights;
+    return "<div class=\"cline\"><span>Trip "+(i+1)+" &mdash; "+tr.nights+"n, "+sn+
+      "<small class=\"meta\" style=\"display:block\">cash "+money(Math.round(night))+"/night"+(tr.disc>0?" after "+Math.round(tr.disc*100)+"% off":"")+", before tax</small></span>"+
+      "<span>"+tr.per+" pts</span></div>";
   }).join("");
   el("tripOut").innerHTML=
     "<div class=\"stayhead\">"+
@@ -1274,6 +1314,79 @@ function renderCash(){
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
     "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Room-rate inflation is an assumption, not a figure anyone publishes. Nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
+}
+
+/* The same trip shape run against every resort at once. Each resort is priced
+   in its own representative studio with its own rack rate, so the row-to-row
+   differences come from the point chart, dues and purchase price — the things
+   that actually distinguish one home resort from another. */
+let compKey="beYear", compDir=1;
+function renderComparison(){
+  const i=inputs(), all=tripShape();
+  let nightsYear=0;
+  for(const t of all) nightsYear+=t.nights;
+
+  const rows=RESORTS.map((r,ri)=>{
+    const ci=studioCol(ri), ch=chartFor(ri,2027), y=yearsLeft(r.exp);
+    let ptsYear=0;
+    for(const t of all) ptsYear+=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
+    const size=Math.max(25,Math.ceil(ptsYear/25)*25);
+    const ppp=r.resale!==null?r.resale:r.direct;
+    const closing=r.resale!==null?i.cR:i.cD;
+    const upfront=ppp*size+closing;
+
+    let annCashToday=0;
+    for(const t of all){
+      const sr=RACK[ri]*CASH_SEASON[t.si];
+      annCashToday+=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc)*(1+ROOM_TAX);
+    }
+    const annCash=annCashToday*avgDues(1,y,i.gRoom);
+    const ownAnnual=ptsYear*costPerPointYear(ppp,closing,size,r.dues,y,i.g).total;
+    const cashNight=nightsYear>0?annCash/nightsYear:0;
+    const ownNight=nightsYear>0?ownAnnual/nightsYear:0;
+    const gap=annCash-ownAnnual;
+
+    const beMax=Math.max(1,Math.ceil(y));
+    let cOwn=upfront, cCash=0, beYear=null;
+    for(let bt=1;bt<=beMax;bt++){
+      cOwn+=size*r.dues*Math.pow(1+i.g,bt-1);
+      cCash+=annCashToday*Math.pow(1+i.gRoom,bt-1);
+      if(beYear===null&&cOwn<=cCash) beYear=bt;
+    }
+    return {ri,name:plain(r.name),modeLabel:r.modeLabel,yrs:y,ptsYear,size,upfront,
+      ownNight,cashNight,gap,beYear,lifetime:cCash-cOwn,restricted:r.restricted,resale:r.resale};
+  });
+
+  rows.sort((a,b)=>{
+    const av=a[compKey], bv=b[compKey];
+    if(av===null&&bv===null) return 0;
+    if(av===null) return 1; if(bv===null) return -1;
+    return typeof av==="string"?av.localeCompare(bv)*compDir:(av-bv)*compDir;
+  });
+
+  el("compareBody").innerHTML=rows.map(r=>{
+    const wins=r.gap>0;
+    return "<tr>"+
+      "<td>"+r.name+"<span class=\"meta\" style=\"display:block;white-space:normal\">"+r.modeLabel+
+        (r.restricted?" &middot; resale books here only":"")+"</span></td>"+
+      "<td>"+r.yrs.toFixed(0)+"</td>"+
+      "<td>"+r.ptsYear+"</td>"+
+      "<td>"+money(r.upfront)+"</td>"+
+      "<td class=\""+(wins?"save":"")+"\">"+money(Math.round(r.ownNight))+"</td>"+
+      "<td>"+money(Math.round(r.cashNight))+"</td>"+
+      "<td class=\""+(wins?"save":"na")+"\">"+(wins?"+":"−")+money(Math.round(Math.abs(r.gap)))+"</td>"+
+      "<td"+(r.beYear===null?" class=\"na\"":"")+">"+(r.beYear!==null?"Year "+r.beYear:"Never")+"</td>"+
+      "<td class=\""+(r.lifetime>=0?"save":"na")+"\">"+(r.lifetime>=0?"+":"−")+money(Math.round(Math.abs(r.lifetime)))+"</td>"+
+    "</tr>";
+  }).join("");
+
+  el("compareFoot").innerHTML="Each resort is priced in its representative deluxe studio at its own estimated rack rate, using the trips from step 1 and the 2027 chart. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
+
+  document.querySelectorAll("#compare thead th").forEach(th=>{
+    const a=th.querySelector(".arrow"); if(!a) return;
+    a.innerHTML=th.dataset.c===compKey?(compDir===1?"&#9652;":"&#9662;"):"&#9662;";
+    a.style.opacity=th.dataset.c===compKey?"1":".4";
+  });
 }
 
 const MONTH_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1742,7 +1855,7 @@ function syncResort(v){
 }
 
 function renderAll(){
-  syncSize(); renderTrips(); renderCash(); renderCalc(); renderGrid();
+  syncSize(); renderTrips(); renderCash(); renderComparison(); renderCalc(); renderGrid();
   renderStay(); renderListing(); renderRank(); renderMatrix(); renderWhen();
   writeURL();
 }
@@ -1955,6 +2068,13 @@ document.querySelectorAll("#rank thead th").forEach(th=>{
 
 document.querySelectorAll("#grid thead th").forEach(th=>{
   const go=()=>{const k=th.dataset.k; if(k===sortKey) sortDir*=-1; else {sortKey=k;sortDir=1;} renderGrid();};
+  th.addEventListener("click",go);
+  th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+});
+
+document.querySelectorAll("#compare thead th").forEach(th=>{
+  // Savings columns default to biggest-first; everything else to smallest-first.
+  const go=()=>{const k=th.dataset.c; if(k===compKey) compDir*=-1; else {compKey=k;compDir=(k==="gap"||k==="lifetime")?-1:1;} renderComparison();};
   th.addEventListener("click",go);
   th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
 });
