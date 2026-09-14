@@ -28,9 +28,10 @@ describe("defaults do not pre-decide the verdict", () => {
       `default resort ${g("RESORTS")[ri].name} carries resale restrictions`);
   });
 
-  test("the rack rate shown matches the default resort", () => {
+  test("no trip starts with a typed cash rate, so the published tables decide", () => {
     const { g, el } = load({ fresh: true });
-    assert.equal(+el("tRack").value, g("RACK")[+el("resort").value]);
+    for (const t of g("trips")) assert.ok(!(t.rate > 0), "a pre-filled override would quietly decide the verdict");
+    el("tripsBody").querySelectorAll('input[data-f="rate"]').forEach((n) => assert.equal(n.value, ""));
   });
 });
 

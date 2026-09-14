@@ -10,10 +10,9 @@ const { g } = load();
 const RESORTS = g("RESORTS");
 const CHARTS = g("CHARTS");
 const SEASONS = g("SEASONS");
-const RACK = g("RACK");
+const CASH_RATES = g("CASH_RATES");
 const ROFR = g("ROFR");
 const MARKET = g("MARKET");
-const CASH_SEASON = g("CASH_SEASON");
 const SEASON_SHORT = g("SEASON_SHORT");
 const seasonIndex = g("seasonIndex");
 
@@ -188,9 +187,9 @@ describe("chart row widths match cols.length", () => {
 // 4. Parallel array alignment
 // ---------------------------------------------------------------------------
 describe("parallel arrays are aligned with RESORTS", () => {
-  test("RESORTS, ROFR, RACK, MARKET, CHARTS all have the same length", () => {
+  test("RESORTS, ROFR, CASH_RATES, MARKET, CHARTS all have the same length", () => {
     assert.equal(ROFR.length, RESORTS.length, `ROFR.length (${ROFR.length}) !== RESORTS.length (${RESORTS.length})`);
-    assert.equal(RACK.length, RESORTS.length, `RACK.length (${RACK.length}) !== RESORTS.length (${RESORTS.length})`);
+    assert.equal(CASH_RATES.length, RESORTS.length, `CASH_RATES.length (${CASH_RATES.length}) !== RESORTS.length (${RESORTS.length})`);
     assert.equal(MARKET.length, RESORTS.length, `MARKET.length (${MARKET.length}) !== RESORTS.length (${RESORTS.length})`);
     assert.equal(CHARTS.length, RESORTS.length, `CHARTS.length (${CHARTS.length}) !== RESORTS.length (${RESORTS.length})`);
   });
@@ -211,16 +210,63 @@ describe("parallel arrays are aligned with RESORTS", () => {
     });
   });
 
-  test("RACK and ROFR entries are non-negative numbers", () => {
+  test("ROFR entries are non-negative numbers", () => {
     RESORTS.forEach((r, i) => {
-      assert.ok(typeof RACK[i] === "number" && RACK[i] > 0, `RACK[${i}] ("${r.name}") is not a positive number: ${RACK[i]}`);
       assert.ok(typeof ROFR[i] === "number" && ROFR[i] >= 0, `ROFR[${i}] ("${r.name}") is not a non-negative number: ${ROFR[i]}`);
     });
   });
 
-  test("CASH_SEASON and SEASON_SHORT have exactly 7 entries, one per season", () => {
-    assert.equal(CASH_SEASON.length, N_SEASONS, `CASH_SEASON.length (${CASH_SEASON.length}) !== ${N_SEASONS}`);
+  test("SEASON_SHORT has exactly 7 entries, one per season", () => {
     assert.equal(SEASON_SHORT.length, N_SEASONS, `SEASON_SHORT.length (${SEASON_SHORT.length}) !== ${N_SEASONS}`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 5. Cash rate tables
+// ---------------------------------------------------------------------------
+describe("cash rate tables", () => {
+  const doy = (md) => Math.round((new Date(2027, Math.floor(md / 100) - 1, md % 100) - new Date(2027, 0, 1)) / 864e5);
+
+  test("every resort's bands tile 20 January to 31 December with no gaps or overlaps", () => {
+    RESORTS.forEach((r, i) => {
+      const t = CASH_RATES[i];
+      assert.ok(Array.isArray(t) && t.length > 0, `CASH_RATES[${i}] ("${r.name}") is empty`);
+      assert.equal(t[0][0], 120, `${r.name}: the published year starts 20 January`);
+      assert.equal(t[t.length - 1][1], 1231, `${r.name}: the published year ends 31 December`);
+      for (let k = 1; k < t.length; k++) {
+        assert.equal(doy(t[k][0]), doy(t[k - 1][1]) + 1,
+          `${r.name}: band ${k} (${t[k][0]}) does not start the day after band ${k - 1} ends (${t[k - 1][1]})`);
+      }
+    });
+  });
+
+  test("every band carries one to three positive prices, as MouseSavers prints them", () => {
+    RESORTS.forEach((r, i) => {
+      for (const [a, z, p] of CASH_RATES[i]) {
+        assert.ok(a <= z, `${r.name}: band ${a}-${z} runs backwards`);
+        assert.ok(Array.isArray(p) && p.length >= 1 && p.length <= 3, `${r.name}: band ${a}-${z} has ${p && p.length} prices`);
+        for (const v of p) assert.ok(Number.isInteger(v) && v > 100 && v < 5000, `${r.name}: band ${a}-${z} price ${v} is implausible`);
+      }
+    });
+  });
+
+  test("Christmas week is the dearest band at every resort", () => {
+    // A transcription that slipped a row would most likely show up here.
+    RESORTS.forEach((r, i) => {
+      const t = CASH_RATES[i];
+      const last = t[t.length - 1], top = Math.max(...last[2]);
+      for (const [a, , p] of t) assert.ok(Math.max(...p) <= top, `${r.name}: band ${a} (${Math.max(...p)}) exceeds Christmas week (${top})`);
+    });
+  });
+
+  test("bandRates nets out the tax and averages across the days a point band covers", () => {
+    // Saratoga, point-band 0 = Sep 1-30. Cash bands: Aug 31-Sep 10 (485|524),
+    // Sep 11-Oct 1 (585|591|621). Ten days at the first, twenty at the second.
+    const r = g("bandRates")(9, 0, 0);
+    const week = (10 * 485 + 20 * ((4 * 585 + 591) / 5)) / 30 / 1.125;
+    const wknd = (10 * 524 + 20 * 621) / 30 / 1.125;
+    assert.ok(Math.abs(r.week - week) < 0.01, `weeknight ${r.week} vs ${week}`);
+    assert.ok(Math.abs(r.wknd - wknd) < 0.01, `weekend ${r.wknd} vs ${wknd}`);
   });
 });
 

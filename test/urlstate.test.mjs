@@ -89,17 +89,13 @@ describe("URL state — round trip", () => {
     });
   }
 
-  test("a custom rack rate survives the resort being applied first", () => {
-    // Regression guard: selecting a resort resets #tRack to that resort's
-    // default, so a shared rack rate is clobbered unless it is applied after.
-    const b = load({ fresh: true, search: "?r=2&rk=888" });
+  test("a typed trip rate survives the resort being applied first", () => {
+    // Selecting a resort rebuilds the room list and re-renders the trips, so
+    // anything carried on the trips has to be applied after it.
+    const b = load({ fresh: true, search: "?r=2&t=4.3.2.0.0.888" });
     assert.equal(b.el("resort").value, "2");
-    assert.equal(b.el("tRack").value, "888", "shared rack rate must outlive the resort default");
-    assert.equal(
-      b.g("RACK")[2],
-      888,
-      "the per-resort RACK entry render reads from should carry the shared value"
-    );
+    assert.equal(b.g("trips")[0].rate, 888, "the shared rate must outlive the resort change");
+    assert.equal(b.el("tripsBody").querySelector('input[data-f="rate"]').value, "888");
   });
 
   test("a multi-trip list survives a round trip", () => {
@@ -137,14 +133,14 @@ describe("URL state — hostile and malformed links", () => {
     ["?t=1.2", "truncated trip tuple"],
     ["?p=-1", "negative points"],
     ["?p=1e10", "absurd points"],
-    ["?rk=notanumber", "non-numeric rack rate"],
-    ["?rk=-500", "negative rack rate"],
+    ["?t=4.3.2.0.0.abc", "non-numeric trip rate"],
+    ["?t=4.3.2.0.0.-500", "negative trip rate"],
     ["?es=1e10", "dues escalation past the compounding overflow"],
     ["?di=999", "discount rate past its max"],
     ["?u=4242", "room column the resort does not have"],
     ["?ci=not-a-date", "unparseable check-in date"],
     ["?n=-3", "negative nights"],
-    ["?r=999&t=abc&p=-1&rk=x&u=99&ci=nope", "everything wrong at once"],
+    ["?r=999&t=abc&p=-1&u=99&ci=nope", "everything wrong at once"],
   ];
 
   for (const [search, label] of HOSTILE) {

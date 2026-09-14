@@ -5,49 +5,60 @@ import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { load } from "./harness.mjs";
 
-describe("rack rate persistence", () => {
-  test("a transiently empty #tRack does not corrupt the resort's rate", () => {
-    // Was: clearing the field wrote RACK[ri]=1 permanently, and the cash
-    // comparison then reported $1/night and flipped the verdict to
-    // "Booking cash wins" with no indication anything was wrong.
-    const { el, g, set } = load({ fresh: true });
-    set("resort", 0, "change");
-    const before = g("RACK")[0];
-    set("tRack", "");
-    set("resort", 3, "change");
-    set("resort", 0, "change");
-    assert.equal(g("RACK")[0], before, `RACK[0] should survive an empty edit, got ${g("RACK")[0]}`);
-    assert.ok(
-      !/\$1\/night/.test(el("cashOut").textContent),
-      "cash comparison must not fall back to a $1/night rate"
-    );
+// A trip's cash rate field: blank uses the published rate for its dates, a
+// typed figure overrides it. The same invariants the old global rate field
+// had to satisfy, restated for the per-trip design.
+const rateInput=(el,idx)=>el("tripsBody").querySelector(`input[data-f="rate"][data-idx="${idx}"]`);
+const fire=(window,node)=>node.dispatchEvent(new window.Event("input",{bubbles:true}));
+
+describe("per-trip cash rates", () => {
+  test("a blank rate field uses the published rate and shows it as the placeholder", () => {
+    const { el, g } = load({ fresh: true });
+    const ri = +el("resort").value, t = g("tripShape")()[0];
+    const r = g("bandRates")(ri, t.si, t.b);
+    const expected = Math.round((t.week * r.week + t.wknd * r.wknd) / t.nights);
+    assert.equal(rateInput(el, 0).value, "");
+    assert.equal(+rateInput(el, 0).placeholder, expected);
+    assert.ok(expected > 100, `published rate should be a real price, got ${expected}`);
   });
 
-  test("a non-studio rate is not written into the studio-denominated RACK", () => {
+  test("a typed rate applies to that trip only, and clearing it restores the table", () => {
+    const { el, g, window } = load({ fresh: true });
+    const ri = +el("resort").value;
+    const before = g("tripShape")().map((t) => g("tripGross")(ri, t));
+    const inp = rateInput(el, 1);
+    inp.value = "1000"; fire(window, inp);
+    const after = g("tripShape")().map((t) => g("tripGross")(ri, t));
+    assert.equal(after[0], before[0], "trip 1 untouched");
+    assert.equal(after[1], 1000 * g("tripShape")()[1].nights, "trip 2 priced at the typed rate");
+    assert.equal(after[2], before[2], "trip 3 untouched");
+    inp.value = ""; fire(window, inp);
+    assert.deepEqual(g("tripShape")().map((t) => g("tripGross")(ri, t)), before);
+  });
+
+  test("an override for a big room does not leak into the studio-denominated banked-point value", () => {
     // Was: bankedValue() divided whatever room's rate the user entered by
-    // studio points, so selecting a grand villa inflated every banked point
-    // ~3.4x and distorted the listing scorer and the whole ranked inventory.
-    const { g, set } = load({ fresh: true });
+    // studio points, so a grand-villa rate inflated every banked point ~3.4x
+    // and distorted the whole ranked inventory.
+    const { el, g, set, window } = load({ fresh: true });
     set("resort", 8, "change");
     const studioValue = g("bankedValue")(8);
-    const cols = g("CHARTS")[8].cols;
-    const gv = cols.findIndex((c) => /Three-Bedroom/.test(c));
+    const gv = g("CHARTS")[8].cols.findIndex((c) => /Three-Bedroom/.test(c));
     assert.ok(gv > 0, "precondition: resort 8 has a grand villa column");
     set("unit", gv);
-    set("tRack", 2400);
-    assert.equal(
-      g("bankedValue")(8).toFixed(2),
-      studioValue.toFixed(2),
-      "bankedValue must stay studio-denominated regardless of the selected room"
-    );
+    assert.match(el("tripOut").textContent, /priced at the studio rate/,
+      "with a big room and no overrides, the page must say the studio rate is standing in");
+    for (let k = 0; k < 3; k++) { const inp = rateInput(el, k); inp.value = "2400"; fire(window, inp); }
+    assert.ok(!/priced at the studio rate/.test(el("tripOut").textContent), "every trip now has its own rate");
+    assert.equal(g("bankedValue")(8).toFixed(2), studioValue.toFixed(2));
   });
 
-  test("a studio rate the user enters IS still honoured", () => {
-    const { g, set } = load({ fresh: true });
-    set("resort", 8, "change");
-    set("unit", g("studioCol")(8));
-    set("tRack", 1000);
-    assert.equal(g("RACK")[8], 1000, "a real studio rate should persist");
+  test("an empty or hostile rate never prices a night at $1", () => {
+    const { el, window } = load({ fresh: true });
+    for (const v of ["", "0", "-50", "abc"]) {
+      const inp = rateInput(el, 0); inp.value = v; fire(window, inp);
+      assert.ok(!/\$1\/night/.test(el("cashOut").textContent), `rate "${v}" produced a $1 night`);
+    }
   });
 });
 
@@ -100,26 +111,20 @@ describe("trip row clamping", () => {
 });
 
 describe("URL cleanliness", () => {
-  test("switching resorts alone does not pin an estimated rack rate in the link", () => {
-    // Was: URL_DEFAULTS.tRack was a single boot-time snapshot, so every resort
-    // switch looked like a manual override and froze that resort's estimated
-    // default into the shared link.
+  test("switching resorts alone adds nothing to the link", () => {
     const { window, set } = load({ fresh: true });
     set("resort", 0, "change");
-    assert.ok(
-      !new URLSearchParams(window.location.search).has("rk"),
-      `no rack override was made, yet the link carries one: ${window.location.search}`
-    );
+    assert.equal(window.location.search, "?r=0", `only the resort should be in the link, got ${window.location.search}`);
   });
 
-  test("a genuine rack-rate override still round-trips", () => {
+  test("a typed trip rate round-trips through the link", () => {
     const a = load({ fresh: true });
-    a.set("resort", 0, "change");
-    a.set("tRack", 999);
+    const inp = rateInput(a.el, 0); inp.value = "999"; fire(a.window, inp);
     const qs = a.window.location.search;
-    assert.ok(qs.includes("rk=999"), `an explicit override should be shared, got ${qs}`);
+    assert.ok(/\.999(_|$|&)/.test(qs), `the rate should ride in the trips field, got ${qs}`);
     const b = load({ fresh: true, search: qs });
-    assert.equal(b.el("tRack").value, "999");
+    assert.equal(b.g("trips")[0].rate, 999);
+    assert.equal(rateInput(b.el, 0).value, "999");
   });
 });
 

@@ -126,7 +126,6 @@ describe("render sweep: resort x room column x display mode", () => {
 // ---------------------------------------------------------------------------
 describe("hostile inputs", () => {
   const numericControls = {
-    tRack: ["0", "-50", "", "abc", "1e10", "-1e10"],
     tRent: ["0", "-50", "", "abc", "1e10", "-1e10"],
     points: ["0", "-50", "", "abc", "1e10", "-1e10"],
     closeD: ["0", "-50", "", "abc", "1e10", "-1e10"],
@@ -178,14 +177,14 @@ describe("hostile inputs", () => {
     );
   });
 
-  test("negative published rate is clamped to a floor rather than producing negative costs", () => {
-    const { el, set } = load({ fresh: true });
-    set("tRack", "-9999");
-    // renderCash clamps rack to Math.max(1, ...), so cash-side figures must
-    // never go negative even when the raw input is deeply negative.
-    assertPageClean(el, "tRack=-9999");
-    const text = el("cashOut").textContent;
-    assert.ok(!/-\$\d/.test(text), "no negative dollar figure should appear in #cashOut for a negative rack rate");
+  test("a hostile per-trip cash rate falls back to the published rate rather than pricing garbage", () => {
+    const { el, window } = load({ fresh: true });
+    for (const v of ["-9999", "abc", "1e10", ""]) {
+      const inp = el("tripsBody").querySelector('input[data-f="rate"][data-idx="0"]');
+      inp.value = v; inp.dispatchEvent(new window.Event("input", { bubbles: true }));
+      assertPageClean(el, "trip rate=" + v);
+      assert.ok(!/-\$\d/.test(el("cashOut").textContent), "no negative dollar figure for rate " + v);
+    }
   });
 
   test("negative discount percent is clamped rather than inflating costs above 100%", () => {
@@ -363,7 +362,7 @@ describe("contract auto-sizing", () => {
 
     // Trigger an unrelated re-render (renderAll runs on many other inputs)
     // and confirm the manual value is not silently overwritten.
-    set("tRack", "900");
+    set("tRent", "22");
     assert.equal(el("points").value, manualValue, "manual #points value must survive further renders while ptsAuto is off");
   });
 

@@ -26,7 +26,7 @@ describe("data files", () => {
   test("the data files are the ones actually carrying the data", () => {
     const paths = dataScriptPaths();
     const combined = paths.map((p) => readFileSync(new URL(p, root), "utf8")).join("\n");
-    for (const name of ["RESORTS", "CHARTS", "SEASONS", "RACK", "MARKET", "ROFR", "CASH_SEASON"]) {
+    for (const name of ["RESORTS", "CHARTS", "SEASONS", "CASH_RATES", "MARKET", "ROFR", "ROOM_TAX"]) {
       assert.ok(
         new RegExp(`\\bconst ${name}\\b`).test(combined),
         `${name} should be declared in a data file, not inline in index.html`
@@ -38,7 +38,7 @@ describe("data files", () => {
     const html = readFileSync(new URL("index.html", root), "utf8");
     // Strip the <script src> lines so we are only looking at inline content.
     const inline = html.replace(/<script src="[^"]+"><\/script>/g, "");
-    for (const name of ["RESORTS", "CHARTS", "SEASONS", "RACK", "MARKET"]) {
+    for (const name of ["RESORTS", "CHARTS", "SEASONS", "CASH_RATES", "MARKET"]) {
       assert.ok(
         !new RegExp(`\\bconst ${name}\\s*=\\s*[[{]`).test(inline),
         `${name} is still declared inline in index.html — extraction did not take`
@@ -49,10 +49,9 @@ describe("data files", () => {
   test("the data survived extraction intact", () => {
     assert.equal(g("RESORTS").length, 12, "12 resorts");
     assert.equal(g("CHARTS").length, 12, "12 charts");
-    assert.equal(g("RACK").length, 12);
+    assert.equal(g("CASH_RATES").length, 12);
     assert.equal(g("MARKET").length, 12);
     assert.equal(g("ROFR").length, 12);
-    assert.equal(g("CASH_SEASON").length, 7);
     assert.deepEqual(Object.keys(g("SEASONS")), ["2026", "2027"]);
   });
 });
@@ -76,26 +75,24 @@ describe("provenance", () => {
     });
   });
 
-  test("seasonality is still flagged estimated", () => {
-    // Rack rates were replaced with published figures in Sept 2026, so they are
-    // no longer estimated. The seasonality multipliers still are: they were
-    // spot-checked against real rates and held up, but Disney's cash seasons do
-    // not align with the point-chart seasons they are indexed to.
-    const byLabel = Object.fromEntries(g("DATASETS").map((m) => [m.label, m]));
-    const seasonality = byLabel["Cash rate seasonality"];
-    assert.ok(seasonality, "seasonality provenance should be present");
-    assert.equal(seasonality.estimated, true, "cash seasonality must stay flagged as estimated");
+  test("the seasonality estimate is gone", () => {
+    // Cash seasonality used to be a set of guessed multipliers indexed to the
+    // point-chart seasons. It was replaced by Disney's published rate for
+    // every date band, so there is no longer an estimated seasonality dataset
+    // to disclose — and it must not quietly come back.
+    const labels = g("DATASETS").map((m) => m.label);
+    assert.ok(!labels.some((l) => /seasonality/i.test(l)), `seasonality should no longer be a dataset: ${labels}`);
   });
 
-  test("rack rates are sourced, and say where from and with what caveats", () => {
+  test("cash rates are sourced per date band, and say what they cover", () => {
     const byLabel = Object.fromEntries(g("DATASETS").map((m) => [m.label, m]));
-    const rack = byLabel["Nightly rack rates"];
-    assert.ok(rack, "rack rate provenance should be present");
-    assert.equal(rack.estimated, false, "rack rates come from published tables now");
-    assert.match(rack.source, /pre-tax|tax/i,
+    const rates = byLabel["Nightly cash rates by date"];
+    assert.ok(rates, "cash rate provenance should be present");
+    assert.equal(rates.estimated, false, "published tables are sourced, not estimated");
+    assert.match(rates.note, /tax/i,
       "the tax basis must be stated — published figures include 12.5% and the model needs them net");
-    assert.match(rack.note, /Polynesian/,
-      "the Polynesian view substitution must be disclosed");
+    assert.match(rates.note, /studio/i, "must say which room the tables cover");
+    assert.match(rates.note, /2027/, "must disclose that 2026 dates stand in for 2027");
   });
 
   test("the point charts are flagged sourced", () => {

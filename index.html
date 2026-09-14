@@ -399,7 +399,8 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
      labels, since the header row no longer sits above them. */
   .trips-table thead{display:none}
   .trips-table,.trips-table tbody{display:block}
-  .trips-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px 10px;align-items:end;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .trips-table tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:8px 8px;align-items:end;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .trips-table input[type=number]{padding-left:8px;padding-right:4px}
   .trips-table tr:last-child{border-bottom:0}
   .trips-table td{display:block;padding:0;border:0;width:auto;min-width:0;text-align:left}
   .trips-table td:first-child{grid-column:1/-1}
@@ -455,8 +456,6 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field"><label for="resort">Resort</label><select id="resort"></select></div>
     <div class="field" style="grid-column:span 2"><label for="unit">Room and view</label><select id="unit"></select></div>
 
-    <div class="field"><label for="tRack">Published nightly rate</label><input id="tRack" type="number" value="573" min="100" step="10">
-      <div class="hint">Disney&rsquo;s undiscounted weeknight price for this room in a normal fall week. Each trip&rsquo;s season scales it, weekend nights add 15%, and your discount comes off after. <strong>The default is an estimate</strong> &mdash; look up your real dates.</div></div>
     <div class="field"><label for="tRent">Point rental rate</label><input id="tRent" type="number" value="20" min="5" max="60" step="1">
       <div class="hint">Dollars per point to rent from an existing owner &mdash; the option that needs no purchase, no dues and no resale risk. Commonly $18&ndash;24. <strong>Estimate; verify current rates.</strong></div></div>
     </div>
@@ -475,8 +474,9 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
         <label style="font-size:.85rem;font-weight:600;color:var(--ink)">Your trips</label>
         <button class="btn" id="addTrip" style="padding:6px 14px;font-size:.82rem">+ Add trip</button>
       </div>
+      <div class="hint" style="margin:0 0 12px">Cash rates are filled in from Disney&rsquo;s published 2026 tables for each trip&rsquo;s dates &mdash; the studio at this resort, before tax and before your discount. Type over one to use a rate you looked up yourself, for instance for a larger room.</div>
       <table class="trips-table" id="tripsTable">
-        <thead><tr><th>Season</th><th>Nights</th><th>Weekend</th><th>Discount %</th><th></th></tr></thead>
+        <thead><tr><th>Dates</th><th>Nights</th><th>Weekend</th><th>Discount %</th><th>Cash $/night</th><th></th></tr></thead>
         <tbody id="tripsBody"></tbody>
       </table>
     </div>
@@ -832,6 +832,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 <script src="data/charts.js"></script>
 <script src="data/resorts.js"></script>
 <script src="data/market.js"></script>
+<script src="data/rates.js"></script>
 <script>
 /* The data files above are classic scripts declaring top-level consts. If one
    fails to load, the first reference to a missing name throws at global scope
@@ -839,7 +840,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
    is entirely dead, with nothing but a console error to explain it. Fail loudly
    and legibly instead. */
 (function(){
-  const missing=["CHARTS","SEASONS","RESORTS","RACK","MARKET","ROFR"].filter(
+  const missing=["CHARTS","SEASONS","RESORTS","CASH_RATES","MARKET","ROFR"].filter(
     n=>typeof window[n]==="undefined"&&(()=>{try{eval(n);return false}catch(e){return true}})());
   if(!missing.length) return;
   const b=document.createElement("div");
@@ -847,7 +848,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   b.style.cssText="margin:24px 22px;padding:18px 22px;border:1px solid var(--rust);border-radius:10px;"+
     "background:var(--rust-tint);color:var(--ink);font:16px/1.55 system-ui,sans-serif;max-width:1060px";
   b.innerHTML="<strong>The data files did not load.</strong> This page needs "+
-    "<code>data/charts.js</code>, <code>data/resorts.js</code> and <code>data/market.js</code> "+
+    "<code>data/charts.js</code>, <code>data/resorts.js</code>, <code>data/market.js</code> and <code>data/rates.js</code> "+
     "alongside it. Missing: "+missing.join(", ")+".";
   document.body.prepend(b);
   throw new Error("data files failed to load: "+missing.join(", "));
@@ -1061,6 +1062,41 @@ const BAND_OPTIONS=SEASONS[2027].flatMap((s,si)=>s.r.map(([a],b)=>({si,b,a})))
   .sort((x,y)=>x.a-y.a);
 const bandCount=si=>SEASONS[2027][si].r.length;
 
+/* Nightly cash rate for a point-chart band, from the published tables: every
+   day of the band is priced on the cash band it falls in, then averaged —
+   weeknights and weekends separately, since Disney prices them apart. Nets
+   out the tax the tables include. Memoised: the listing scorer calls this for
+   every listing on the board. */
+const dayOfYear=md=>Math.round((new Date(2027,Math.floor(md/100)-1,md%100)-new Date(2027,0,1))/864e5);
+const CASH_DAYS=CASH_RATES.map(table=>table.map(([a,z,p])=>({
+  a:dayOfYear(a), z:dayOfYear(z),
+  week:p.length===3?(4*p[0]+p[1])/5:p[0],
+  wknd:p[p.length-1]
+})));
+const bandRateMemo={};
+function bandRates(ri,si,b){
+  const key=ri+"."+si+"."+b;
+  if(bandRateMemo[key]) return bandRateMemo[key];
+  const [a,z]=SEASONS[2027][si].r[Math.min(Math.max(0,b|0),bandCount(si)-1)];
+  const table=CASH_DAYS[ri];
+  let wk=0, we=0, n=0;
+  for(let d=dayOfYear(a);d<=dayOfYear(z);d++){
+    // Days before the first published band (1-19 January) take the first band.
+    const band=table.find(x=>d>=x.a&&d<=x.z)||table[0];
+    wk+=band.week; we+=band.wknd; n++;
+  }
+  return bandRateMemo[key]={week:wk/n/(1+ROOM_TAX), wknd:we/n/(1+ROOM_TAX)};
+}
+/* Pre-tax, pre-discount nightly rates for a trip. A rate the reader typed on
+   the trip wins and applies to every night; otherwise the published studio
+   rate for the trip's dates. */
+function cashForTrip(ri,t){
+  if(t.rate>0) return {week:t.rate, wknd:t.rate, own:true};
+  return {...bandRates(ri,t.si,t.b), own:false};
+}
+// Gross cash for a trip's nights before discount and tax.
+const tripGross=(ri,t)=>{ const c=cashForTrip(ri,t); return t.week*c.week+t.wknd*c.wknd; };
+
 /* A preset is "on" only while every trip still carries its discount. Editing
    one trip's discount by hand breaks the match and un-presses the chip, which
    is the honest state: the list no longer reflects that preset. */
@@ -1081,6 +1117,7 @@ function renderTripRows(){
       "<td data-l=\"Discount %\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"disc\" value=\""+(tr.disc||0)+"\" min=\"0\" max=\"60\" step=\"5\">"+
         (NO_DISCOUNT_SEASONS.includes(tr.si)&&(tr.disc||0)>0
           ? "<span class=\"disc-void\" title=\"Disney's resident and passholder discounts do not apply in this season\">not offered</span>" : "")+"</td>"+
+      "<td data-l=\"Cash $/night\"><input type=\"number\" data-idx=\""+i+"\" data-f=\"rate\" value=\""+(tr.rate>0?tr.rate:"")+"\" min=\"0\" step=\"10\" title=\"Blank uses the published studio rate for these dates\"></td>"+
       "<td><button class=\"btn-remove\" data-idx=\""+i+"\" title=\"Remove trip\">&times;</button></td>"+
     "</tr>").join("");
   el("tripsBody").querySelectorAll("select,input").forEach(inp=>{
@@ -1112,6 +1149,7 @@ function renderTripRows(){
         if(+inp.value>tr.nights) inp.value=String(tr.wknd);
       }
       if(f==="disc") tr.disc=clamp(tr.disc||0,0,60);
+      if(f==="rate") tr.rate=tr.rate>0?clamp(tr.rate,1,1e5):0;
       // The "not offered" marker depends on season and discount together.
       if(f==="si"||f==="disc") renderTripRows();
       renderAll();
@@ -1134,7 +1172,8 @@ function tripShape(){
     const asked=Math.min(0.9,Math.max(0,(tr.disc||0)/100));
     // A discount the user entered for a peak week is not one Disney offers.
     const disc=NO_DISCOUNT_SEASONS.includes(si)?0:asked;
-    return {nights, wknd, week:nights-wknd, si, b, disc, asked, discBlocked:asked>0&&disc===0};
+    const rate=tr.rate>0?clamp(tr.rate,1,1e5):0;
+    return {nights, wknd, week:nights-wknd, si, b, disc, asked, rate, discBlocked:asked>0&&disc===0};
   });
 }
 function tripPoints(){
@@ -1159,17 +1198,26 @@ function syncSize(){
 function renderTrips(){
   const t=tripPoints(), ri=+el("resort").value, r=RESORTS[ri];
   const [room,view]=CHARTS[ri].cols[t.ci].split("|");
-  const typed=parseFloat(el("tRack").value);
-  const rack=Number.isFinite(typed)&&typed>0?typed:RACK[ri];
+  const isStudio=t.ci===studioCol(ri);
+  let unpriced=0;
   const tripLines=t.trips.map((tr,i)=>{
     const sn=bandLabel(tr.si,tr.b);
-    // The season and weekend multipliers make the entered rate a baseline, not the price.
-    const sr=rack*CASH_SEASON[tr.si];
-    const night=(tr.week*sr+tr.wknd*sr*1.15)*(1-tr.disc)/tr.nights;
+    const c=cashForTrip(ri,tr);
+    const night=tripGross(ri,tr)*(1-tr.disc)/tr.nights;
+    if(!c.own&&!isStudio) unpriced++;
     return "<div class=\"cline\"><span>Trip "+(i+1)+" &mdash; "+tr.nights+"n, "+sn+
-      "<small class=\"meta\" style=\"display:block\">cash "+money(Math.round(night))+"/night"+(tr.disc>0?" after "+Math.round(tr.disc*100)+"% off":"")+", before tax</small></span>"+
+      "<small class=\"meta\" style=\"display:block\">cash "+money(Math.round(night))+"/night"+(tr.disc>0?" after "+Math.round(tr.disc*100)+"% off":"")+
+      ", before tax"+(c.own?" &mdash; your rate":"")+"</small></span>"+
       "<span>"+tr.per+" pts</span></div>";
   }).join("");
+  /* The blank rate field shows what it would use, so the reader can see the
+     published figure before deciding to type over it. Refreshed here rather
+     than in renderTripRows because it changes with the resort, not the trip. */
+  el("tripsBody").querySelectorAll('input[data-f="rate"]').forEach(inp=>{
+    const tr=t.trips[+inp.dataset.idx]; if(!tr) return;
+    const r=bandRates(ri,tr.si,tr.b);
+    inp.placeholder=Math.round((tr.week*r.week+tr.wknd*r.wknd)/tr.nights);
+  });
   el("tripOut").innerHTML=
     "<div class=\"stayhead\">"+
       "<div class=\"staypts\">"+
@@ -1183,7 +1231,9 @@ function renderTrips(){
         "<div class=\"cline\"><span>Contract size this needs</span><span>"+t.size+" points</span></div>"+
         "<div class=\"cline\"><span>A banked point is worth here</span><span>"+money2(bankedValue(ri))+"</span></div>"+
       "</div>"+
-    "</div>";
+    "</div>"+
+    (unpriced?"<div class=\"staywarn\">The published rates on hand are for the <strong>studio</strong> at this resort, and you chose a "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+
+      ". "+unpriced+" of your trips "+(unpriced===1?"is":"are")+" priced at the studio rate &mdash; look up this room for your dates and type the rate on each trip.</div>":"");
 }
 
 /* The representative studio, used as the cash-rate baseline and as the
@@ -1209,9 +1259,11 @@ function bankedValue(ri){
   let totalPts=0, totalCash=0, totalNights=0;
   for(const t of all){
     const pts=t.week*ch[t.si][0][ci]+t.wknd*ch[t.si][1][ci];
-    const sr=RACK[ri]*CASH_SEASON[t.si];
     // What a point saves is the cash avoided, tax included — points are exempt.
-    const cash=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc)*(1+ROOM_TAX);
+    // Always the published studio rate: an override is for the room chosen in
+    // step 1, and a banked point is denominated in studio nights.
+    const r=bandRates(ri,t.si,t.b);
+    const cash=(t.week*r.week+t.wknd*r.wknd)*(1-t.disc)*(1+ROOM_TAX);
     totalPts+=pts; totalCash+=cash; totalNights+=t.nights;
   }
   return totalPts>0?totalCash/totalPts:0;
@@ -1219,17 +1271,6 @@ function bankedValue(ri){
 
 function renderCash(){
   const ri=+el("resort").value, r=RESORTS[ri], i=inputs();
-  /* #tRack holds the rate for whichever room is currently selected, but RACK is
-     documented as the deluxe-studio rate and bankedValue() divides it by studio
-     points. Writing a grand-villa rate back into RACK inflates every banked
-     point several-fold and corrupts the listing scorer, so only a studio rate
-     is persisted. A transiently empty or unparseable field is not persisted at
-     all — doing so pinned the resort at $1/night for the rest of the session. */
-  const typedRack=parseFloat(el("tRack").value);
-  const rackOk=Number.isFinite(typedRack)&&typedRack>0;
-  const selCi=Math.min(Math.max(0,+el("unit").value||0),CHARTS[ri].cols.length-1);
-  if(rackOk&&selCi===studioCol(ri)) RACK[ri]=typedRack;
-  const rack=rackOk?typedRack:RACK[ri];
   const t=tripPoints();
   const disc=t.disc, ptsYear=t.year, nightsYear=t.nightsYear;
   const size=Math.max(25,+el("points").value||t.size);
@@ -1244,8 +1285,7 @@ function renderCash(){
      than applying one blended rate across seasons that price differently. */
   let annCash=0; let annCashUndisc=0, blocked=0;
   for(const tr of t.trips){
-    const sr=rack*CASH_SEASON[tr.si];
-    const gross=tr.week*sr+tr.wknd*sr*1.15;
+    const gross=tripGross(ri,tr);
     /* Tax lands on the discounted rate, not the rack rate, and only a cash
        booking pays it — a stay on points, owned or rented, is exempt at these
        resorts. Omitting it flattered cash by 12.5% against both alternatives. */
@@ -1394,7 +1434,7 @@ function renderCash(){
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Each column holds dues at "+(i.gNom*100).toFixed(1)+"%/yr and asks what happens if room rates rise at that pace instead &mdash; in today&rsquo;s dollars only the gap between the two matters. Whether dues outrun room rates is an assumption, not a figure anyone publishes, and nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(rack*0.55*(1-effDisc)*(1+ROOM_TAX)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Each column holds dues at "+(i.gNom*100).toFixed(1)+"%/yr and asks what happens if room rates rise at that pace instead &mdash; in today&rsquo;s dollars only the gap between the two matters. Whether dues outrun room rates is an assumption, not a figure anyone publishes, and nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(annCashUndisc/nightsYear*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 /* The same trip shape run against every resort at once. Each resort is priced
@@ -1416,10 +1456,12 @@ function renderComparison(){
     const closing=r.resale!==null?i.cR:i.cD;
     const upfront=ppp*size+closing;
 
+    // A typed rate belongs to the resort it was looked up for; elsewhere the table.
+    const sel=ri===+el("resort").value;
     let annCashToday=0;
     for(const t of all){
-      const sr=RACK[ri]*CASH_SEASON[t.si];
-      annCashToday+=(t.week*sr+t.wknd*sr*1.15)*(1-t.disc)*(1+ROOM_TAX);
+      const c=sel?cashForTrip(ri,t):bandRates(ri,t.si,t.b);
+      annCashToday+=(t.week*c.week+t.wknd*c.wknd)*(1-t.disc)*(1+ROOM_TAX);
     }
     const annCash=annCashToday;
     const ownAnnual=ptsYear*costPerPointYear(ppp,closing,size,r.dues,y,i.g).total;
@@ -1461,7 +1503,7 @@ function renderComparison(){
     "</tr>";
   }).join("");
 
-  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its representative deluxe studio at its own estimated rack rate, using the trips from step 1 and the 2027 chart. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
+  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its studio at Disney&rsquo;s published 2026 rates for each trip&rsquo;s dates, using the trips from step 1 and the 2027 chart; a rate you typed on a trip applies only to the resort selected in step 1. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
 
   document.querySelectorAll("#compare thead th").forEach(th=>{
     const a=th.querySelector(".arrow"); if(!a) return;
@@ -2022,7 +2064,7 @@ const ROPTS=RESORTS.map((r,i)=>"<option value=\""+i+"\">"+plain(r.name)+"</optio
 RSEL.forEach(id=>{el(id).innerHTML=ROPTS;el(id).value="9";});
 function syncResort(v){
   RSEL.forEach(id=>{if(el(id).value!==v) el(id).value=v;});
-  el("tRack").value=RACK[+v]; fillUnits(); renderAll();
+  fillUnits(); renderAll();
 }
 
 function renderAll(){
@@ -2037,7 +2079,7 @@ function renderAll(){
    the author's estimates — the distinction that matters most here, because
    the estimated ones sit on screen next to the sourced ones looking equally
    authoritative. */
-const DATASETS=[CHARTS_META,RESORTS_META,MARKET_META,ROFR_META,RACK_META,ROOM_TAX_META,CASH_SEASON_META];
+const DATASETS=[CHARTS_META,RESORTS_META,MARKET_META,ROFR_META,CASH_RATES_META,ROOM_TAX_META];
 
 function renderProvenance(){
   el("provBody").innerHTML=DATASETS.map(m=>
@@ -2063,14 +2105,11 @@ function renderProvenance(){
    rendering garbage. */
 
 const URL_FIELDS=[
-  ["u","unit"], ["rk","tRack"], ["rn","tRent"], ["er","escRoom"],
+  ["u","unit"], ["rn","tRent"], ["er","escRoom"],
   ["p","points"], ["pa","ptsAuto"], ["cd","closeD"], ["cr","closeR"],
   ["es","esc"], ["di","disc"], ["ci","checkin"], ["n","nights"]
 ];
 const URL_DEFAULTS={};
-// RACK is mutated as the user enters real rates; keep the shipped defaults so
-// writeURL can tell an override from a resort switch.
-const RACK_PRISTINE=RACK.slice();
 let urlReady=false;
 
 const readField=n=>n.type==="checkbox"?(n.checked?"1":"0"):n.value;
@@ -2081,19 +2120,20 @@ function snapshotDefaults(){
   URL_DEFAULTS.trips=encodeTrips();
 }
 
-const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd,t.disc||0,t.b||0].join(".")).join("_");
+const encodeTrips=()=>trips.map(t=>[t.si,t.nights,t.wknd,t.disc||0,t.b||0,t.rate>0?Math.round(t.rate):0].join(".")).join("_");
 
 function decodeTrips(s){
   const out=[];
   for(const part of String(s).split("_")){
-    const [si,nights,wknd,disc,b]=part.split(".").map(x=>parseInt(x,10));
+    const [si,nights,wknd,disc,b,rate]=part.split(".").map(x=>parseInt(x,10));
     if(![si,nights,wknd].every(Number.isFinite)) continue;
     const n=clamp(nights,1,14), s2=clamp(si,0,SEASON_SHORT.length-1);
     out.push({
       si:s2, nights:n, wknd:clamp(wknd,0,n),
-      // Older links omit the discount (4th) and band (5th) fields.
+      // Older links omit the discount (4th), band (5th) and rate (6th) fields.
       disc:Number.isFinite(disc)?clamp(disc,0,60):0,
-      b:Number.isFinite(b)?clamp(b,0,bandCount(s2)-1):0
+      b:Number.isFinite(b)?clamp(b,0,bandCount(s2)-1):0,
+      rate:Number.isFinite(rate)&&rate>0?clamp(rate,1,1e5):0
     });
   }
   return out.length?out:null;
@@ -2108,16 +2148,6 @@ function writeURL(){
     // chosen — pinning it in the link would freeze a number the recipient's
     // own trip list should recompute.
     if(id==="points"&&el("ptsAuto").checked) return;
-    /* The rack rate's default is per-resort, so comparing against a single
-       boot-time snapshot marked every resort switch as a manual override and
-       froze an estimated rate into links the sharer never chose. Compare
-       against this resort's own pristine default instead. */
-    if(id==="tRack"){
-      const cur=parseFloat(el("tRack").value);
-      if(!Number.isFinite(cur)||cur===RACK_PRISTINE[+el("resort").value]) return;
-      p.set(key,el("tRack").value);
-      return;
-    }
     const v=readField(el(id));
     if(v!==URL_DEFAULTS[id]) p.set(key,v);
   });
@@ -2136,13 +2166,10 @@ function readURL(){
   const p=new URLSearchParams(location.search);
   if(!Array.from(p.keys()).length) return;
 
-  /* Resort first. syncResort-style setup resets the rack rate and rebuilds
-     the room list, so anything derived from the resort must land after it —
-     otherwise a shared rack rate gets clobbered by the resort default. */
+  // Resort first: it rebuilds the room list, so the room index must land after it.
   if(p.has("r")){
     const ri=clamp(parseInt(p.get("r"),10)||0,0,RESORTS.length-1);
     RSEL.forEach(id=>{ el(id).value=String(ri); });
-    el("tRack").value=RACK[ri];
     fillUnits();
   }
   if(p.has("t")){
@@ -2168,8 +2195,6 @@ function readURL(){
     }
     node.value=raw;
   }
-  // A shared rack rate is per-resort state that render reads back out.
-  if(p.has("rk")) RACK[+el("resort").value]=Math.max(1,+el("tRack").value||1);
 }
 
 function copyLink(){
@@ -2209,7 +2234,6 @@ document.querySelectorAll(".presets .chip").forEach(c=>{
     renderTripRows(); renderAll();
   });
 });
-el("tRack").value=RACK[9];
 fillUnits();
 el("fResort").innerHTML='<option value="-1">All resorts</option>'+
   RESORTS.map((r,i)=>ROFR[i]===undefined?"":'<option value="'+i+'">'+plain(r.name)+'</option>').join("");
@@ -2231,7 +2255,7 @@ document.querySelectorAll("#rank thead th").forEach(th=>{
   el(id).addEventListener("input",renderAll));
 ["mMode","mPat"].forEach(id=>el(id).addEventListener("input",renderMatrix));
 ["wStart","wMode","wMax","wCols"].forEach(id=>el(id).addEventListener("input",renderWhen));
-["tRack","tRent","unit"].forEach(id=>
+["tRent","unit"].forEach(id=>
   el(id).addEventListener("input",renderAll));
 ["lPts","lPpp","l26","l27"].forEach(id=>
   el(id).addEventListener("input",renderListing));

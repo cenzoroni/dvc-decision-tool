@@ -124,9 +124,9 @@ describe("sensitivity strip", () => {
       for (const disc of [0, 20, 40]) {
         const p = load({ fresh: true });
         p.g("trips").length = 0;
-        p.g("trips").push({ si: 4, nights: 3, wknd: 0, disc });
+        // A typed rate on the trip is how a reader sets the cash side now.
+        p.g("trips").push({ si: 4, b: 0, nights: 3, wknd: 0, disc, rate: rack });
         p.g("renderTripRows")();
-        p.set("tRack", rack);
         p.g("renderAll")();
         const cells = Array.from(p.el("cashOut").querySelectorAll(".sens-cell"));
         const owns = cells.filter((c) => c.classList.contains("owns")).length;
@@ -162,12 +162,11 @@ describe("the cash panel is a checkable price", () => {
     // before tax, and reconcile against the headline. This is the number a
     // reader compares with a Disney quote, so it has to be a real price.
     const p = load({ fresh: true });
-    const trips = p.g("trips");
-    const rack = Number(p.el("tRack").value), tax = p.g("ROOM_TAX"), cs = p.g("CASH_SEASON");
+    const ri = +p.el("resort").value, tax = p.g("ROOM_TAX");
     let expected = 0, nights = 0;
-    for (const t of trips) {
-      const sr = rack * cs[t.si];
-      expected += ((t.nights - t.wknd) * sr + t.wknd * sr * 1.15) * (1 + tax);
+    for (const t of p.g("tripShape")()) {
+      const r = p.g("bandRates")(ri, t.si, t.b);
+      expected += (t.week * r.week + t.wknd * r.wknd) * (1 + tax);
       nights += t.nights;
     }
     const shown = p.el("cashOut").textContent.match(/Book it[\s\S]*?\$([\d,]+)per night/);
@@ -207,14 +206,9 @@ describe("room tax falls on cash only", () => {
     p.set("escRoom", 0);
     const cash = annual(p, "Book it");
     // Reconstruct the pre-tax figure from the trip shape and check the ratio.
-    const t = p.g("tripPoints")();
-    const rack = Number(p.el("tRack").value);
-    const CS = p.g("CASH_SEASON");
+    const ri = +p.el("resort").value;
     let pre = 0;
-    for (const tr of Array.from(t.trips)) {
-      const sr = rack * CS[tr.si];
-      pre += (tr.week * sr + tr.wknd * sr * 1.15) * (1 - tr.disc);
-    }
+    for (const tr of p.g("tripShape")()) pre += p.g("tripGross")(ri, tr) * (1 - tr.disc);
     assert.ok(Math.abs(cash / pre - 1.125) < 0.01,
       `cash should sit 12.5% above the pre-tax figure, ratio was ${(cash / pre).toFixed(4)}`);
   });
