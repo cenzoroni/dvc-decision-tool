@@ -328,20 +328,6 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .disc-void{display:inline-block;margin-left:8px;font-size:.7rem;font-weight:700;padding:2px 7px;
   border-radius:4px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
 
-.sens{margin:0;padding:18px 24px;border-top:1px solid var(--line);background:var(--paper)}
-.sens-head{font-size:.83rem;color:var(--ink);margin-bottom:12px;font-weight:500}
-.sens-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.sens-cell{padding:10px 8px;border-radius:6px;text-align:center;border:1px solid var(--line);background:var(--surface)}
-.sens-cell.owns{background:var(--lagoon-tint);border-color:var(--lagoon-tint)}
-.sens-cell.cash{background:var(--rust-tint);border-color:var(--rust-tint)}
-.sens-cell.now{border-color:var(--ink);border-width:2px;padding:9px 7px}
-.sens-pct{display:block;font-size:.74rem;color:var(--ink-soft);margin-bottom:3px}
-.sens-val{display:block;font-size:.8rem;font-weight:700}
-.sens-cell.owns .sens-val{color:var(--lagoon)}
-.sens-cell.cash .sens-val{color:var(--rust)}
-.sens-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
-@media (max-width:640px){.sens-row{grid-template-columns:repeat(2,1fr)}.sens-cell:last-child{grid-column:1/-1}}
-
 .breakeven{margin:0;padding:22px 24px;border-top:1px solid var(--line);background:var(--surface);overflow-x:auto}
 .be-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
 .be-head .big{font-size:clamp(1.8rem,4.2vw,2.45rem)}
@@ -427,7 +413,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   }
   body{background:#fff}
   .chips,.presets,.sharerow,#themeToggle{display:none}
-  .resort,.verdict,.sens,.breakeven,.hero{break-inside:avoid}
+  .resort,.verdict,.breakeven,.hero{break-inside:avoid}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -1325,66 +1311,61 @@ function renderCash(){
   const ppp=r.resale===null?r.direct:r.resale, closing=r.resale===null?i.cD:i.cR;
   const upfront=ppp*size+closing;
 
-  /* The single largest lever on this verdict is a rate nobody knows: whether
-     dues outrun room rates or fall behind them over the coming decades. In
-     today's dollars that is the only escalation left in the model, so the
-     strip prices the same decision across a range of room-rate assumptions
-     against the dues rate set below — cash stays flat, and ownership's real
-     dues burden moves. */
-  const sens=[0,2,3,4.5,6].map(pct=>{
-    const own2=ptsYear*costPerPointYear(ppp,closing,size,r.dues,y,realDues(i.gNom,pct)).total;
-    const g2=annCashToday-own2;
-    return {pct, gap:g2, owns:g2>0};
-  });
-  const flips=sens.some(x=>x.owns)&&sens.some(x=>!x.owns);
-
+  /* Break-even, both ways in: a cumulative ledger for a resale buyer and a
+     direct buyer against the same cash bill. The two routes differ only in
+     the purchase price, so they share dues and part ways only at year zero. */
   const beMax=Math.max(1,Math.ceil(y));
-  let cOwn=upfront, cCash=0;
+  const routes=[
+    r.resale!==null?{k:"R",label:"resale",upfront:r.resale*size+i.cR}:null,
+    {k:"D",label:"direct",upfront:r.direct*size+i.cD}
+  ].filter(Boolean);
+  const beAll=[], beYear={};
+  let cCash=0; const cOwn={};
+  routes.forEach(x=>{ cOwn[x.k]=x.upfront; });
+  for(let bt=1;bt<=beMax;bt++){
+    const dues=size*r.dues*Math.pow(1+i.g,bt-1);
+    cCash+=annCashToday;
+    const row={t:bt,cash:cCash};
+    routes.forEach(x=>{
+      cOwn[x.k]+=dues; row[x.k]=cOwn[x.k];
+      if(beYear[x.k]===undefined&&cOwn[x.k]<=cCash) beYear[x.k]=bt;
+    });
+    beAll.push(row);
+  }
   const bePicks=new Set([1,3,5,10,15,20,30].filter(x=>x<=beMax));
   bePicks.add(beMax);
-  let beYear=null;
-  const beAll=[];
-  for(let bt=1;bt<=beMax;bt++){
-    cOwn+=size*r.dues*Math.pow(1+i.g,bt-1);
-    cCash+=annCashToday;
-    if(beYear===null&&cOwn<=cCash) beYear=bt;
-    beAll.push({t:bt,own:cOwn,cash:cCash});
-  }
-  if(beYear!==null) bePicks.add(beYear);
-  if(beYear!==null&&beYear>1) bePicks.add(beYear-1);
-  const beMilestones=[...bePicks].sort((a,b)=>a-b).map(t=>({...beAll[t-1],diff:beAll[t-1].cash-beAll[t-1].own}));
+  routes.forEach(x=>{ const yr=beYear[x.k]; if(yr!==undefined){ bePicks.add(yr); if(yr>1) bePicks.add(yr-1); } });
+  const beMilestones=[...bePicks].sort((a,b)=>a-b).map(t=>beAll[t-1]);
   const beEnd=beAll[beAll.length-1];
+  const first=routes[0], yrFirst=beYear[first.k];
+  const beHead=routes.map(x=>beYear[x.k]!==undefined?"year "+beYear[x.k]+" bought "+x.label:"never bought "+x.label).join(", ");
+  const edge=(m,k)=>{ const d=m.cash-m[k]; return "<td class=\""+(d>=0?"be-pos":"be-neg")+"\">"+(d>=0?"+":"−")+money(Math.round(Math.abs(d)))+"</td>"; };
   const beHTML=
     "<div class=\"breakeven\">"+
       "<div class=\"be-head\">"+
-        "<span class=\"big\">"+(beYear!==null?"Year "+beYear:"Never")+"</span>"+
-        "<span class=\"big-unit\">"+(beYear!==null
-          ?"break-even point — when cumulative ownership costs drop below what you would have spent booking cash"
-          :"ownership does not break even against cash within the "+beMax+"-year deed")+"</span>"+
+        "<span class=\"big\">"+(yrFirst!==undefined?"Year "+yrFirst:"Never")+"</span>"+
+        "<span class=\"big-unit\">break-even "+(routes.length>1?"&mdash; "+beHead:"bought "+first.label)+
+          ": the year cumulative ownership costs drop below what you would have spent booking cash</span>"+
       "</div>"+
       "<table class=\"be-tbl\">"+
-        "<thead><tr><th>After</th><th>Spent owning</th><th>Spent booking cash</th><th>Ownership edge</th></tr></thead>"+
-        "<tbody>"+beMilestones.map(m=>
-          "<tr"+(m.t===beYear?" class=\"be-row\"":"")+">"+
-            "<td>Year "+m.t+(m.t===beMax?" (deed end)":"")+"</td>"+
-            "<td>"+money(Math.round(m.own))+"</td>"+
+        "<thead><tr><th>After</th><th>Booking cash</th>"+
+          routes.map(x=>"<th>Owning, "+x.label+"</th><th>Edge, "+x.label+"</th>").join("")+"</tr></thead>"+
+        "<tbody>"+beMilestones.map(m=>{
+          const hits=routes.filter(x=>beYear[x.k]===m.t).map(x=>x.label);
+          return "<tr"+(hits.length?" class=\"be-row\"":"")+">"+
+            "<td>Year "+m.t+(m.t===beMax?" (deed end)":"")+(hits.length?" <small class=\"meta\">"+hits.join(" &amp; ")+" breaks even</small>":"")+"</td>"+
             "<td>"+money(Math.round(m.cash))+"</td>"+
-            "<td class=\""+(m.diff>=0?"be-pos":"be-neg")+"\">"+(m.diff>=0?"+":"−")+money(Math.round(Math.abs(m.diff)))+"</td>"+
-          "</tr>").join("")+
+            routes.map(x=>"<td>"+money(Math.round(m[x.k]))+"</td>"+edge(m,x.k)).join("")+
+          "</tr>";}).join("")+
         "</tbody>"+
       "</table>"+
-      "<div class=\"be-note\">Cumulative spending in today&rsquo;s dollars, "+size+" points at "+
-        (r.resale!==null?money2(r.resale)+"/pt resale":money(r.direct)+"/pt direct")+
+      "<div class=\"be-note\">Cumulative spending in today&rsquo;s dollars, "+size+" points"+
+        (r.resale!==null?" at "+money2(r.resale)+"/pt resale or ":" at ")+money(r.direct)+"/pt direct"+
         ". Dues start at "+money2(r.dues)+"/pt"+
         (Math.abs(i.g)<0.0005?" and hold steady against room rates":
           " and "+(i.g>0?"outrun":"fall behind")+" room rates by "+(Math.abs(i.g)*100).toFixed(1)+"% a year")+
-        "; cash is flat at this year&rsquo;s rate. "+
-        (beYear!==null
-          ?"Every year after the crossover is money you would otherwise have handed to the front desk."
-          :"Annual cash savings are too small to recover the purchase price before the deed expires.")+
-        " At deed end in "+r.exp+", you will have spent "+money(Math.round(beEnd.own))+" owning versus "+money(Math.round(beEnd.cash))+" on cash — "+
-        (beEnd.cash-beEnd.own>=0?"a lifetime savings of "+money(Math.round(beEnd.cash-beEnd.own))+"."
-          :"a net cost of "+money(Math.round(beEnd.own-beEnd.cash))+" more than cash.")+
+        "; cash is flat at this year&rsquo;s rate. Every year after a crossover is money you would otherwise have handed to the front desk. At deed end in "+r.exp+", cash would have cost "+money(Math.round(beEnd.cash))+"; "+
+        routes.map(x=>{ const d=beEnd.cash-beEnd[x.k]; return "owning "+x.label+" "+money(Math.round(beEnd[x.k]))+" ("+(d>=0?money(Math.round(d))+" ahead":money(Math.round(-d))+" behind")+")"; }).join(", ")+"."+
       "</div>"+
     "</div>";
 
@@ -1434,7 +1415,7 @@ function renderCash(){
       "</div>"+
     "</div>"+
     "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    "<div class=\"sens\"><div class=\"sens-head\">Same decision, priced across room-rate assumptions"+(flips?" &mdash; <strong>the answer flips inside this range</strong>":"")+"</div><div class=\"sens-row\">"+sens.map(x=>"<div class=\"sens-cell"+(Math.abs(x.pct-i.gRoom*100)<0.01?" now":"")+(x.owns?" owns":" cash")+"\">"+"<span class=\"sens-pct\">+"+x.pct+"%/yr</span>"+"<span class=\"sens-val\">"+(x.owns?"own":"cash")+" by "+money(Math.abs(x.gap))+"</span>"+"</div>").join("")+"</div>"+"<div class=\"sens-note\">Each column holds dues at "+(i.gNom*100).toFixed(1)+"%/yr and asks what happens if room rates rise at that pace instead &mdash; in today&rsquo;s dollars only the gap between the two matters. Whether dues outrun room rates is an assumption, not a figure anyone publishes, and nothing else on this page moves the verdict as much.</div></div>"+beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(annCashUndisc/nightsYear*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
+    beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(annCashUndisc/nightsYear*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
 }
 
 /* The same trip shape run against every resort at once. Each resort is priced
@@ -1806,8 +1787,6 @@ function inputs(){
     d:clamp((+el("disc").value||0)/100,0,0.12)
   };
 }
-// Real dues growth for an alternative room-rate assumption, same nominal dues.
-const realDues=(gNom,gRoomPct)=>(1+gNom)/(1+gRoomPct/100)-1;
 
 function renderCalc(){
   const r=RESORTS[+el("resort").value], i=inputs(), yrs=yearsLeft(r.exp);

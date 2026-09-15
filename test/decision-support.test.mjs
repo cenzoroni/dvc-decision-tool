@@ -190,3 +190,38 @@ describe("section order", () => {
     assert.deepEqual(nums, [...new Set(nums)], "a section number is duplicated");
   });
 });
+
+describe("break-even shows both ways in", () => {
+  const rows = (el) => [...el("cashOut").querySelectorAll(".be-tbl tr")]
+    .map((tr) => [...tr.children].map((c) => c.textContent.replace(/\s+/g, " ").trim()));
+
+  test("a resort with a resale market gets a resale and a direct ledger", () => {
+    const { el, g } = load({ fresh: true });
+    const head = rows(el)[0];
+    assert.deepEqual(head, ["After", "Booking cash", "Owning, resale", "Edge, resale", "Owning, direct", "Edge, direct"]);
+    const txt = el("cashOut").querySelector(".be-head").textContent;
+    assert.match(txt, /bought resale/); assert.match(txt, /bought direct/);
+    // Direct costs more up front and shares the dues, so it can never break even first.
+    const yr = (label) => { const m = txt.match(new RegExp("year (\\d+) bought " + label)); return m ? +m[1] : Infinity; };
+    assert.ok(yr("resale") <= yr("direct"), "resale must break even no later than direct");
+  });
+
+  test("a resort with no resale market shows direct only", () => {
+    const { el, set } = load({ fresh: true });
+    set("resort", 11, "change");
+    assert.deepEqual(rows(el)[0], ["After", "Booking cash", "Owning, direct", "Edge, direct"]);
+    assert.ok(!/resale/.test(el("cashOut").querySelector(".breakeven").textContent));
+  });
+
+  test("the crossover rows are marked, and the ledger is arithmetic the reader can check", () => {
+    const { el } = load({ fresh: true });
+    const body = rows(el).slice(1);
+    const marked = body.filter((r) => /breaks even/.test(r[0]));
+    assert.ok(marked.length >= 1, "at least one crossover should be flagged in the default scenario");
+    for (const r of body) {
+      const n = (s) => Number(s.replace(/[^\d.]/g, "")) * (s.startsWith("−") ? -1 : 1);
+      // Each cell is rounded on its own, so the difference can be off by a dollar.
+      assert.ok(Math.abs((n(r[1]) - n(r[2])) - n(r[3])) <= 1, `resale edge is cash minus owning on ${r[0]}`);
+    }
+  });
+});

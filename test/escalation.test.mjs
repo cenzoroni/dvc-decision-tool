@@ -95,67 +95,6 @@ describe("everything is in today's dollars", () => {
   });
 });
 
-describe("sensitivity strip", () => {
-  test("it prices the decision across a range of assumptions", () => {
-    const { el } = load({ fresh: true });
-    const cells = el("cashOut").querySelectorAll(".sens-cell");
-    assert.equal(cells.length, 5, "expected five assumption columns");
-    for (const c of cells) {
-      assert.match(c.textContent, /%\/yr/, "each column should name its rate");
-      assert.match(c.textContent, /\$[\d,]+/, "each column should price the outcome");
-    }
-  });
-
-  test("the current assumption is marked", () => {
-    const { el } = load({ fresh: true });
-    assert.equal(el("cashOut").querySelectorAll(".sens-cell.now").length, 1,
-      "exactly one column should be marked as the current setting");
-  });
-
-  test("a verdict that flips inside the range says so", () => {
-    // Some scenario is always borderline — cash wins if room rates never rise,
-    // owning wins if they rise at all — and that the answer turns entirely on
-    // an unknowable assumption is the most useful thing the page can say.
-    // The scenario is searched for rather than hardcoded so that updating the
-    // rack rates cannot silently retire this test.
-    let straddled = null;
-    outer:
-    for (const rack of [250, 300, 350, 400, 450]) {
-      for (const disc of [0, 20, 40]) {
-        const p = load({ fresh: true });
-        p.g("trips").length = 0;
-        // A typed rate on the trip is how a reader sets the cash side now.
-        p.g("trips").push({ si: 4, b: 0, nights: 3, wknd: 0, disc, rate: rack });
-        p.g("renderTripRows")();
-        p.g("renderAll")();
-        const cells = Array.from(p.el("cashOut").querySelectorAll(".sens-cell"));
-        const owns = cells.filter((c) => c.classList.contains("owns")).length;
-        const cash = cells.filter((c) => c.classList.contains("cash")).length;
-        if (owns > 0 && cash > 0) { straddled = { p, rack, disc, owns, cash }; break outer; }
-      }
-    }
-    assert.ok(straddled,
-      "no scenario in the swept range straddled the escalation assumptions — " +
-      "either the sensitivity strip stopped working or the sweep needs widening");
-    assert.match(straddled.p.el("cashOut").textContent, /answer flips/,
-      `rack=${straddled.rack} disc=${straddled.disc}% straddles ` +
-      `(${straddled.owns} own / ${straddled.cash} cash) but is not labelled as assumption-dependent`);
-  });
-
-  test("a robust verdict is not labelled as flipping", () => {
-    const p = load({ fresh: true });
-    p.g("trips").length = 0;
-    p.g("trips").push({ si: 4, nights: 7, wknd: 2, disc: 0 },
-                      { si: 4, nights: 7, wknd: 2, disc: 0 });
-    p.g("renderTripRows")(); p.g("renderAll")();
-    const cells = Array.from(p.el("cashOut").querySelectorAll(".sens-cell"));
-    if (cells.every((c) => c.classList.contains("owns"))) {
-      assert.ok(!/answer flips/.test(p.el("cashOut").textContent),
-        "a verdict that holds across the range should not claim to flip");
-    }
-  });
-});
-
 describe("the cash panel is a checkable price", () => {
   test("the cash figure is exactly this year's rate for the trips, taxed", () => {
     // Read off the per-trip lines, which show each trip's season-adjusted rate
