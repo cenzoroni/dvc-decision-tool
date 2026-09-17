@@ -139,14 +139,14 @@ html{scroll-behavior:smooth;scroll-padding-top:16px}
 .ys-trip{position:absolute;top:50%;transform:translateY(-50%);
   background:var(--lagoon);color:var(--on-lagoon);font-size:.8rem;font-weight:700;
   padding:4px 10px;border-radius:14px;white-space:nowrap;box-shadow:var(--shadow)}
-.ys-labels{position:relative;margin-top:10px}
-.ys-lab{position:absolute;white-space:nowrap;font-size:.72rem;line-height:1;color:var(--ink-soft);padding:2px 3px;background:var(--paper)}
-/* The tick rises from the label's centre-of-band (--dx from its left edge)
-   up to the strip, so a shifted label still points at the band it names. */
-.ys-lab::before{content:"";position:absolute;left:var(--dx);bottom:100%;width:1px;height:var(--tick);background:var(--line)}
-.ys-list{display:none;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:.78rem;color:var(--ink-soft)}
-.ys-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.ys-item i{width:12px;height:12px;border-radius:2px;border:1px solid var(--line)}
+.ys-months{display:flex;font-size:.78rem;color:var(--ink-soft);margin-top:6px}
+.ys-months span{flex:0 0 auto;min-width:0;overflow:hidden;white-space:nowrap;padding:2px 0 0 5px;border-left:1px solid var(--ink-soft)}
+.ys-list{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-size:.8rem;color:var(--ink)}
+.ys-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.ys-item i{width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}
+.ys-item small{font-size:.74rem;color:var(--ink-soft)}
+.ys-item.here{font-weight:700}
+.ys-item.here i{outline:2px solid var(--lagoon);outline-offset:1px}
 .ys-cap{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-soft);margin-top:14px}
 .ys-cap b{color:var(--ink);font-weight:500}
 .ys-key{display:inline-flex;align-items:center;gap:6px}
@@ -397,8 +397,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .col + .col{border-left:0;border-top:1px solid var(--line)}
   .grid2{grid-template-columns:1fr}
   .yearstrip{height:60px}
-  .ys-labels{display:none}
-  .ys-list{display:flex}}
+  .ys-months span:nth-child(even){visibility:hidden}}
 @media (max-width:640px){
   .stayhead{grid-template-columns:1fr}
   .staypts{border-right:0;border-bottom:1px solid var(--line);min-width:0}
@@ -1554,7 +1553,7 @@ function renderHero(){
     "<div class=\"ys-seg\" style=\"width:"+((s.b2-s.a)/total*100).toFixed(3)+"%;background:rgba(var(--shade-rgb),"+
       (0.08+0.54*t(s.si)).toFixed(3)+")\" title=\""+bandLabel(s.si,s.b)+": "+pts(s.si)+" points a weeknight\"></div>").join("");
 
-  const W=el("hero").clientWidth||1000, rowH=18;
+  const W=el("hero").clientWidth||1000;
 
   /* Pins sit in a layer over the strip rather than inside their band: a
      Christmas-week band is eight days wide and a pill is wider than that,
@@ -1581,26 +1580,21 @@ function renderHero(){
   }
   const pins=pinList.map(p=>"<span class=\"ys-trip\" style=\"left:"+p.left.toFixed(0)+"px\">"+p.text+"</span>").join("");
 
-  /* Every band gets a label under the strip. They cannot share one line —
-     Thanksgiving is three days wide — so each takes the first row where it
-     clears its left-hand neighbour, with a tick up to its band. Widths are
-     estimated from character counts; the page re-renders on resize. */
-  const rowsEnd=[];
-  const labels=segs.map(s=>{
-    const text=bandLabel(s.si,s.b), w=text.length*6.3+10;
-    const x=(s.a+s.b2)/2/total*W;
-    const left=Math.max(0,Math.min(W-w,x-w/2));
-    let row=0; while(rowsEnd[row]!==undefined&&rowsEnd[row]>left-8) row++;
-    rowsEnd[row]=left+w;
-    return "<span class=\"ys-lab\" style=\"left:"+left.toFixed(0)+"px;top:"+(row*rowH)+"px;--tick:"+(row*rowH+5)+"px;--dx:"+(x-left).toFixed(0)+"px\">"+text+"</span>";
+  /* A month ruler makes the strip read as a calendar; the bands themselves
+     are listed beneath it in order, each with its swatch. Labels pinned to
+     bands were tried and read as scatter: Thanksgiving is three days wide. */
+  const months=MONTH_SHORT.map((m,i)=>
+    "<span style=\"width:"+(new Date(yr,i+1,0).getDate()/total*100).toFixed(3)+"%\">"+m+"</span>").join("");
+  const list=segs.map(s=>{
+    const here=(byBand[s.si+"."+s.b]||[]).length;
+    return "<span class=\"ys-item"+(here?" here":"")+"\"><i style=\"background:rgba(var(--shade-rgb),"+(0.08+0.54*t(s.si)).toFixed(3)+")\"></i>"+
+      bandLabel(s.si,s.b)+"<small>"+pts(s.si)+" pts</small></span>";
   }).join("");
-  const list=segs.map(s=>
-    "<span class=\"ys-item\"><i style=\"background:rgba(var(--shade-rgb),"+(0.08+0.54*t(s.si)).toFixed(3)+")\"></i>"+bandLabel(s.si,s.b)+" &middot; "+pts(s.si)+"</span>").join("");
   const [room,view]=CHARTS[ri].cols[ci].split("|");
   const n=trips.length;
   el("hero").innerHTML=
     "<div class=\"ys-wrap\"><div class=\"yearstrip\">"+strip+"</div><div class=\"ys-pins\">"+pins+"</div></div>"+
-    "<div class=\"ys-labels\" style=\"height:"+(rowsEnd.length*rowH+4)+"px\">"+labels+"</div>"+
+    "<div class=\"ys-months\">"+months+"</div>"+
     "<div class=\"ys-list\">"+list+"</div>"+
     "<div class=\"ys-cap\"><span><b>"+plain(r.name)+"</b>, "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+
       " on the 2027 point chart &mdash; "+lo+" to "+hi+" points a weeknight <span class=\"ys-key\"><i></i></span> &mdash; with your "+n+" trip"+(n===1?"":"s")+" pinned.</span>"+
