@@ -186,9 +186,10 @@ h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.95re
 .line span:last-child{font-weight:500;white-space:nowrap}
 .line.total{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;font-weight:700}
 
-.verdict{margin-top:20px;padding:18px 22px;background:var(--surface);
-  border:1px solid var(--line);border-left:4px solid var(--lagoon);border-radius:var(--radius);font-size:.94rem}
-.verdict.warn{border-left-color:var(--rust)}
+/* Verdicts are tinted banners everywhere on the page: the same treatment
+   the own-or-book answer gets, so a conclusion always looks like one. */
+.verdict{margin-top:20px;padding:18px 22px;background:var(--lagoon-tint);border-radius:var(--radius);font-size:.94rem}
+.verdict.warn{background:var(--rust-tint)}
 
 .tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
@@ -286,8 +287,10 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .staywarn{padding:14px 24px;background:var(--amber-tint);border-top:1px solid var(--line);font-size:.85rem}
 .staywarn.bad{background:var(--rust-tint)}
 .staywarn.good{background:var(--lagoon-tint)}
+/* The ranking slider is a control, so it sits on a rule band like the other
+   controls; only the paste area, the section's one real action, gets a surface. */
 .weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px 24px;
-  border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px}
+  border-top:1px solid var(--line);padding:22px 0 4px;margin-bottom:0}
 .wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
 .wrow label b{color:var(--ink);font-weight:700}
 .wrow input[type=range]{width:100%;accent-color:var(--lagoon)}
@@ -301,7 +304,7 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 #rank a:hover{border-bottom-color:var(--lagoon)}
 #compare td:first-child{white-space:normal;min-width:15ch}
 #compare td:first-child .meta{display:block;font-size:.72rem;line-height:1.25;margin-top:2px}
-.refresh{border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px}
+.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:26px}
 .refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
   padding:12px;border:1px solid var(--line);border-radius:6px;resize:vertical;color:var(--ink);background:var(--surface);transition:border-color .15s,box-shadow .15s}
 .refresh textarea:focus{border-color:var(--lagoon);box-shadow:0 0 0 3px var(--lagoon-tint)}
@@ -641,14 +644,14 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field"><label for="resortStay">Resort</label><select id="resortStay"></select></div>
     <div class="field"><label for="checkin">Check-in date</label><input id="checkin" type="date"></div>
     <div class="field"><label for="nights">Nights</label><input id="nights" type="number" value="3" min="1" max="14" step="1"></div>
-    <div class="field"><label for="wStart">Matrix rows use</label><select id="wStart">
+    <div class="field"><label for="wStart">Grid assumes check-in on</label><select id="wStart">
       <option value="-2">The weekday of my date</option>
       <option value="-1">Any day &mdash; averaged</option>
       <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
       <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option>
       <option value="6">Saturday</option>
     </select></div>
-    <div class="field"><label for="wCols">Columns</label><select id="wCols">
+    <div class="field"><label for="wCols">Grid columns</label><select id="wCols">
       <option value="m">Calendar months</option>
       <option value="s">Point-chart seasons &mdash; exact bands</option>
     </select></div>
@@ -692,7 +695,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <h2>9. Ranked inventory</h2>
   <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
-  <div class="refresh" style="border:2px dashed var(--lagoon);background:var(--lagoon-tint)">
+  <div class="refresh">
     <p style="font-size:.95rem;font-weight:600;color:var(--ink);margin:0 0 6px">Paste resale listings to get started</p>
     <p style="font-size:.85rem;color:var(--ink-soft);margin:0 0 12px;max-width:70ch">Open a broker&rsquo;s listings page, select the table, copy it, and paste it below. The parser reads whatever shape it arrives in.</p>
     <textarea id="pasteBox" placeholder="Paste the copied listings table here" style="min-height:110px"></textarea>
