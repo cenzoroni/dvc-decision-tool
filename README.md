@@ -11,8 +11,17 @@ Disney Vacation Development, Inc. Informational only — not financial advice.
 
 ## How it works
 
-`index.html` is the whole application: no build step, no dependencies, no
-backend. It is deployed to GitHub Pages exactly as it sits in the repo.
+The application is four plain files and a data directory, deployed exactly as
+they sit in the repo — no build step, no dependencies, no backend:
+
+- `index.html` — the page
+- `styles.css` — the stylesheet, with the light and dark token blocks at the top
+- `app.js` — the model and rendering
+- `data/` — point charts, resort facts, market snapshot and cash rates, each
+  file declaring its own provenance
+
+It is served by Firebase Hosting at dvc.altavilla.dev; a push to `main` runs
+the tests and deploys.
 
 Resale listings are **not** bundled. Brokers' terms prohibit republishing their
 inventory, so the tool ships with an empty listing set and users paste in
@@ -26,9 +35,9 @@ npm install
 npm test
 ```
 
-Tests run against `index.html` itself — the shipped file is the tested file,
-loaded into jsdom by `test/harness.mjs`. There is no separate copy of the logic
-to drift out of sync.
+Tests run against the shipped files themselves — `test/harness.mjs` loads
+`index.html` into jsdom with its stylesheet, script and data files inlined.
+There is no separate copy of the logic to drift out of sync.
 
 - `test/data.test.mjs` — chart/season/parallel-array integrity
 - `test/calc.test.mjs` — cost model and point arithmetic

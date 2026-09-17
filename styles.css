@@ -1,0 +1,445 @@
+/* Light is the base palette. Dark redefines only the colour tokens, never the
+   rules that use them, so the two themes cannot drift apart.
+
+   Three states to cover: an explicit choice stamps data-theme on <html>; the
+   default "system" setting stamps nothing and is decided by prefers-color-scheme.
+   Both dark branches are needed so the toggle wins in either direction.
+
+   The neutrals carry a faint green cast in both themes — the page is about a
+   place with lagoons and live oaks, not a spreadsheet — and the one accent is
+   the same lagoon green throughout. */
+:root{
+  color-scheme:light;
+  --ink:#22302B;
+  --ink-soft:#5B6964;
+  --on-ink:#FFFFFF;
+  --ink-hover:#3A4944;
+  --paper:#F4F5F1;
+  --surface:#FFFFFF;
+  --line:#D9DED8;
+  --line-soft:#E8ECE6;
+  --lagoon:#257C62;
+  --lagoon-hover:#1C6049;
+  --lagoon-tint:#E6F6F0;
+  --on-lagoon:#FFFFFF;
+  --rust:#B8322C;
+  --rust-tint:#FBEFEE;
+  --amber:#8F6114;
+  --amber-tint:#FBF6E9;
+  --shade-rgb:37,124,98;
+  --radius:8px;
+  --shadow:0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 10px 30px -12px rgba(34,48,43,.28), 0 2px 6px rgba(0,0,0,.05);
+}
+
+/* Accents are lifted and desaturated for dark: the light greens and reds are
+   tuned for dark-on-light and drop under 4.5:1 when the ground inverts. Tints
+   become low-alpha washes of the accent rather than near-white pastels. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#E7ECE8;
+    --ink-soft:#9DAAA3;
+    --on-ink:#101614;
+    --ink-hover:#C6D0CA;
+    --paper:#111614;
+    --surface:#191F1C;
+    --line:#2A332E;
+    --line-soft:#222A26;
+    --lagoon:#4ECFA4;
+    --lagoon-hover:#6FDDB8;
+    --lagoon-tint:#163027;
+    --on-lagoon:#08130F;
+    --rust:#FF8A80;
+    --rust-tint:#33201F;
+    --amber:#E8B54B;
+    --amber-tint:#302713;
+    --shade-rgb:78,207,164;
+    --shadow:0 1px 2px rgba(0,0,0,.5);
+    --shadow-md:0 14px 34px -12px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#E7ECE8;
+  --ink-soft:#9DAAA3;
+  --on-ink:#101614;
+  --ink-hover:#C6D0CA;
+  --paper:#111614;
+  --surface:#191F1C;
+  --line:#2A332E;
+  --line-soft:#222A26;
+  --lagoon:#4ECFA4;
+  --lagoon-hover:#6FDDB8;
+  --lagoon-tint:#163027;
+  --on-lagoon:#08130F;
+  --rust:#FF8A80;
+  --rust-tint:#33201F;
+  --amber:#E8B54B;
+  --amber-tint:#302713;
+  --shade-rgb:78,207,164;
+  --shadow:0 1px 2px rgba(0,0,0,.5);
+  --shadow-md:0 14px 34px -12px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
+}
+
+/* Type scale: 1.25 from a 16px base. 12.8 / 16 / 20 / 25 / 31.25 / 39 / 48.8.
+   Serif carries only the headings and the big numbers; everything else is
+   the sans, so the serif reads as a voice rather than a texture. */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"DM Sans",system-ui,sans-serif;font-size:16px;line-height:1.55;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px 90px}
+
+.mast{padding:52px 0 0}
+.mast h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;
+  font-size:clamp(2.4rem,5.5vw,3.05rem);line-height:1.05;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance;max-width:20ch}
+.mast p{margin:0;color:var(--ink-soft);font-size:1.25rem;line-height:1.5;max-width:44ch;text-wrap:pretty}
+.mast .asof{margin-top:10px;font-size:.8rem;max-width:none}
+
+/* The hero: a year on Disney's point chart. Segments are seasons, sized by
+   their real day counts and shaded by what one night costs in the chosen
+   room, with the reader's own trips pinned to the seasons they fall in. */
+.mast{position:relative}
+.mast .theme{position:absolute;top:56px;right:0;padding:7px 14px;font-size:.8rem}
+/* The year strip is an instrument in step 1: it sits between the trips and
+   their breakdown, so editing a trip visibly moves its pin. */
+.hero{margin:0 0 26px}
+/* Four views, one per job the page does. The bar sticks so the view can
+   be changed from anywhere in a long Decide; a tab is a word with an
+   underline, nothing more, so it cannot be mistaken for a button. */
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:26px;margin-top:28px;padding:4px 0 0;
+  background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-size:.95rem;font-weight:500;color:var(--ink-soft);background:none;border:0;cursor:pointer;text-align:left;
+  padding:12px 2px 11px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab small{display:block;font-size:.74rem;font-weight:400;color:var(--ink-soft);margin-top:2px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--lagoon)}
+.view[hidden]{display:none}
+/* A folded section: the heading is the summary, the table opens beneath. */
+.fold summary{list-style:none;cursor:pointer;padding:6px 0 10px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::before{content:"+";grid-row:1/3;font-family:"DM Serif Display",Georgia,serif;font-size:1.6rem;line-height:1;color:var(--ink-soft)}
+.fold[open] summary::before{content:"\2212"}
+.fold-title{font-family:"DM Serif Display",Georgia,serif;font-size:1.4rem;letter-spacing:-.01em}
+.fold-sub{grid-column:2;font-size:.95rem;color:var(--ink-soft);max-width:62ch}
+.fold .tablescroll{margin-top:14px}
+section.folded{padding-top:34px}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* Rarely-changed dials fold away. The summary reads as a plain rule-separated
+   line; open, the controls band inside carries its own top rule. */
+.assume{border-top:1px solid var(--line);margin-bottom:22px}
+.assume summary{list-style:none;cursor:pointer;padding:14px 0;font-size:.92rem;font-weight:500;display:flex;align-items:center;gap:10px}
+.assume summary::-webkit-details-marker{display:none}
+.assume summary::before{content:"+";font-size:1.15rem;line-height:1;color:var(--ink-soft);width:14px}
+.assume[open] summary::before{content:"\2212"}
+.assume .controls{margin-bottom:6px}
+.ys-wrap{position:relative}
+.yearstrip{display:flex;height:64px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.ys-seg{flex:0 0 auto;min-width:0;border-right:1px solid var(--paper)}
+.ys-seg:last-child{border-right:0}
+.ys-pins{position:absolute;inset:0;pointer-events:none}
+.ys-trip{position:absolute;top:50%;transform:translateY(-50%);
+  background:var(--lagoon);color:var(--on-lagoon);font-size:.8rem;font-weight:700;
+  padding:4px 10px;border-radius:14px;white-space:nowrap;box-shadow:var(--shadow)}
+.ys-months{display:flex;font-size:.78rem;color:var(--ink-soft);margin-top:6px}
+.ys-months span{flex:0 0 auto;min-width:0;overflow:hidden;white-space:nowrap;padding:2px 0 0 5px;border-left:1px solid var(--ink-soft)}
+.ys-cap{margin:12px 0 0;font-size:.8rem;color:var(--ink-soft);max-width:78ch;line-height:1.5}
+.ys-key{display:inline-flex;align-items:center;gap:6px}
+.ys-key i{display:inline-block;width:34px;height:10px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(var(--shade-rgb),.08),rgba(var(--shade-rgb),.62))}
+
+section{padding:52px 0 16px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.95rem;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;text-wrap:balance}
+.lede{margin:0 0 26px;color:var(--ink-soft);max-width:62ch;line-height:1.6;text-wrap:pretty}
+
+/* Controls sit on a band between two rules rather than in a box: they are
+   the page's instrument panel, not a piece of content to be framed. */
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:18px 22px;
+  padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:28px}
+.field label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+.field select,.field input{width:100%;font:inherit;font-size:.95rem;padding:9px 12px;
+  border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.field select:hover,.field input:hover{border-color:var(--ink-soft)}
+.field select:focus,.field input:focus{border-color:var(--lagoon);box-shadow:0 0 0 3px var(--lagoon-tint)}
+.field select:focus-visible,.field input:focus-visible,button:focus-visible,summary:focus-visible,th[data-k]:focus-visible,th[data-c]:focus-visible,th[data-r]:focus-visible{
+  outline:2px solid var(--lagoon);outline-offset:2px}
+.hint{font-size:.76rem;color:var(--ink-soft);margin-top:5px;line-height:1.45}
+
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.col{padding:28px 28px 24px}
+.col + .col{border-left:1px solid var(--line)}
+.col.resale{background:var(--lagoon-tint)}
+.col h3{margin:0 0 2px;font-size:.95rem;font-weight:700}
+.col .sub{margin:0 0 18px;font-size:.8rem;color:var(--ink-soft)}
+.big{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(2.4rem,6.6vw,3.05rem);
+  line-height:1;letter-spacing:-.02em;display:block}
+.big-unit{font-size:.8rem;font-family:"DM Sans",sans-serif;color:var(--ink-soft);display:block;margin-top:7px;max-width:28ch}
+.col.resale .big{color:var(--lagoon)}
+.lines{margin-top:20px;border-top:1px solid var(--line-soft);padding-top:12px}
+.line{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.88rem}
+.line span:last-child{font-weight:500;white-space:nowrap}
+.line.total{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:10px;font-weight:700}
+
+/* Verdicts are tinted banners everywhere on the page: the same treatment
+   the own-or-book answer gets, so a conclusion always looks like one. */
+.verdict{margin-top:20px;padding:18px 22px;background:var(--lagoon-tint);border-radius:var(--radius);font-size:.94rem}
+.verdict.warn{background:var(--rust-tint)}
+
+.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:760px}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line-soft)}
+th:first-child,td:first-child{text-align:left}
+thead th:first-child,tbody td:first-child{white-space:nowrap}
+/* Sortable headers are a rule, not a bar: the data is the dark thing on the page. */
+thead th{background:var(--surface);color:var(--ink);font-weight:500;font-size:.8rem;position:sticky;top:0;cursor:pointer;user-select:none;
+  border-bottom:2px solid var(--ink)}
+thead th:hover{background:var(--line-soft)}
+thead th .arrow{opacity:.45;font-size:.7rem}
+tbody tr:hover{background:var(--line-soft)}
+td.save{color:var(--lagoon);font-weight:700}
+td.na{color:var(--ink-soft)}
+tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding-top:12px;white-space:normal}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{font:inherit;font-size:.83rem;padding:7px 16px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--lagoon);color:var(--lagoon)}
+.chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:var(--on-lagoon);font-weight:500}
+
+.resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;transition:border-color .15s}
+.resort:hover{border-color:var(--ink-soft)}
+.resort[hidden]{display:none}
+.resort summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.resort summary::-webkit-details-marker{display:none}
+.resort summary::after{content:"+";margin-left:auto;font-size:1.25rem;color:var(--ink-soft);line-height:1}
+.resort[open] summary::after{content:"\2212"}
+.resort[open] summary{border-bottom:1px solid var(--line-soft)}
+.rname{font-family:"DM Serif Display",Georgia,serif;font-size:1.25rem;letter-spacing:-.01em}
+.meta{font-size:.8rem;color:var(--ink-soft)}
+.modes{font-size:.8rem;color:var(--ink);font-weight:500}
+.tag{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--rust-tint);color:var(--rust);white-space:nowrap}
+.tag.ok{background:var(--lagoon-tint);color:var(--lagoon)}
+.tag.soon{background:var(--amber-tint);color:var(--amber)}
+.rbody{padding:6px 20px 22px}
+.rnote{font-size:.88rem;color:var(--ink-soft);margin:12px 0 18px;max-width:74ch}
+.alert{font-size:.83rem;background:var(--amber-tint);border-left:3px solid var(--amber);
+  padding:9px 14px;border-radius:0 var(--radius) var(--radius) 0;margin:0 0 18px;max-width:74ch}
+
+.rooms{width:100%;border-collapse:collapse;font-size:.86rem;min-width:0;margin-bottom:6px}
+.rooms th{background:transparent;color:var(--ink-soft);font-size:.76rem;font-weight:500;
+  text-align:left;padding:6px 10px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
+.rooms th:hover{background:transparent}
+.rooms td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.rooms td:nth-child(2){white-space:nowrap;width:5.5rem}
+.rooms tr:last-child td{border-bottom:0}
+
+.blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;border-top:1px solid var(--line)}
+.block{padding:18px 20px 4px 0}
+.block + .block{border-left:1px solid var(--line-soft);padding-left:20px}
+.block h4{margin:0 0 10px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.1rem}
+.block ul{margin:0 0 12px;padding-left:16px}
+.block li{font-size:.85rem;margin-bottom:6px;line-height:1.45}
+.block .cat{font-size:.76rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
+.block p.none{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px}
+
+/* One lifted surface on the page: the own-or-book verdict. Everything else
+   that shares this container is framed with a rule only. */
+.stayout{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+#cashOut{box-shadow:var(--shadow-md)}
+.stayhead{display:grid;grid-template-columns:auto 1fr;gap:0}
+.duel{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.duel .side{padding:26px 20px 24px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.duel .side+.side{border-left:1px solid var(--line)}
+.duel .side h3{margin:0 0 14px;font-size:.8rem;font-weight:500;color:var(--ink-soft);text-wrap:balance}
+.duel .side .big{font-size:clamp(1.8rem,4.2vw,2.45rem)}
+.duel .side .sub2{display:block;margin-top:8px;font-size:.8rem;color:var(--ink-soft);line-height:1.4}
+.duel .side .yr1{display:inline-block;margin-top:5px;font-size:.74rem;opacity:.85}
+.duel .side.win{background:var(--lagoon-tint)}
+.duel .side.win .big{color:var(--lagoon);font-size:clamp(2.6rem,6vw,3.6rem)}
+.duel .side.win h3{color:var(--lagoon);font-weight:700}
+.duel .tagwin{display:inline-block;margin-top:auto;padding-top:12px;font-size:.7rem;font-weight:700;letter-spacing:.04em;color:var(--lagoon)}
+@media (max-width:900px){.duel{grid-template-columns:repeat(2,1fr)}
+  .duel .side:nth-child(3){border-left:0}.duel .side:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:640px){.duel{grid-template-columns:1fr}.duel .side+.side{border-left:0;border-top:1px solid var(--line)}}
+.staypts{padding:26px 24px;border-right:1px solid var(--line);min-width:210px}
+.staypts .big{color:var(--lagoon)}
+.staycost{padding:26px 24px}
+.staycost .cline{display:flex;justify-content:space-between;gap:16px;padding:6px 0;font-size:.9rem;border-bottom:1px solid var(--line-soft)}
+.staycost .cline:last-child{border-bottom:0}
+.staycost .cline span:last-child{font-weight:700;white-space:nowrap}
+.staycost h4{margin:0 0 10px;font-size:.85rem;font-weight:700}
+.nights{width:100%;border-collapse:collapse;font-size:.83rem;min-width:0}
+.nights caption{text-align:left;padding:16px 24px 8px;font-size:.8rem;color:var(--ink-soft);caption-side:top}
+.nights th{background:transparent;color:var(--ink-soft);font-size:.76rem;font-weight:500;text-align:left;
+  padding:6px 24px 6px 0;position:static;cursor:default;border-bottom:1px solid var(--line)}
+.nights th:hover{background:transparent}
+.nights th:first-child,.nights td:first-child{padding-left:24px}
+.nights th:last-child,.nights td:last-child{text-align:right;padding-right:24px}
+.nights td{text-align:left;padding:7px 24px 7px 0;border-bottom:1px solid var(--line-soft)}
+.nights tr.wknd td{background:var(--line-soft)}
+.nights tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--line);font-size:.88rem;color:var(--ink)}
+.staywarn{padding:14px 24px;background:var(--amber-tint);border-top:1px solid var(--line);font-size:.85rem}
+.staywarn.bad{background:var(--rust-tint)}
+.staywarn.good{background:var(--lagoon-tint)}
+/* The ranking slider is a control, so it sits on a rule band like the other
+   controls; only the paste area, the section's one real action, gets a surface. */
+.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px 24px;
+  border-top:1px solid var(--line);padding:22px 0 4px;margin-bottom:0}
+.wrow label{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+.wrow label b{color:var(--ink);font-weight:700}
+.wrow input[type=range]{width:100%;accent-color:var(--lagoon)}
+#rank th:first-child,#rank td:first-child{width:62px;padding-right:8px}
+#rank td.sc{font-weight:700;background-repeat:no-repeat}
+#rank th:nth-child(2),#rank td:nth-child(2){white-space:normal}
+#rank td:nth-child(2) .meta{display:block;font-size:.72rem;line-height:1.2}
+#rank td.pos{color:var(--lagoon)}
+#rank td.neg{color:var(--rust)}
+#rank a{color:var(--lagoon);text-decoration:none;border-bottom:1px solid var(--lagoon-tint);transition:border-color .15s}
+#rank a:hover{border-bottom-color:var(--lagoon)}
+#compare td:first-child{white-space:normal;min-width:15ch}
+#compare td:first-child .meta{display:block;font-size:.72rem;line-height:1.25;margin-top:2px}
+.refresh{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:26px}
+.refresh textarea{width:100%;min-height:96px;font:inherit;font-size:.82rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  padding:12px;border:1px solid var(--line);border-radius:6px;resize:vertical;color:var(--ink);background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.refresh textarea:focus{border-color:var(--lagoon);box-shadow:0 0 0 3px var(--lagoon-tint)}
+.refresh .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.btn{font:inherit;font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:6px;cursor:pointer;
+  border:1px solid var(--lagoon);background:var(--lagoon);color:var(--on-lagoon);transition:all .15s}
+.btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.btn:hover{background:var(--lagoon-hover);border-color:var(--lagoon-hover)}
+.btn.ghost:hover{background:transparent;border-color:var(--ink-soft);color:var(--ink)}
+#parseMsg{font-size:.83rem;color:var(--ink-soft)}
+#parseMsg.good{color:var(--lagoon);font-weight:500}
+#parseMsg.bad{color:var(--rust);font-weight:500}
+.matrix{width:100%;border-collapse:collapse;font-size:.83rem;min-width:640px}
+.matrix th{background:var(--surface);color:var(--ink);font-weight:500;font-size:.74rem;padding:8px 6px;text-align:center;position:static;cursor:default;line-height:1.25;border-bottom:2px solid var(--ink)}
+.matrix th:hover{background:var(--surface)}
+.matrix th:first-child{text-align:left;width:34%;padding-left:14px}
+.matrix td{text-align:center;padding:7px 6px;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+.matrix td:first-child{text-align:left;padding-left:14px;white-space:normal}
+.matrix tbody tr:hover td:first-child{font-weight:700}
+.matrix .rv{color:var(--ink-soft);font-size:.76rem}
+.mlegend{font-size:.8rem;color:var(--ink-soft);padding:12px 14px 0;max-width:78ch}
+
+/* The closing essays are columns of text with a rule above, not boxes. */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
+.panel{padding:18px 0 8px;border-top:1px solid var(--line)}
+.panel h3{margin:0 0 12px;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.25rem}
+.panel ul{margin:0;padding-left:18px}
+.panel li{margin-bottom:8px;font-size:.9rem;line-height:1.5}
+.panel li:last-child{margin-bottom:0}
+
+#provTable{min-width:0}
+#provTable td{text-align:left;vertical-align:top}
+#provTable td:nth-child(3){white-space:nowrap}
+.prov-tag{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;
+  background:var(--lagoon-tint);color:var(--lagoon)}
+.prov-tag.est{background:var(--amber-tint);color:var(--amber)}
+.prov-note{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:4px;line-height:1.45}
+
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-8px 0 24px}
+.presets-label{font-size:.8rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
+.disc-void{display:inline-block;margin-left:8px;font-size:.7rem;font-weight:700;padding:2px 7px;
+  border-radius:4px;background:var(--amber-tint);color:var(--amber);white-space:nowrap}
+
+.breakeven{margin:0;padding:22px 24px;border-top:1px solid var(--line);background:var(--surface);overflow-x:auto}
+.be-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.be-head .big{font-size:clamp(1.8rem,4.2vw,2.45rem)}
+.be-head .big-unit{font-size:.82rem;color:var(--ink-soft);max-width:44ch}
+.be-tbl{width:100%;border-collapse:collapse;font-size:.83rem;min-width:0}
+.be-tbl th{text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:6px 12px 6px 0;border-bottom:1px solid var(--line);background:transparent;position:static;cursor:default}
+.be-tbl th:hover{background:transparent}
+.be-tbl td{padding:7px 12px 7px 0;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums}
+.be-tbl td:nth-child(n+2){text-align:right}
+.be-tbl th:nth-child(n+2){text-align:right}
+.be-tbl tr.be-row{background:var(--lagoon-tint);font-weight:700}
+.be-tbl tr.be-row td{border-bottom-color:var(--lagoon)}
+.be-tbl td.be-pos{color:var(--lagoon);font-weight:600}
+.be-tbl td.be-neg{color:var(--rust)}
+.be-note{font-size:.76rem;color:var(--ink-soft);margin-top:10px;line-height:1.5}
+
+.skey{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.skey-label{font-size:.74rem;color:var(--ink-soft);font-weight:500;margin-right:2px}
+.skey-cell{font-size:.7rem;padding:3px 9px;border-radius:4px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.sharerow{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.sharerow #copyMsg{font-size:.83rem;color:var(--lagoon);font-weight:500;word-break:break-all}
+
+.trips-list{padding:4px 0 10px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.trips-table{width:100%;min-width:0;border-collapse:collapse;font-size:.88rem}
+.trips-table th{background:transparent;text-align:left;font-size:.76rem;font-weight:500;color:var(--ink-soft);padding:0 8px 8px 0;border-bottom:1px solid var(--line);position:static;cursor:default}
+.trips-table th:hover{background:transparent}
+.trips-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.trips-table tr:last-child td{border-bottom:0}
+.trips-table td:last-child{text-align:right;padding-right:0;width:40px}
+.trips-table select,.trips-table input[type=number]{font:inherit;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.trips-table select{min-width:160px}
+.trips-table input[type=number]{width:70px}
+.btn-remove{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;transition:all .15s}
+.btn-remove:hover{background:var(--rust-tint);color:var(--rust)}
+
+footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;line-height:1.6}
+.disclaimer{margin:0 0 16px;font-size:.8rem;line-height:1.6;color:var(--ink-soft)}
+.disclaimer strong{font-weight:600;color:var(--ink)}
+.build{margin-top:20px;font-size:.74rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.build span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+@media (max-width:860px){.blocks{grid-template-columns:1fr}
+  .block + .block{border-left:0;border-top:1px solid var(--line-soft);padding-left:0}
+  .block{padding-right:0}}
+@media (max-width:720px){.split{grid-template-columns:1fr}
+  .mast .theme{position:static;margin-bottom:18px}
+  .tabs{gap:18px}
+  .tab small{display:none}
+  .col + .col{border-left:0;border-top:1px solid var(--line)}
+  .grid2{grid-template-columns:1fr}
+  .yearstrip{height:60px}
+  .ys-months span:nth-child(even){visibility:hidden}}
+@media (max-width:640px){
+  .stayhead{grid-template-columns:1fr}
+  .staypts{border-right:0;border-bottom:1px solid var(--line);min-width:0}
+  .staycost .cline{font-size:.84rem;gap:10px}
+  /* Five columns cannot share 350px. Each trip becomes a small block: the
+     season on its own line, the three numbers beneath it with their own
+     labels, since the header row no longer sits above them. */
+  .trips-table thead{display:none}
+  .trips-table,.trips-table tbody{display:block}
+  .trips-table tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:8px 8px;align-items:end;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .trips-table input[type=number]{padding-left:8px;padding-right:4px}
+  .trips-table tr:last-child{border-bottom:0}
+  .trips-table td{display:block;padding:0;border:0;width:auto;min-width:0;text-align:left}
+  .trips-table td:first-child{grid-column:1/-1}
+  .trips-table td[data-l]::before{content:attr(data-l);display:block;font-size:.72rem;color:var(--ink-soft);margin-bottom:4px}
+  .trips-table select,.trips-table input[type=number]{min-width:0;width:100%}
+  .trips-table td:last-child{text-align:right;width:auto}
+  .trips-table .disc-void{display:block;margin:4px 0 0}
+  .be-tbl{font-size:.78rem}
+  .be-tbl th,.be-tbl td{padding:6px 8px 6px 0}
+  .be-head .big{font-size:1.5rem}
+  .ys-trip{font-size:.72rem;padding:3px 7px}
+}
+/* Print always uses the light palette: a dark theme on paper wastes ink and
+   the shadows and tints do not survive the trip. Forcing the tokens rather than
+   individual rules keeps every component consistent. */
+@media print{
+  :root,:root[data-theme="dark"]{
+    color-scheme:light;
+    --ink:#1a1a1a; --ink-soft:#555; --on-ink:#fff; --ink-hover:#333;
+    --paper:#fff; --surface:#fff; --line:#bbb; --line-soft:#ddd;
+    --lagoon:#1a6b52; --lagoon-hover:#1a6b52; --lagoon-tint:#eef6f2; --on-lagoon:#fff;
+    --rust:#a02020; --rust-tint:#fbeeee; --amber:#8a6512; --amber-tint:#f8f3e6;
+    --shadow:none; --shadow-md:none;
+  }
+  body{background:#fff}
+  .chips,.presets,.sharerow,#themeToggle,.tabs{display:none}
+  .view[hidden]{display:block}
+  .fold summary::before{content:""}
+  .assume[open] summary::before,.assume summary::before{content:""}
+  .resort,.verdict,.breakeven,.hero{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

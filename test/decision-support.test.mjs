@@ -5,9 +5,10 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { load } from "./harness.mjs";
+import { load, shippedJS } from "./harness.mjs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const js = shippedJS();
 
 describe("defaults do not pre-decide the verdict", () => {
   test("every trip starts at a 0% discount", () => {
@@ -102,7 +103,7 @@ describe("verdict language", () => {
   test("no percentage return on capital is claimed", () => {
     // "a return of X% a year on the capital" was annual savings over purchase
     // price dressed as an investment yield.
-    assert.ok(!/return of .*% a year on the capital/.test(html),
+    assert.ok(!/return of .*% a year on the capital/.test(js),
       "the return-on-capital phrasing is back in the source");
   });
 

@@ -1,6 +1,7 @@
-// Loads index.html into a jsdom window so tests run against the SHIPPED file.
-// There is no build step and no duplicated copy of the logic: if index.html is
-// the thing deployed, it is also the thing tested.
+// Loads index.html into a jsdom window so tests run against the SHIPPED files.
+// There is no build step and no duplicated copy of the logic: the page, its
+// stylesheet, its script and its data files are deployed as-is, and they are
+// what is tested.
 //
 // Top-level `function` declarations land on `window`, but top-level `const`/`let`
 // go to the global lexical scope instead — reachable only through `window.eval`.
@@ -12,17 +13,27 @@ import { JSDOM } from "jsdom";
 let cached = null;
 
 const SRC_TAG = /<script src="([^"]+)"><\/script>/g;
+const CSS_TAG = /<link rel="stylesheet" href="((?!https?:)[^"]+)">/g;
 
-// The data files are classic scripts that only declare top-level consts, so
-// inlining them produces byte-identical global state to letting jsdom fetch
-// them — but synchronously, which keeps every test free of async plumbing.
-// The real <script src> resolution is covered separately in data.test.mjs.
+// Local scripts and stylesheets are classic files with no imports, so inlining
+// them produces byte-identical page state to letting jsdom fetch them — but
+// synchronously, which keeps every test free of async plumbing. That every
+// referenced file actually exists is covered separately in provenance.test.mjs.
 export function inlineDataScripts(html, baseUrl) {
-  return html.replace(SRC_TAG, (whole, src) => {
-    const body = readFileSync(new URL("../" + src, baseUrl), "utf8");
-    return "<script>\n" + body + "\n</script>";
-  });
+  return html
+    .replace(SRC_TAG, (whole, src) => {
+      const body = readFileSync(new URL("../" + src, baseUrl), "utf8");
+      return "<script>\n" + body + "\n</script>";
+    })
+    .replace(CSS_TAG, (whole, href) => {
+      const body = readFileSync(new URL("../" + href, baseUrl), "utf8");
+      return "<style>\n" + body + "\n</style>";
+    });
 }
+
+// The page's own stylesheet and script, as shipped.
+export const shippedCSS = () => readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+export const shippedJS = () => readFileSync(new URL("../app.js", import.meta.url), "utf8");
 
 export function dataScriptPaths() {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");

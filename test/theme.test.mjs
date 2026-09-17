@@ -4,10 +4,10 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { load } from "./harness.mjs";
+import { load, shippedCSS } from "./harness.mjs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const css = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+const css = shippedCSS();
 
 const block = (re) => {
   const m = css.match(re);

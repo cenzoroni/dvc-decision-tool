@@ -23,6 +23,16 @@ describe("data files", () => {
     }
   });
 
+  test("the page links its own stylesheet and script, and both exist", () => {
+    const html = readFileSync(new URL("index.html", root), "utf8");
+    assert.match(html, /<link rel="stylesheet" href="styles.css">/, "styles.css should be linked");
+    assert.match(html, /<script src="app.js"><\/script>/, "app.js should be linked");
+    assert.ok(existsSync(new URL("styles.css", root)) && existsSync(new URL("app.js", root)));
+    // The stylesheet must be linked before the pre-paint theme script so a
+    // stored preference is applied against real styles, not a bare document.
+    assert.ok(html.indexOf('href="styles.css"') < html.indexOf('localStorage.getItem("dvc-theme")'));
+  });
+
   test("the data files are the ones actually carrying the data", () => {
     const paths = dataScriptPaths();
     const combined = paths.map((p) => readFileSync(new URL(p, root), "utf8")).join("\n");
