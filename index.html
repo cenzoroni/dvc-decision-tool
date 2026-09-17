@@ -383,6 +383,8 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;line-height:1.6}
 .disclaimer{margin:0 0 16px;font-size:.8rem;line-height:1.6;color:var(--ink-soft)}
 .disclaimer strong{font-weight:600;color:var(--ink)}
+.build{margin-top:20px;font-size:.74rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.build span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
 @media (max-width:860px){.blocks{grid-template-columns:1fr}
   .block + .block{border-left:0;border-top:1px solid var(--line-soft);padding-left:0}
@@ -838,6 +840,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <p class="disclaimer"><strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.</p>
   <p>Figures are current as of early September 2026 and move constantly. Direct prices for sold-out resorts &mdash; Animal Kingdom, Bay Lake Tower, Beach Club, BoardWalk, Boulder Ridge, Copper Creek, Old Key West, Saratoga Springs and Grand Floridian &mdash; are real list prices, but Disney only sells inventory it has reclaimed, so availability is sporadic and you take the use year and point total on offer. Restaurants open, close and refurbish constantly; verify anything you are planning a trip around, along with point charts and room capacities, against Disney&rsquo;s current listings.</p>
   <p style="margin-top:16px">This site is not affiliated with, endorsed by, or connected to The Walt Disney Company or Disney Vacation Development, Inc. All trademarks belong to their respective owners. This tool provides estimates for informational purposes only and does not constitute financial or investment advice.</p>
+  <p class="build">Build <span id="build">dev</span></p>
 </footer>
 
 </div>
