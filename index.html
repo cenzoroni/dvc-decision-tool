@@ -488,7 +488,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field" style="grid-column:span 2"><label for="unit">Room and view</label><select id="unit"></select></div>
 
     <div class="field"><label for="tRent">Point rental rate</label><input id="tRent" type="number" value="20" min="5" max="60" step="1">
-      <div class="hint">Dollars per point to rent from an existing owner &mdash; the option that needs no purchase, no dues and no resale risk. Commonly $18&ndash;24. <strong>Estimate; verify current rates.</strong></div></div>
+      <div class="hint">Renting from an owner: no purchase, no dues, no resale risk. Commonly $18&ndash;24.</div></div>
     </div>
 
     <div class="presets">
@@ -497,7 +497,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
       <button class="chip" data-disc="30">Florida resident, 1&ndash;3 nights &mdash; 30%</button>
       <button class="chip" data-disc="35">Florida resident, 4+ nights &mdash; 35%</button>
       <button class="chip" data-disc="40">Florida resident + Annual Pass &mdash; 40%</button>
-      <div class="hint" style="flex-basis:100%;margin-top:2px">Most visitors get no room discount at all, so this starts at none. Discounts are set per trip below because Disney tiers them by length of stay, and they largely disappear over Easter and Christmas weeks.</div>
+      <div class="hint" style="flex-basis:100%;margin-top:2px">Most visitors get none. Set per trip, since Disney tiers discounts by stay length and drops them over Easter and Christmas.</div>
     </div>
 
     <div class="trips-list" id="tripsList">
@@ -505,7 +505,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
         <label style="font-size:.85rem;font-weight:600;color:var(--ink)">Your trips</label>
         <button class="btn" id="addTrip" style="padding:6px 14px;font-size:.82rem">+ Add trip</button>
       </div>
-      <div class="hint" style="margin:0 0 12px">Cash rates are filled in from Disney&rsquo;s published 2026 tables for each trip&rsquo;s dates &mdash; the studio at this resort, before tax and before your discount. Type over one to use a rate you looked up yourself, for instance for a larger room.</div>
+      <div class="hint" style="margin:0 0 12px">Cash rates come from Disney&rsquo;s published 2026 tables for the studio on those dates, before tax and discount. Type over one for a rate you looked up &mdash; a bigger room, say.</div>
       <table class="trips-table" id="tripsTable">
         <thead><tr><th>Dates</th><th>Nights</th><th>Weekend</th><th>Discount %</th><th>Cash $/night</th><th></th></tr></thead>
         <tbody id="tripsBody"></tbody>
@@ -1363,7 +1363,6 @@ function renderCash(){
   const cashNight=nightsYear>0?annCash/nightsYear:0;
   const ownNightR=uR===null?null:ptsYear*uR/nightsYear;
   const ownNightD=ptsYear*uD/nightsYear;
-  const todayCash=cashNight;
   /* What a night actually costs an existing owner THIS year, so it uses this
      year's dues rather than the deed average. */
   const marginal=ptsYear*r.dues/nightsYear;
@@ -1465,21 +1464,9 @@ function renderCash(){
           (idx<2&&c.v!==null?"<br><span class=\"yr1\">"+ownNote+"</span>":"")+"</span>"+
         (c.v!==null&&Math.abs(c.v-low)<0.01?"<span class=\"tagwin\">CHEAPEST</span>":"")+
       "</div>").join("")+"</div>"+
-    "<div class=\"stayhead\">"+
-      "<div class=\"staypts\">"+
-        "<span class=\"big\">"+nightsYear+"</span>"+
-        "<span class=\"big-unit\">nights a year across "+t.trips.length+" trip"+(t.trips.length===1?"":"s")+", costing "+ptsYear+" points &mdash; "+money(Math.round(cashNight))+" avg per night in cash"+(effDisc>0.0005?" after your discount":"")+"</span>"+
-      "</div>"+
-      "<div class=\"staycost\">"+
-        "<h4>The contract</h4>"+
-        "<div class=\"cline\"><span>Contract size needed</span><span>"+size+" points</span></div>"+
-        "<div class=\"cline\"><span>Cash at closing</span><span>"+money(upfront)+"</span></div>"+
-        "<div class=\"cline\"><span>Cash rate"+(effDisc>0.0005?" after discount":"")+", plus tax</span><span>"+money(Math.round(todayCash))+"/night</span></div>"+
-        "<div class=\"cline\"><span>Dues only this year, once you already own</span><span>"+money(marginal)+"/night</span></div>"+
-      "</div>"+
-    "</div>"+
-    "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+"</div>"+
-    beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+"<div class=\"staywarn\">Two things this cannot model. Disney&rsquo;s discounts cover set date windows and are not guaranteed for your dates. And if your family would otherwise be happy at a moderate resort, that is roughly "+money(Math.round(annCashUndisc/nightsYear*0.55*(1-effDisc)))+" a night after the same discount, which no villa contract can beat.</div>";
+    "<div class=\"staywarn "+verdict[0]+"\">"+verdict[1]+" Dues only this year, once you already own: <strong>"+money(marginal)+"</strong> a night.</div>"+
+    beHTML+(blocked?"<div class=\"staywarn\"><strong>"+blocked+" of your "+t.trips.length+" trips fall in a peak week</strong> &mdash; Easter and the Christmas fortnight. Disney&rsquo;s resident and passholder discounts effectively vanish then, so those trips are priced here at the full rate no matter what discount you entered. Points cost the same premium whenever you go, which is exactly when ownership is worth most.</div>":"")+
+    "<div class=\"staywarn\">If your family would be happy at a moderate resort, that is roughly "+money(Math.round(annCashUndisc/nightsYear*0.55*(1-effDisc)))+" a night after the same discount &mdash; no villa contract beats it.</div>";
 }
 
 /* The same trip shape run against every resort at once. Each resort is priced
@@ -1548,7 +1535,7 @@ function renderComparison(){
     "</tr>";
   }).join("");
 
-  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its studio at Disney&rsquo;s published 2026 rates for each trip&rsquo;s dates, using your trips and the 2027 chart; a rate you typed on a trip applies only to the resort you selected. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
+  el("compareFoot").innerHTML="Today&rsquo;s dollars, each resort&rsquo;s studio at Disney&rsquo;s published rates for your dates. Resale pricing where a market exists, direct otherwise; contract size rounds up to the next 25 points. A rate you typed on a trip applies only to your selected resort.";
 
   document.querySelectorAll("#compare thead th").forEach(th=>{
     const a=th.querySelector(".arrow"); if(!a) return;
