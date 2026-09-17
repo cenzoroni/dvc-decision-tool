@@ -4,7 +4,7 @@ A free calculator for Disney Vacation Club at Walt Disney World. Answers three
 questions in order: whether to own at all, whether to buy resale or direct, and
 which contract to buy.
 
-**Live: https://cenzoroni.github.io/dvc-decision-tool/**
+**Live: https://dvc.altavilla.dev/**
 
 Not affiliated with, endorsed by, or connected to The Walt Disney Company or
 Disney Vacation Development, Inc. Informational only — not financial advice.
