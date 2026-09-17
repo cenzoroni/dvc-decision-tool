@@ -118,12 +118,27 @@ body{
 /* The year strip is an instrument in step 1: it sits between the trips and
    their breakdown, so editing a trip visibly moves its pin. */
 .hero{margin:0 0 26px}
-/* The contents list is a row of plain links, not tabs: it names where each
-   answer lives on a long page and nothing else. */
-.toc{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:28px;padding:16px 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:.86rem}
-.toc a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;padding:2px 0;transition:color .15s,border-color .15s}
-.toc a:hover{color:var(--lagoon);border-bottom-color:var(--lagoon)}
-html{scroll-behavior:smooth;scroll-padding-top:16px}
+/* Four views, one per job the page does. The bar sticks so the view can
+   be changed from anywhere in a long Decide; a tab is a word with an
+   underline, nothing more, so it cannot be mistaken for a button. */
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:26px;margin-top:28px;padding:4px 0 0;
+  background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-size:.95rem;font-weight:500;color:var(--ink-soft);background:none;border:0;cursor:pointer;text-align:left;
+  padding:12px 2px 11px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab small{display:block;font-size:.74rem;font-weight:400;color:var(--ink-soft);margin-top:2px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--lagoon)}
+.view[hidden]{display:none}
+/* A folded section: the heading is the summary, the table opens beneath. */
+.fold summary{list-style:none;cursor:pointer;padding:6px 0 10px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::before{content:"+";grid-row:1/3;font-family:"DM Serif Display",Georgia,serif;font-size:1.6rem;line-height:1;color:var(--ink-soft)}
+.fold[open] summary::before{content:"\2212"}
+.fold-title{font-family:"DM Serif Display",Georgia,serif;font-size:1.4rem;letter-spacing:-.01em}
+.fold-sub{grid-column:2;font-size:.95rem;color:var(--ink-soft);max-width:62ch}
+.fold .tablescroll{margin-top:14px}
+section.folded{padding-top:34px}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* Rarely-changed dials fold away. The summary reads as a plain rule-separated
    line; open, the controls band inside carries its own top rule. */
@@ -389,6 +404,8 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .block{padding-right:0}}
 @media (max-width:720px){.split{grid-template-columns:1fr}
   .mast .theme{position:static;margin-bottom:18px}
+  .tabs{gap:18px}
+  .tab small{display:none}
   .col + .col{border-left:0;border-top:1px solid var(--line)}
   .grid2{grid-template-columns:1fr}
   .yearstrip{height:60px}
@@ -429,7 +446,9 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     --shadow:none; --shadow-md:none;
   }
   body{background:#fff}
-  .chips,.presets,.sharerow,#themeToggle,.toc{display:none}
+  .chips,.presets,.sharerow,#themeToggle,.tabs{display:none}
+  .view[hidden]{display:block}
+  .fold summary::before{content:""}
   .assume[open] summary::before,.assume summary::before{content:""}
   .resort,.verdict,.breakeven,.hero{break-inside:avoid}
 }
@@ -451,11 +470,15 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
   <p>Whether to own, whether to buy resale or direct, and which contract &mdash; worked out from how your family actually travels.</p>
   <p class="asof">Point charts, dues, cash rates and prices as of September 2026.</p>
-  <nav class="toc" aria-label="Contents">
-    <a href="#own">Own or book?</a><a href="#resorts">Every resort, your trips</a><a href="#route">Resale or direct</a><a href="#points">Cost per point</a><a href="#buys">What a contract buys</a><a href="#when">When to go</a><a href="#listing">Score a listing</a><a href="#inventory">Ranked inventory</a><a href="#reference">Resort reference</a><a href="#leaves-out">What is left out</a><a href="#provenance">Sources</a>
+  <nav class="tabs" aria-label="Views">
+    <button class="tab" data-view="decide" aria-selected="true">Decide<small>Own or book, which resort, resale or direct</small></button>
+    <button class="tab" data-view="explore" aria-selected="false">Explore<small>What a contract buys, and when to go</small></button>
+    <button class="tab" data-view="shop" aria-selected="false">Shop<small>Score a listing, rank a broker&rsquo;s board</small></button>
+    <button class="tab" data-view="read" aria-selected="false">Read<small>Resorts, fine print, sources</small></button>
   </nav>
 </header>
 
+<div class="view" id="view-decide">
 <section id="travel">
   <h2>1. How your family travels</h2>
   <p class="lede">Everything below is derived from this: how you travel, and what you would otherwise pay for the room.</p>
@@ -583,9 +606,9 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section id="points">
-  <h2>5. Every resort side by side</h2>
-  <p class="lede">Every contract reduced to one figure: what a point costs per year of deed, all in. Sorted cheapest first.</p>
+<section id="perpoint" class="folded">
+  <details class="fold">
+    <summary><span class="fold-title">Every resort side by side, by cost per point</span><span class="fold-sub">Every contract reduced to one figure: what a point costs per year of deed, all in. Sorted cheapest first.</span></summary>
   <div class="tablescroll">
     <table id="grid">
       <thead><tr>
@@ -603,10 +626,14 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
       <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
     </table>
   </div>
+  </details>
 </section>
 
+</div>
+
+<div class="view" id="view-explore">
 <section id="buys">
-  <h2>6. What the contract buys</h2>
+  <h2>What the contract buys</h2>
   <p class="lede">The same contract is a fortnight in September or four nights at Christmas. Every room against every season, on the 2027 chart.</p>
 
   <div class="controls">
@@ -633,7 +660,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section id="when">
-  <h2>7. When to go, and what a stay costs</h2>
+  <h2>When to go, and what a stay costs</h2>
   <p class="lede">Trip length down the side, dates across the top. Pick a check-in date and the matching cell is outlined, with the night-by-night breakdown beneath &mdash; a stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
 
   <div class="controls">
@@ -670,8 +697,11 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
+</div>
+
+<div class="view" id="view-shop">
 <section id="listing">
-  <h2>8. Score a listing</h2>
+  <h2>Score a listing</h2>
   <p class="lede">Two contracts at the same price per point are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it: banked points are nights you would otherwise buy, and a stripped contract quietly costs you a year.</p>
 
   <div class="controls">
@@ -688,7 +718,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section id="inventory">
-  <h2>9. Ranked inventory</h2>
+  <h2>Ranked inventory</h2>
   <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
   <div class="refresh">
@@ -741,8 +771,11 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
+</div>
+
+<div class="view" id="view-read">
 <section id="reference">
-  <h2>10. Resort reference</h2>
+  <h2>Resort reference</h2>
   <p class="lede">Rooms, transport, dining and amenities. Filter by how you would actually get to a park &mdash; day to day that matters more than the theming.</p>
   <div class="chips" id="chips">
     <button class="chip" data-mode="all" aria-pressed="true">All resorts</button>
@@ -758,7 +791,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 <section id="leaves-out">
-  <h2>11. What this model leaves out</h2>
+  <h2>What this model leaves out</h2>
   <p class="lede">Each of these would move the numbers above, and none is in the model &mdash; listed rather than guessed at, so the figures do not look more complete than they are.</p>
   <div class="grid2">
     <div class="panel">
@@ -783,7 +816,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section id="resale-costs">
-  <h2>12. What resale actually costs you</h2>
+  <h2>What resale actually costs you</h2>
   <div class="grid2">
     <div class="panel">
       <h3>The booking restriction</h3>
@@ -834,6 +867,8 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </table>
   </div>
 </section>
+
+</div>
 
 <footer>
   <p class="disclaimer"><strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.</p>
@@ -2154,7 +2189,8 @@ function writeURL(){
      Link sharing is an enhancement, so a page opened straight off disk should
      lose the shareable URL and nothing else. */
   try{
-    history.replaceState(null,"",qs?"?"+qs:location.pathname);
+    // The hash names the view (or a section inside one); keep it.
+    history.replaceState(null,"",(qs?"?"+qs:location.pathname)+location.hash);
   }catch(e){ /* no addressable URL to update; carry on */ }
 }
 
@@ -2280,6 +2316,37 @@ document.querySelectorAll("#chips .chip").forEach(c=>{
 });
 
 el("copyLink").addEventListener("click",copyLink);
+
+/* Views. One is shown at a time; the hash names it, or names a section
+   inside it, so a shared link opens where the sharer was looking. */
+const VIEWS=["decide","explore","shop","read"];
+const VIEW_OF={};
+document.querySelectorAll(".view").forEach(v=>
+  v.querySelectorAll("section[id]").forEach(sec=>{ VIEW_OF[sec.id]=v.id.slice(5); }));
+function showView(name){
+  if(!VIEWS.includes(name)) name="decide";
+  VIEWS.forEach(v=>{ el("view-"+v).hidden=v!==name; });
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===name?"true":"false"));
+  // The year strip measures its own width, which is zero while hidden.
+  if(name==="decide") renderHero();
+  return name;
+}
+function applyHash(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  if(VIEWS.includes(h)){ showView(h); return; }
+  const sec=h&&VIEW_OF[h]?el(h):null;
+  showView(sec?VIEW_OF[h]:"decide");
+  if(sec){
+    const fold=sec.querySelector("details.fold"); if(fold) fold.open=true;
+    if(sec.scrollIntoView) sec.scrollIntoView();
+  }
+}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  const v=showView(t.dataset.view);
+  try{ history.replaceState(null,"",location.pathname+location.search+(v==="decide"?"":"#"+v)); }catch(e){}
+  window.scrollTo({top:Math.max(0,document.querySelector(".tabs").offsetTop-8)});
+}));
+window.addEventListener("hashchange",applyHash);
 // The hero's label rows depend on the strip's pixel width.
 let heroResize=null;
 window.addEventListener("resize",()=>{ clearTimeout(heroResize); heroResize=setTimeout(renderHero,120); });
@@ -2314,6 +2381,7 @@ urlReady=true;
 
 renderProvenance();
 renderRooms(); renderAll();
+applyHash();
 </script>
 </body>
 </html>
