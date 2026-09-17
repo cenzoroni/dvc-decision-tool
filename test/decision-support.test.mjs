@@ -175,13 +175,27 @@ describe("renting points", () => {
 
 describe("section order", () => {
   test("the cross-resort comparison precedes resale-or-direct", () => {
-    // You should be able to see every resort side by side before being asked
-    // to commit to one resort's resale-vs-direct detail.
-    const grid = html.indexOf("Every resort side by side");
+    // You should be able to see every resort priced for your own trips before
+    // being asked to commit to one resort's resale-vs-direct detail. The
+    // per-point-year grid is the technical follow-up to that question, so it
+    // sits after it.
+    const compare = html.indexOf("Your trips at every resort");
     const split = html.indexOf("Resale or direct?");
-    assert.ok(grid > 0 && split > 0, "both sections should exist");
-    assert.ok(grid < split,
-      "the comparison grid should come first so the resort choice is informed");
+    const grid = html.indexOf("Every resort side by side");
+    assert.ok(compare > 0 && split > 0 && grid > 0, "all three sections should exist");
+    assert.ok(compare < split, "the trips-at-every-resort table should come first so the resort choice is informed");
+    assert.ok(split < grid, "the per-point grid follows the resale-or-direct question it elaborates");
+  });
+
+  test("the assumptions live with the inputs, folded away", () => {
+    const { el } = load({ fresh: true });
+    const panel = el("assume");
+    assert.ok(panel && panel.tagName === "DETAILS", "assumptions should be a collapsible panel");
+    assert.equal(panel.open, false, "closed by default: the defaults are sensible");
+    for (const id of ["points", "closeD", "closeR", "esc", "escRoom", "disc"]) {
+      assert.ok(panel.contains(el(id)), `#${id} should be inside the assumptions panel`);
+    }
+    assert.ok(el("travel").contains(panel), "and the panel belongs to step 1, where every other input is");
   });
 
   test("section numbers run in order with no gaps or repeats", () => {

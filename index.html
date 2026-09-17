@@ -113,7 +113,24 @@ body{
 /* The hero: a year on Disney's point chart. Segments are seasons, sized by
    their real day counts and shaded by what one night costs in the chosen
    room, with the reader's own trips pinned to the seasons they fall in. */
-.hero{margin:36px 0 0;padding-bottom:40px;border-bottom:1px solid var(--line)}
+.mast{position:relative}
+.mast .theme{position:absolute;top:56px;right:0;padding:7px 14px;font-size:.8rem}
+.hero{margin:36px 0 0}
+/* The contents list is a row of plain links, not tabs: it names where each
+   answer lives on a long page and nothing else. */
+.toc{display:flex;flex-wrap:wrap;gap:4px 18px;padding:18px 0 22px;border-bottom:1px solid var(--line);font-size:.86rem}
+.toc a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;padding:2px 0;transition:color .15s,border-color .15s}
+.toc a:hover{color:var(--lagoon);border-bottom-color:var(--lagoon)}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* Rarely-changed dials fold away. The summary reads as a plain rule-separated
+   line; open, the controls band inside carries its own top rule. */
+.assume{border-top:1px solid var(--line);margin-bottom:22px}
+.assume summary{list-style:none;cursor:pointer;padding:14px 0;font-size:.92rem;font-weight:500;display:flex;align-items:center;gap:10px}
+.assume summary::-webkit-details-marker{display:none}
+.assume summary::before{content:"+";font-size:1.15rem;line-height:1;color:var(--ink-soft);width:14px}
+.assume[open] summary::before{content:"\2212"}
+.assume .controls{margin-bottom:6px}
 .ys-wrap{position:relative}
 .yearstrip{display:flex;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .ys-seg{flex:0 0 auto;min-width:0;border-right:1px solid var(--paper)}
@@ -371,6 +388,7 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
   .block + .block{border-left:0;border-top:1px solid var(--line-soft);padding-left:0}
   .block{padding-right:0}}
 @media (max-width:720px){.split{grid-template-columns:1fr}
+  .mast .theme{position:static;margin-bottom:18px}
   .col + .col{border-left:0;border-top:1px solid var(--line)}
   .grid2{grid-template-columns:1fr}
   .yearstrip{height:60px}
@@ -412,7 +430,8 @@ footer{padding-top:40px;font-size:.8rem;color:var(--ink-soft);max-width:72ch;lin
     --shadow:none; --shadow-md:none;
   }
   body{background:#fff}
-  .chips,.presets,.sharerow,#themeToggle{display:none}
+  .chips,.presets,.sharerow,#themeToggle,.toc{display:none}
+  .assume[open] summary::before,.assume summary::before{content:""}
   .resort,.verdict,.breakeven,.hero{break-inside:avoid}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -429,12 +448,16 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 <div class="wrap">
 
 <header class="mast">
+  <button class="btn ghost theme" id="themeToggle" aria-pressed="false">Dark mode</button>
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
   <p>Whether to own, whether to buy resale or direct, and which contract &mdash; worked out from how your family actually travels.</p>
   <div class="hero" id="hero"></div>
+  <nav class="toc" aria-label="Contents">
+    <a href="#own">Own or book?</a><a href="#resorts">Every resort, your trips</a><a href="#route">Resale or direct</a><a href="#points">Cost per point</a><a href="#buys">What a contract buys</a><a href="#when">When to go</a><a href="#listing">Score a listing</a><a href="#inventory">Ranked inventory</a><a href="#reference">Resort reference</a><a href="#leaves-out">What is left out</a><a href="#provenance">Sources</a>
+  </nav>
 </header>
 
-<section>
+<section id="travel">
   <h2>1. How your family travels</h2>
   <p class="lede">Everything below is derived from this: how you travel, and what you would otherwise pay for the room.</p>
 
@@ -469,20 +492,38 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
   <div class="stayout" id="tripOut"></div>
 
+  <details class="assume" id="assume">
+    <summary>Contract size, closing costs and assumptions</summary>
+    <p class="hint" style="margin:0 0 14px">Everything below is derived from these too. The defaults are sensible; open this only if you want to change them.</p>
+  <div class="controls">
+    <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
+      <div class="hint"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ptsAuto" checked style="width:auto;accent-color:var(--lagoon)"> size it to the trips in step 1</label></div></div>
+    <div class="field"><label for="closeD">Direct closing costs</label><input id="closeD" type="number" value="845" min="0" step="50">
+      <div class="hint">Disney quotes $845.08 on a 150-point cash contract</div></div>
+    <div class="field"><label for="closeR">Resale closing + admin</label><input id="closeR" type="number" value="1200" min="0" step="50"></div>
+    <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
+      <div class="hint">Percent. 2026 came in at 6.4%</div></div>
+    <div class="field"><label for="escRoom">Room rates increase per year</label><input id="escRoom" type="number" value="4.5" min="0" max="12" step="0.25">
+      <div class="hint">Percent. The page is in today&rsquo;s dollars, so only the <em>gap</em> between this and the dues rate matters: dues outrunning rooms makes owning dearer, equal rates keep every figure flat. <strong>Estimate.</strong></div></div>
+    <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
+      <div class="hint">Percent, above inflation. At 0 every future dollar counts equally; above 0 the figures switch to a levelized cost.</div></div>
+  </div>
+
+  </details>
+
   <div class="sharerow">
     <button class="btn ghost" id="copyLink">Copy link to this scenario</button>
-    <button class="btn ghost" id="themeToggle" aria-pressed="false">Dark mode</button>
     <span id="copyMsg"></span>
   </div>
 </section>
 
-<section>
+<section id="own">
   <h2>2. Own, or just book a room?</h2>
   <p class="lede">The gate question, in today&rsquo;s dollars. Owning only saves against what you would <em>otherwise pay</em> &mdash; and a Florida resident already books these villas at 30&ndash;40% off. If cash wins here, nothing further down matters.</p>
   <div class="stayout" id="cashOut"></div>
 </section>
 
-<section>
+<section id="resorts">
   <h2>3. Your trips at every resort</h2>
   <p class="lede">The same trips priced at every resort. Point charts, rack rates and dues all differ, so the same family gets a different answer at each one. Sorted by break-even year; click any heading to re-sort.</p>
   <div class="tablescroll">
@@ -504,45 +545,9 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   </div>
 </section>
 
-<section>
-  <h2>4. Every resort side by side</h2>
-  <p class="lede">Every contract reduced to one figure: what a point costs per year of deed, all in. Sorted cheapest first.</p>
-  <div class="tablescroll">
-    <table id="grid">
-      <thead><tr>
-        <th data-k="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
-        <th data-k="exp" tabindex="0">Deed ends <span class="arrow">&#9662;</span></th>
-        <th data-k="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
-        <th data-k="direct" tabindex="0">Direct $/pt <span class="arrow">&#9662;</span></th>
-        <th data-k="resale" tabindex="0">Resale $/pt <span class="arrow">&#9662;</span></th>
-        <th data-k="dues" tabindex="0">2026 dues <span class="arrow">&#9662;</span></th>
-        <th data-k="cD" tabindex="0">Direct $/pt-yr <span class="arrow">&#9662;</span></th>
-        <th data-k="cR" tabindex="0">Resale $/pt-yr <span class="arrow">&#9662;</span></th>
-        <th data-k="lR" tabindex="0">Resale, discounted <span class="arrow">&#9662;</span></th>
-      </tr></thead>
-      <tbody id="gridBody"></tbody>
-      <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
-    </table>
-  </div>
-</section>
-
-<section>
-  <h2>5. Resale or direct?</h2>
-  <p class="lede">Same rooms, same booking windows, same dues. Only the purchase price differs, spread here over the years left on the deed.</p>
-
-  <div class="controls">
-    <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
-      <div class="hint"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ptsAuto" checked style="width:auto;accent-color:var(--lagoon)"> size it to the trips in step 1</label></div></div>
-    <div class="field"><label for="closeD">Direct closing costs</label><input id="closeD" type="number" value="845" min="0" step="50">
-      <div class="hint">Disney quotes $845.08 on a 150-point cash contract</div></div>
-    <div class="field"><label for="closeR">Resale closing + admin</label><input id="closeR" type="number" value="1200" min="0" step="50"></div>
-    <div class="field"><label for="esc">Dues increase per year</label><input id="esc" type="number" value="4.5" min="0" max="12" step="0.25">
-      <div class="hint">Percent. 2026 came in at 6.4%</div></div>
-    <div class="field"><label for="escRoom">Room rates increase per year</label><input id="escRoom" type="number" value="4.5" min="0" max="12" step="0.25">
-      <div class="hint">Percent. The page is in today&rsquo;s dollars, so only the <em>gap</em> between this and the dues rate matters: dues outrunning rooms makes owning dearer, equal rates keep every figure flat. <strong>Estimate.</strong></div></div>
-    <div class="field"><label for="disc">Discount rate</label><input id="disc" type="number" value="0" min="0" max="12" step="0.5">
-      <div class="hint">Percent, above inflation. At 0 every future dollar counts equally; above 0 the figures switch to a levelized cost.</div></div>
-  </div>
+<section id="route">
+  <h2>4. Resale or direct?</h2>
+  <p class="lede">Same rooms, same booking windows, same dues. Only the purchase price differs, spread here over the years left on the deed. Contract size and closing costs come from the panel at the end of step 1.</p>
 
   <div class="split">
     <div class="col">
@@ -577,7 +582,29 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="points">
+  <h2>5. Every resort side by side</h2>
+  <p class="lede">Every contract reduced to one figure: what a point costs per year of deed, all in. Sorted cheapest first.</p>
+  <div class="tablescroll">
+    <table id="grid">
+      <thead><tr>
+        <th data-k="name" tabindex="0">Resort <span class="arrow">&#9662;</span></th>
+        <th data-k="exp" tabindex="0">Deed ends <span class="arrow">&#9662;</span></th>
+        <th data-k="yrs" tabindex="0">Years left <span class="arrow">&#9662;</span></th>
+        <th data-k="direct" tabindex="0">Direct $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="resale" tabindex="0">Resale $/pt <span class="arrow">&#9662;</span></th>
+        <th data-k="dues" tabindex="0">2026 dues <span class="arrow">&#9662;</span></th>
+        <th data-k="cD" tabindex="0">Direct $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="cR" tabindex="0">Resale $/pt-yr <span class="arrow">&#9662;</span></th>
+        <th data-k="lR" tabindex="0">Resale, discounted <span class="arrow">&#9662;</span></th>
+      </tr></thead>
+      <tbody id="gridBody"></tbody>
+      <tfoot><tr><td colspan="9">Direct prices are list prices with no incentive applied &mdash; Disney runs volume incentives most of the year, so the real direct price is often lower and worth asking for in writing. Grand Floridian is confirmed at $275 from a current Disney sales sheet; the rest come from a July 2026 published list and may have moved the same way. Cost per point-year uses the contract size and assumptions set above. Old Key West trades in two flavors: original deeds ending 2042 and extended deeds ending 2057 &mdash; the extended ones sell at a premium, and the table shows the extended figure. The Cabins at Fort Wilderness have too little resale history to average.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<section id="buys">
   <h2>6. What the contract buys</h2>
   <p class="lede">The same contract is a fortnight in September or four nights at Christmas. Every room against every season, on the 2027 chart.</p>
 
@@ -604,7 +631,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="when">
   <h2>7. When to go, and what a stay costs</h2>
   <p class="lede">Trip length down the side, dates across the top. Pick a check-in date and the matching cell is outlined, with the night-by-night breakdown beneath &mdash; a stay&rsquo;s cost turns on which weekday you arrive as much as on the date.</p>
 
@@ -642,7 +669,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="listing">
   <h2>8. Score a listing</h2>
   <p class="lede">Two contracts at the same price per point are rarely worth the same. The points-available column &mdash; the <em>26 | 27 | 28</em> figures on a listing &mdash; decides it: banked points are nights you would otherwise buy, and a stripped contract quietly costs you a year.</p>
 
@@ -659,7 +686,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="inventory">
   <h2>9. Ranked inventory</h2>
   <p class="lede">Paste current listings from any DVC resale broker to score and rank them by all-in cost per point-year and value relative to recent sales.</p>
 
@@ -713,7 +740,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="reference">
   <h2>10. Resort reference</h2>
   <p class="lede">Rooms, transport, dining and amenities. Filter by how you would actually get to a park &mdash; day to day that matters more than the theming.</p>
   <div class="chips" id="chips">
@@ -729,7 +756,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 
 
-<section>
+<section id="leaves-out">
   <h2>11. What this model leaves out</h2>
   <p class="lede">Each of these would move the numbers above, and none is in the model &mdash; listed rather than guessed at, so the figures do not look more complete than they are.</p>
   <div class="grid2">
@@ -754,7 +781,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   </div>
 </section>
 
-<section>
+<section id="resale-costs">
   <h2>12. What resale actually costs you</h2>
   <div class="grid2">
     <div class="panel">
@@ -1338,14 +1365,14 @@ function renderCash(){
   const beMilestones=[...bePicks].sort((a,b)=>a-b).map(t=>beAll[t-1]);
   const beEnd=beAll[beAll.length-1];
   const first=routes[0], yrFirst=beYear[first.k];
-  const beHead=routes.map(x=>beYear[x.k]!==undefined?"year "+beYear[x.k]+" bought "+x.label:"never bought "+x.label).join(", ");
+  const beHead=routes.map(x=>"bought "+x.label+", "+(beYear[x.k]!==undefined?"year "+beYear[x.k]:"never")).join("; ");
   const edge=(m,k)=>{ const d=m.cash-m[k]; return "<td class=\""+(d>=0?"be-pos":"be-neg")+"\">"+(d>=0?"+":"−")+money(Math.round(Math.abs(d)))+"</td>"; };
   const beHTML=
     "<div class=\"breakeven\">"+
       "<div class=\"be-head\">"+
         "<span class=\"big\">"+(yrFirst!==undefined?"Year "+yrFirst:"Never")+"</span>"+
-        "<span class=\"big-unit\">break-even "+(routes.length>1?"&mdash; "+beHead:"bought "+first.label)+
-          ": the year cumulative ownership costs drop below what you would have spent booking cash</span>"+
+        "<span class=\"big-unit\">"+(yrFirst!==undefined?"when owning pulls ahead of booking cash":"owning never pulls ahead of booking cash within the deed")+
+          (routes.length>1?" &mdash; "+beHead:"")+"</span>"+
       "</div>"+
       "<table class=\"be-tbl\">"+
         "<thead><tr><th>After</th><th>Booking cash</th>"+
@@ -1379,7 +1406,7 @@ function renderCash(){
   const payback=gap>0?upfront/gap:null;
   const lifeSave=gap>0?gap*y:null;
   const verdict = gap>0
-    ? ["good","Owning wins by <strong>"+money(gap)+"</strong> a year on these assumptions. The <strong>"+money(upfront)+"</strong> you put in takes about <strong>"+payback.toFixed(1)+" years</strong> to pay back, and you only get it out again by selling the contract &mdash; which takes months and is not guaranteed to fetch today&rsquo;s price. Hold it to expiry in "+r.exp+" and the deed is worth nothing, which this figure already accounts for; on these assumptions you would be roughly "+money(lifeSave)+" ahead over that whole span."]
+    ? ["good","Owning wins by <strong>"+money(gap)+"</strong> a year on these assumptions. The <strong>"+money(upfront)+"</strong> you put in takes "+(yrFirst!==undefined?"until <strong>year "+yrFirst+"</strong>":"about <strong>"+payback.toFixed(1)+" years</strong>")+" to pay back, and you only get it out again by selling the contract &mdash; which takes months and is not guaranteed to fetch today&rsquo;s price. Hold it to expiry in "+r.exp+" and the deed is worth nothing, which this figure already accounts for; on these assumptions you would be roughly "+money(lifeSave)+" ahead over that whole span."]
     : ["bad","Booking cash wins by <strong>"+money(-gap)+"</strong> a year here. At this usage the purchase price never earns itself back, and you would be locking up "+money(upfront)+" to spend more per night."];
 
   const cells=[
