@@ -108,17 +108,19 @@ body{
 .mast h1{font-family:"DM Serif Display",Georgia,serif;font-weight:400;
   font-size:clamp(2.4rem,5.5vw,3.05rem);line-height:1.05;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance;max-width:20ch}
 .mast p{margin:0;color:var(--ink-soft);font-size:1.25rem;line-height:1.5;max-width:44ch;text-wrap:pretty}
-.mast .asof{margin-top:0;font-size:.8rem;max-width:none}
+.mast .asof{margin-top:10px;font-size:.8rem;max-width:none}
 
 /* The hero: a year on Disney's point chart. Segments are seasons, sized by
    their real day counts and shaded by what one night costs in the chosen
    room, with the reader's own trips pinned to the seasons they fall in. */
 .mast{position:relative}
 .mast .theme{position:absolute;top:56px;right:0;padding:7px 14px;font-size:.8rem}
-.hero{margin:36px 0 0}
+/* The year strip is an instrument in step 1: it sits between the trips and
+   their breakdown, so editing a trip visibly moves its pin. */
+.hero{margin:0 0 26px}
 /* The contents list is a row of plain links, not tabs: it names where each
    answer lives on a long page and nothing else. */
-.toc{display:flex;flex-wrap:wrap;gap:4px 18px;padding:18px 0 22px;border-bottom:1px solid var(--line);font-size:.86rem}
+.toc{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:28px;padding:16px 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:.86rem}
 .toc a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;padding:2px 0;transition:color .15s,border-color .15s}
 .toc a:hover{color:var(--lagoon);border-bottom-color:var(--lagoon)}
 html{scroll-behavior:smooth;scroll-padding-top:16px}
@@ -132,7 +134,7 @@ html{scroll-behavior:smooth;scroll-padding-top:16px}
 .assume[open] summary::before{content:"\2212"}
 .assume .controls{margin-bottom:6px}
 .ys-wrap{position:relative}
-.yearstrip{display:flex;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.yearstrip{display:flex;height:64px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
 .ys-seg{flex:0 0 auto;min-width:0;border-right:1px solid var(--paper)}
 .ys-seg:last-child{border-right:0}
 .ys-pins{position:absolute;inset:0;pointer-events:none}
@@ -141,14 +143,7 @@ html{scroll-behavior:smooth;scroll-padding-top:16px}
   padding:4px 10px;border-radius:14px;white-space:nowrap;box-shadow:var(--shadow)}
 .ys-months{display:flex;font-size:.78rem;color:var(--ink-soft);margin-top:6px}
 .ys-months span{flex:0 0 auto;min-width:0;overflow:hidden;white-space:nowrap;padding:2px 0 0 5px;border-left:1px solid var(--ink-soft)}
-.ys-list{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-size:.8rem;color:var(--ink)}
-.ys-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.ys-item i{width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}
-.ys-item small{font-size:.74rem;color:var(--ink-soft)}
-.ys-item.here{font-weight:700}
-.ys-item.here i{outline:2px solid var(--lagoon);outline-offset:1px}
-.ys-cap{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-soft);margin-top:14px}
-.ys-cap b{color:var(--ink);font-weight:500}
+.ys-cap{margin:12px 0 0;font-size:.8rem;color:var(--ink-soft);max-width:78ch;line-height:1.5}
 .ys-key{display:inline-flex;align-items:center;gap:6px}
 .ys-key i{display:inline-block;width:34px;height:10px;border-radius:2px;
   background:linear-gradient(90deg,rgba(var(--shade-rgb),.08),rgba(var(--shade-rgb),.62))}
@@ -455,7 +450,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <button class="btn ghost theme" id="themeToggle" aria-pressed="false">Dark mode</button>
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
   <p>Whether to own, whether to buy resale or direct, and which contract &mdash; worked out from how your family actually travels.</p>
-  <div class="hero" id="hero"></div>
+  <p class="asof">Point charts, dues, cash rates and prices as of September 2026.</p>
   <nav class="toc" aria-label="Contents">
     <a href="#own">Own or book?</a><a href="#resorts">Every resort, your trips</a><a href="#route">Resale or direct</a><a href="#points">Cost per point</a><a href="#buys">What a contract buys</a><a href="#when">When to go</a><a href="#listing">Score a listing</a><a href="#inventory">Ranked inventory</a><a href="#reference">Resort reference</a><a href="#leaves-out">What is left out</a><a href="#provenance">Sources</a>
   </nav>
@@ -493,6 +488,8 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
         <tbody id="tripsBody"></tbody>
       </table>
     </div>
+
+  <div class="hero" id="hero"></div>
 
   <div class="stayout" id="tripOut"></div>
 
@@ -1585,20 +1582,13 @@ function renderHero(){
      bands were tried and read as scatter: Thanksgiving is three days wide. */
   const months=MONTH_SHORT.map((m,i)=>
     "<span style=\"width:"+(new Date(yr,i+1,0).getDate()/total*100).toFixed(3)+"%\">"+m+"</span>").join("");
-  const list=segs.map(s=>{
-    const here=(byBand[s.si+"."+s.b]||[]).length;
-    return "<span class=\"ys-item"+(here?" here":"")+"\"><i style=\"background:rgba(var(--shade-rgb),"+(0.08+0.54*t(s.si)).toFixed(3)+")\"></i>"+
-      bandLabel(s.si,s.b)+"<small>"+pts(s.si)+" pts</small></span>";
-  }).join("");
   const [room,view]=CHARTS[ri].cols[ci].split("|");
   const n=trips.length;
   el("hero").innerHTML=
     "<div class=\"ys-wrap\"><div class=\"yearstrip\">"+strip+"</div><div class=\"ys-pins\">"+pins+"</div></div>"+
     "<div class=\"ys-months\">"+months+"</div>"+
-    "<div class=\"ys-list\">"+list+"</div>"+
-    "<div class=\"ys-cap\"><span><b>"+plain(r.name)+"</b>, "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+
-      " on the 2027 point chart &mdash; "+lo+" to "+hi+" points a weeknight <span class=\"ys-key\"><i></i></span> &mdash; with your "+n+" trip"+(n===1?"":"s")+" pinned.</span>"+
-    "<span class=\"asof\">Charts, dues and prices as of September 2026</span></div>";
+    "<p class=\"ys-cap\">Your "+n+" trip"+(n===1?"":"s")+" on the 2027 point chart for a "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+
+      " at "+plain(r.name)+". Darker bands cost more points a night, "+lo+" to "+hi+" <span class=\"ys-key\"><i></i></span>; hover a band for its dates.</p>";
 }
 
 /* Render a season's real date bands from the chart data, so headers can never
