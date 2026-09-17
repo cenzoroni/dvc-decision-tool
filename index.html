@@ -480,7 +480,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 
 <div class="view" id="view-decide">
 <section id="travel">
-  <h2>1. How your family travels</h2>
+  <h2>How your family travels</h2>
   <p class="lede">Everything below is derived from this: how you travel, and what you would otherwise pay for the room.</p>
 
   <div class="controls">
@@ -521,7 +521,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <p class="hint" style="margin:0 0 14px">Everything below is derived from these too. The defaults are sensible; open this only if you want to change them.</p>
   <div class="controls">
     <div class="field"><label for="points">Contract size</label><input id="points" type="number" value="150" min="25" max="1000" step="5">
-      <div class="hint"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ptsAuto" checked style="width:auto;accent-color:var(--lagoon)"> size it to the trips in step 1</label></div></div>
+      <div class="hint"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ptsAuto" checked style="width:auto;accent-color:var(--lagoon)"> size it to the trips above</label></div></div>
     <div class="field"><label for="closeD">Direct closing costs</label><input id="closeD" type="number" value="845" min="0" step="50">
       <div class="hint">Disney quotes $845.08 on a 150-point cash contract</div></div>
     <div class="field"><label for="closeR">Resale closing + admin</label><input id="closeR" type="number" value="1200" min="0" step="50"></div>
@@ -542,13 +542,13 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section id="own">
-  <h2>2. Own, or just book a room?</h2>
+  <h2>Own, or just book a room?</h2>
   <p class="lede">The gate question, in today&rsquo;s dollars. Owning only saves against what you would <em>otherwise pay</em> &mdash; and a Florida resident already books these villas at 30&ndash;40% off. If cash wins here, nothing further down matters.</p>
   <div class="stayout" id="cashOut"></div>
 </section>
 
 <section id="resorts">
-  <h2>3. Your trips at every resort</h2>
+  <h2>Your trips at every resort</h2>
   <p class="lede">The same trips priced at every resort. Point charts, rack rates and dues all differ, so the same family gets a different answer at each one. Sorted by break-even year; click any heading to re-sort.</p>
   <div class="tablescroll">
     <table id="compare">
@@ -570,8 +570,8 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </section>
 
 <section id="route">
-  <h2>4. Resale or direct?</h2>
-  <p class="lede">Same rooms, same booking windows, same dues. Only the purchase price differs, spread here over the years left on the deed. Contract size and closing costs come from the panel at the end of step 1.</p>
+  <h2>Resale or direct?</h2>
+  <p class="lede">Same rooms, same booking windows, same dues. Only the purchase price differs, spread here over the years left on the deed. Contract size and closing costs are set in the panel under your trips.</p>
 
   <div class="split">
     <div class="col">
@@ -1548,7 +1548,7 @@ function renderComparison(){
     "</tr>";
   }).join("");
 
-  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its studio at Disney&rsquo;s published 2026 rates for each trip&rsquo;s dates, using the trips from step 1 and the 2027 chart; a rate you typed on a trip applies only to the resort selected in step 1. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
+  el("compareFoot").innerHTML="Today&rsquo;s dollars. Each resort is priced in its studio at Disney&rsquo;s published 2026 rates for each trip&rsquo;s dates, using your trips and the 2027 chart; a rate you typed on a trip applies only to the resort you selected. Upfront and ownership costs use resale pricing where a market exists, direct otherwise. Contract size is the trip total rounded up to the next 25 points. Transport and full amenity detail are in the resort reference below.";
 
   document.querySelectorAll("#compare thead th").forEach(th=>{
     const a=th.querySelector(".arrow"); if(!a) return;
