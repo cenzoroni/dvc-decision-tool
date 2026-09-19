@@ -221,7 +221,11 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <div class="field"><label for="resortStay">Resort</label><select id="resortStay"></select></div>
     <div class="field"><label for="checkin">Check-in date</label><input id="checkin" type="date"></div>
     <div class="field"><label for="nights">Nights</label><input id="nights" type="number" value="3" min="1" max="14" step="1"></div>
-    <div class="field"><label for="wStart">Grid assumes check-in on</label><select id="wStart">
+  </div>
+  <details class="assume" id="gridPrefs">
+    <summary>Grid options</summary>
+  <div class="controls">
+    <div class="field"><label for="wStart">Check-in day</label><select id="wStart">
       <option value="-2">The weekday of my date</option>
       <option value="-1">Any day &mdash; averaged</option>
       <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
@@ -240,6 +244,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </select></div>
     <div class="field"><label for="wMax">Longest trip shown</label><input id="wMax" type="number" value="7" min="2" max="14" step="1"></div>
   </div>
+  </details>
 
   <div class="tablescroll" style="margin-bottom:20px">
     <table class="matrix" id="whenTbl"><thead id="whenHead"></thead><tbody id="whenBody"></tbody></table>
@@ -350,6 +355,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <div class="grid2">
     <div class="panel">
       <h3>Costs that are missing</h3>
+      <p class="panel-lead">Each of these makes owning dearer than the figures above.</p>
       <ul>
         <li><strong>Financing.</strong> Every figure here assumes you pay cash. Disney&rsquo;s in-house financing on direct contracts has historically run in the low-to-mid teens, and resale buyers who finance pay their own lender. Because direct buyers finance more often, leaving interest out flatters direct specifically.</li>
         <li><strong>Getting out.</strong> Selling means a broker commission, closing costs, and months of waiting, with no guarantee of today&rsquo;s price and a right of first refusal that can pull the sale. The payback figure assumes you simply hold to expiry.</li>
@@ -359,6 +365,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </div>
     <div class="panel">
       <h3>What owning takes away</h3>
+      <p class="panel-lead">Flexibility, mostly &mdash; and the other uses of the money.</p>
       <ul>
         <li><strong>The money stops working elsewhere.</strong> A five-figure sum in a contract is a five-figure sum not invested. The comparison here counts what you save on rooms, not what the capital might have earned instead.</li>
         <li><strong>Skipping a year is not free.</strong> A cash booker who does not travel pays nothing. An owner still owes dues, every year, whether or not they go.</li>
@@ -374,6 +381,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <div class="grid2">
     <div class="panel">
       <h3>The booking restriction</h3>
+      <p class="panel-lead">Resale points can never book the newest resorts &mdash; and at those resorts, resale can book nothing else.</p>
       <ul>
         <li>Resale points bought on or after 19 January 2019 at any of the original 14 resorts can book those 14 resorts, but never Riviera, the Villas at Disneyland Hotel, or the Cabins at Fort Wilderness &mdash; and almost certainly never Lakeshore Lodge.</li>
         <li>Resale points bought at Riviera, Disneyland Hotel, or Fort Wilderness Cabins can only book that one resort. No 7-month trading at all.</li>
@@ -383,6 +391,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </div>
     <div class="panel">
       <h3>The perks you give up</h3>
+      <p class="panel-lead">The blue card: member discounts and events. Worth real money to frequent passholders, close to nothing otherwise.</p>
       <ul>
         <li>No blue card. That is the members-only annual pass, dining and merchandise discounts, Moonlight Magic events, and Top of the World Lounge at Bay Lake Tower.</li>
         <li>Blue card requires 150 direct points minimum, so a small direct add-on does not restore it if your base contract is resale.</li>
@@ -392,6 +401,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </div>
     <div class="panel">
       <h3>Friction on the resale side</h3>
+      <p class="panel-lead">Slower, with more paperwork, and Disney can take the deal off the table.</p>
       <ul>
         <li>Disney holds right of first refusal. It can take your contract at your agreed price, and you start over. Budget 2&ndash;4 months from offer to points in your account.</li>
         <li>Closing costs run higher than direct: roughly $600&ndash;$1,000 plus a broker admin fee, and you usually pay the current year&rsquo;s dues on any points that come with the contract.</li>
@@ -401,6 +411,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     </div>
     <div class="panel">
       <h3>Where direct genuinely wins</h3>
+      <p class="panel-lead">Four cases, and only the last one is a judgement call.</p>
       <ul>
         <li>You specifically want Riviera or Lakeshore Lodge as a home resort and want to keep trading rights elsewhere.</li>
         <li>You want a small contract. Disney will sell 25-point add-ons; the resale market prices small contracts at a steep premium per point.</li>
@@ -425,9 +436,7 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
 </div>
 
 <footer>
-  <p class="disclaimer"><strong>Independent tool &middot; not affiliated with Disney.</strong> This site is not endorsed by or connected to The Walt Disney Company. &ldquo;Disney Vacation Club,&rdquo; &ldquo;DVC,&rdquo; and resort names are Disney trademarks. This is an informational calculator, not financial advice &mdash; verify all figures with Disney and consult a licensed professional before purchasing. Some figures (rack rates, cash seasonality) are estimates; point charts and dues are from published Disney sources.</p>
-  <p>Figures are current as of early September 2026 and move constantly. Direct prices for sold-out resorts &mdash; Animal Kingdom, Bay Lake Tower, Beach Club, BoardWalk, Boulder Ridge, Copper Creek, Old Key West, Saratoga Springs and Grand Floridian &mdash; are real list prices, but Disney only sells inventory it has reclaimed, so availability is sporadic and you take the use year and point total on offer. Restaurants open, close and refurbish constantly; verify anything you are planning a trip around, along with point charts and room capacities, against Disney&rsquo;s current listings.</p>
-  <p style="margin-top:16px">This site is not affiliated with, endorsed by, or connected to The Walt Disney Company or Disney Vacation Development, Inc. All trademarks belong to their respective owners. This tool provides estimates for informational purposes only and does not constitute financial or investment advice.</p>
+  <p>Not affiliated with, endorsed by, or connected to The Walt Disney Company or Disney Vacation Development, Inc.; &ldquo;Disney Vacation Club&rdquo; and resort names are their trademarks. Estimates for information only, not financial advice &mdash; verify point charts, dues, prices and room details with Disney before acting on any of it. Figures move constantly and were current in early September 2026.</p>
   <p class="build">Build <span id="build">dev</span></p>
 </footer>
 

@@ -818,11 +818,10 @@ function renderWhen(){
      mode==="cheap"?"Points for the stay, taking the cheapest start date available":
      mode==="range"?"Points for the stay, cheapest to priciest start date":
      "Points for the stay, averaged over every eligible start date")+
-    " &mdash; "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+" at "+plain(r.name)+", "+dn+
-    ". 2027 chart. Blank cells run past the published chart. "+
+    " &mdash; "+room.toLowerCase()+(view?", "+view.toLowerCase()+" view":"")+" at "+plain(r.name)+", "+dn+". "+
     (byMonth
-      ? "<strong>Months are not pricing periods.</strong> Disney&rsquo;s seasons cut mid-month &mdash; season 6 ends 20 March and season 7 runs only 21&ndash;28 March &mdash; so a monthly figure can average two very different prices. An asterisk marks a column where the cheapest and priciest start differ by more than 12%; switch the columns to point-chart seasons, or to the cheapest-to-priciest view, to see it."
-      : "These are Disney&rsquo+shadeKey();s actual pricing bands, so every start date inside a column carries the same nightly rate. Variation left within a column comes only from which weekdays the stay covers.")+hl;
+      ? "Disney&rsquo;s seasons cut mid-month, so an asterisk marks a month whose cheapest and priciest start differ by more than 12% &mdash; switch the columns to point-chart seasons to see the bands themselves."
+      : "Every start date in a column carries the same nightly rate; what varies is which weekdays the stay covers.")+hl+shadeKey();
 }
 
 let rankKey="score", rankDir=-1;
@@ -866,9 +865,12 @@ function renderRank(){
       "<td>"+money2(x.allin)+"</td><td>"+money(x.cash)+"</td>"+
       "<td class=\""+(x.rofr>=10?"neg":x.rofr>=4?"":"pos")+"\">"+x.rofr+"%</td>"+
     "</tr>").join("");
-  el("rankFoot").innerHTML=rows.length+" listing"+(rows.length===1?"":"s")+" match"+(rows.length===1?"es":"")+
-    (rows.length>60?", showing the top 60":"")+
-    ". Effective price credits banked points and debits missing ones at each resort&rsquo;s own value &mdash; the cash a point saves you there, derived from the trip shape and discount set above, so a BoardWalk point and a Saratoga point are not treated as equal; &ldquo;vs sold&rdquo; compares it to the August 2026 average for that resort. Resort names link out to the listing &mdash; 43% of the board was already pending when this was captured, so expect some to be gone.";
+  el("rankFoot").innerHTML=!LISTINGS.length
+    ? "Nothing to rank yet. Paste a broker&rsquo;s listings above and they will appear here, scored."
+    : !rows.length
+    ? "No listings match these filters."
+    : rows.length+" listing"+(rows.length===1?"":"s")+(rows.length>60?", showing the top 60":"")+
+      ". Effective price credits banked points and debits missing ones at what a point saves at that resort; &ldquo;vs sold&rdquo; compares it to the August 2026 average. Resort names link to the listing.";
   document.querySelectorAll("#rank thead th").forEach(th=>{
     const a=th.querySelector(".arrow"); if(!a) return;
     a.innerHTML=th.dataset.r===rankKey?(rankDir===1?"&#9652;":"&#9662;"):"&#9662;";
@@ -1151,7 +1153,7 @@ function renderRooms(){
         "<span class=\"meta\">Deed ends "+r.exp+" &middot; dues "+money2(r.dues)+"/pt</span>"+
         (r.restricted
           ? "<span class=\"tag\">Resale books this resort only</span>"
-          : "<span class=\"tag ok\">Resale trades across the original 14</span>")+
+          : "")+
       "</summary>"+
       "<div class=\"rbody\">"+
         "<p class=\"rnote\">"+r.note+"</p>"+
@@ -1439,7 +1441,7 @@ function applyHash(){
   showView(sec?VIEW_OF[h]:"decide");
   if(sec){
     const fold=sec.querySelector("details.fold"); if(fold) fold.open=true;
-    if(sec.scrollIntoView) sec.scrollIntoView();
+    const bar=document.querySelector(".tabs"); window.scrollTo({top:sec.getBoundingClientRect().top+window.scrollY-(bar?bar.offsetHeight:0)-16});
   }
 }
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
