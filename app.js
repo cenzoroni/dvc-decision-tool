@@ -1153,7 +1153,19 @@ const SPA_RE=/\bSenses Spa\b/i;
 const SLIDE_RE=/slide/i;
 const DUES_MEDIAN=RESORTS.reduce((s,r)=>s+r.dues,0)/RESORTS.length;
 
-function resortTags(r){
+function resortRoomTags(i){
+  const cols=CHARTS[i].cols;
+  const t=[];
+  const low=cols.map(c=>c.toLowerCase());
+  if(low.some(c=>c.includes("studio"))) t.push("rt-studio");
+  if(low.some(c=>/one-bedroom|^cabin\|/.test(c))) t.push("rt-1bed");
+  if(low.some(c=>/two-bedroom|cascade cabin/.test(c))) t.push("rt-2bed");
+  if(low.some(c=>/three-bedroom|grand villa|treehouse/.test(c))) t.push("rt-3bed");
+  if(cols.some(c=>c.split("|")[1]&&/club level/i.test(c.split("|")[1]))) t.push("rt-club");
+  return t;
+}
+
+function resortTags(r,i){
   const t=[];
   const dText=r.dining.map(d=>d[0]+" "+d[1]).join(" ");
   const aText=r.amenities.join(" ");
@@ -1164,12 +1176,12 @@ function resortTags(r){
   if(r.exp<=2042) t.push("short-deed");
   if(r.exp>=2060) t.push("long-deed");
   if(r.dues<DUES_MEDIAN) t.push("low-dues");
-  return t;
+  return t.concat(resortRoomTags(i));
 }
 
 function renderRooms(){
   const main=RESORTS.map((r,i)=>{
-    const tags=resortTags(r);
+    const tags=resortTags(r,i);
     return "<details class=\"resort\" data-modes=\""+r.modes.join(" ")+"\" data-tags=\""+tags.join(" ")+"\" data-i=\""+i+"\">"+
       "<summary>"+
         "<span class=\"rname\">"+r.name+"</span>"+
@@ -1178,7 +1190,7 @@ function renderRooms(){
         (r.restricted
           ? "<span class=\"tag\">Resale books this resort only</span>"
           : "")+
-        (tags.length ? "<span class=\"taglist\">"+tags.map(t=>"<span class=\"pill\">"+({"signature":"Signature","character":"Character dining","spa":"Spa","pool-slide":"Pool slide","short-deed":"Short deed","long-deed":"Long deed","low-dues":"Low dues"}[t]||t)+"</span>").join("")+"</span>" : "")+
+        (tags.length ? "<span class=\"taglist\">"+tags.filter(t=>!t.startsWith("rt-")).map(t=>"<span class=\"pill\">"+({"signature":"Signature","character":"Character dining","spa":"Spa","pool-slide":"Pool slide","short-deed":"Short deed","long-deed":"Long deed","low-dues":"Low dues"}[t]||t)+"</span>").join("")+"</span>" : "")+
       "</summary>"+
       "<div class=\"rbody\">"+
         "<p class=\"rnote\">"+r.note+"</p>"+
@@ -1453,7 +1465,7 @@ document.querySelectorAll("#chips .chip").forEach(c=>{
   });
 });
 
-document.querySelectorAll("#chipsAmenity .chip").forEach(c=>{
+document.querySelectorAll("#chipsRoom .chip, #chipsAmenity .chip").forEach(c=>{
   c.addEventListener("click",()=>{
     const tag=c.dataset.tag;
     if(activeTags.has(tag)){ activeTags.delete(tag); c.setAttribute("aria-pressed","false"); }
