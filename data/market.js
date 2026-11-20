@@ -5,14 +5,14 @@
    in the same global lexical scope the application code reads them from.
    Editing a price here is a data change, not a code change. */
 
-const MARKET_META={label:"Resale asking prices",source:"Broker listing board snapshot",captured:"2026-09-03",estimated:false,note:"A point-in-time snapshot; 43% of the board was already pending when captured."};
+const MARKET_META={label:"Resale asking prices",source:"DVC Resale Market listing board snapshot",captured:"2026-11-19",estimated:false,note:"A point-in-time snapshot of dvcresalemarket.com/listings; ask is the mean asking price of non-pending listings."};
 const ROFR_META={label:"ROFR buyback rates",source:"Monthly ROFR reports, 2026 year to date",captured:"2026-09-03",estimated:true,note:"Approximated from published monthly reports; used only to score relative risk."};
 const ROOM_TAX_META={label:"Room tax on cash bookings",source:"Florida transient rental tax as applied at Walt Disney World; DVC point stays are exempt",captured:"2026-09-09",estimated:false,note:"12.5% on a cash room booking only. Stays on points \u2014 your own or rented \u2014 are not taxed at the WDW resorts modelled here."};
 
 const MARKET=[
-  {ask:120,n:36,live:22},{ask:150,n:18,live:7},{ask:145,n:22,live:15},{ask:130,n:18,live:6},
-  {ask:113,n:4,live:2},{ask:149,n:22,live:15},{ask:99,n:39,live:27},{ask:173,n:19,live:3},
-  {ask:122,n:13,live:10},{ask:114,n:52,live:31},{ask:177,n:20,live:11},{ask:null,n:0,live:0}
+  {ask:120,n:71,live:53},{ask:152,n:37,live:30},{ask:141,n:16,live:8},{ask:135,n:44,live:32},
+  {ask:108,n:8,live:5},{ask:150,n:20,live:11},{ask:101,n:66,live:53},{ask:182,n:31,live:25},
+  {ask:130,n:20,live:11},{ask:110,n:84,live:66},{ask:178,n:27,live:22},{ask:null,n:0,live:0}
 ];
 
 const ROFR=[3,5,3,0,0,0,12,0,3,4,15,0];

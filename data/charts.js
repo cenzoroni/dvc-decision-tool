@@ -5,7 +5,7 @@
    in the same global lexical scope the application code reads them from.
    Editing a price here is a data change, not a code change. */
 
-const CHARTS_META={label:"Point charts and seasons",source:"Disney published 2026 DVC point charts; separately published 2027 charts for Animal Kingdom Villas and Polynesian",captured:"2026-09-03",estimated:false,note:"Charts end 31 Dec 2027; 2028 charts publish around Dec 2026. Only Animal Kingdom Villas and Polynesian have separately transcribed 2027 charts \u2014 the other ten resorts reuse their 2026 values for 2027, which is an assumption of no change rather than a sourced figure."};
+const CHARTS_META={label:"Point charts and seasons",source:"Disney published 2026 and 2027 DVC point charts",captured:"2026-11-19",estimated:false,note:"All twelve 2027 charts confirmed from Disney\u2019s published PDFs. Animal Kingdom Villas and Polynesian carry explicit y27 data; the remaining ten resorts reuse their 2026 values because every 2027 chart is identical to 2026."};
 
 const SEASONS = {
   2026:[
