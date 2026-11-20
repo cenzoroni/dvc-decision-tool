@@ -212,6 +212,10 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
   background:var(--surface);color:var(--ink-soft);border-radius:20px;cursor:pointer;transition:all .15s}
 .chip:hover{border-color:var(--lagoon);color:var(--lagoon)}
 .chip[aria-pressed="true"]{background:var(--lagoon);border-color:var(--lagoon);color:var(--on-lagoon);font-weight:500}
+.chips-amenity{margin-top:-12px}
+.chips-amenity .chip{font-size:.78rem;padding:5px 12px}
+.taglist{display:inline-flex;flex-wrap:wrap;gap:4px}
+.pill{font-size:.65rem;padding:2px 7px;border-radius:3px;background:var(--lagoon-tint);color:var(--lagoon);white-space:nowrap}
 
 .resort{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;transition:border-color .15s}
 .resort:hover{border-color:var(--ink-soft)}
@@ -247,6 +251,8 @@ tfoot td{font-size:.76rem;color:var(--ink-soft);text-align:left;border:0;padding
 .block ul{margin:0 0 12px;padding-left:16px}
 .block li{font-size:.85rem;margin-bottom:6px;line-height:1.45}
 .block .cat{font-size:.76rem;color:var(--ink-soft);font-weight:500;margin:0 0 5px}
+.block .cat a{color:var(--lagoon);text-decoration:none;border-bottom:1px solid transparent}
+.block .cat a:hover{border-bottom-color:var(--lagoon)}
 .block p.none{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px}
 
 /* One lifted surface on the page: the own-or-book verdict. Everything else

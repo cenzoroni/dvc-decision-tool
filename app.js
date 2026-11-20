@@ -1134,7 +1134,10 @@ const roomTable = rooms =>
   rooms.map(x=>"<tr><td>"+x[0]+"</td><td>"+x[1]+"</td><td>"+x[2]+"</td></tr>").join("")+"</tbody></table>";
 
 const list = items => "<ul>"+items.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
-const diningBlock = groups => groups.map(g=>"<p class=\"cat\">"+g[0]+"</p><ul><li>"+g[1]+"</li></ul>").join("");
+const diningBlock = groups => groups.map(g=>{
+  const name = g[2] ? "<a href=\""+g[2]+"\" target=\"_blank\" rel=\"noopener\">"+g[0]+"</a>" : g[0];
+  return "<p class=\"cat\">"+name+"</p><ul><li>"+g[1]+"</li></ul>";
+}).join("");
 
 function blocks(r){
   return "<div class=\"blocks\">"+
@@ -1144,9 +1147,30 @@ function blocks(r){
   "</div>";
 }
 
+const SIGNATURE_RE=/signature|fine dining/i;
+const CHARACTER_RE=/character|Snow White|Chef Mickey|Minnie|Lilo|Stitch|Mickey.*friends/i;
+const SPA_RE=/\bSenses Spa\b/i;
+const SLIDE_RE=/slide/i;
+const DUES_MEDIAN=RESORTS.reduce((s,r)=>s+r.dues,0)/RESORTS.length;
+
+function resortTags(r){
+  const t=[];
+  const dText=r.dining.map(d=>d[0]+" "+d[1]).join(" ");
+  const aText=r.amenities.join(" ");
+  if(SIGNATURE_RE.test(dText)) t.push("signature");
+  if(CHARACTER_RE.test(dText)) t.push("character");
+  if(SPA_RE.test(aText)) t.push("spa");
+  if(SLIDE_RE.test(aText)) t.push("pool-slide");
+  if(r.exp<=2042) t.push("short-deed");
+  if(r.exp>=2060) t.push("long-deed");
+  if(r.dues<DUES_MEDIAN) t.push("low-dues");
+  return t;
+}
+
 function renderRooms(){
-  const main=RESORTS.map((r,i)=>
-    "<details class=\"resort\" data-modes=\""+r.modes.join(" ")+"\" data-i=\""+i+"\">"+
+  const main=RESORTS.map((r,i)=>{
+    const tags=resortTags(r);
+    return "<details class=\"resort\" data-modes=\""+r.modes.join(" ")+"\" data-tags=\""+tags.join(" ")+"\" data-i=\""+i+"\">"+
       "<summary>"+
         "<span class=\"rname\">"+r.name+"</span>"+
         "<span class=\"modes\">"+r.modeLabel+"</span>"+
@@ -1154,6 +1178,7 @@ function renderRooms(){
         (r.restricted
           ? "<span class=\"tag\">Resale books this resort only</span>"
           : "")+
+        (tags.length ? "<span class=\"taglist\">"+tags.map(t=>"<span class=\"pill\">"+({"signature":"Signature","character":"Character dining","spa":"Spa","pool-slide":"Pool slide","short-deed":"Short deed","long-deed":"Long deed","low-dues":"Low dues"}[t]||t)+"</span>").join("")+"</span>" : "")+
       "</summary>"+
       "<div class=\"rbody\">"+
         "<p class=\"rnote\">"+r.note+"</p>"+
@@ -1161,10 +1186,10 @@ function renderRooms(){
         roomTable(r.rooms)+
         blocks(r)+
       "</div>"+
-    "</details>").join("");
+    "</details>";}).join("");
 
   const soon =
-    "<details class=\"resort\" data-modes=\"boat bus\">"+
+    "<details class=\"resort\" data-modes=\"boat bus\" data-tags=\"\">"+
       "<summary>"+
         "<span class=\"rname\">"+UPCOMING.name+"</span>"+
         "<span class=\"modes\">Boat &middot; Bus</span>"+
@@ -1181,16 +1206,26 @@ function renderRooms(){
   el("rooms").innerHTML = main + soon;
 }
 
-function applyFilter(mode){
+let activeMode="all";
+let activeTags=new Set();
+
+function applyFilters(){
   document.querySelectorAll("#rooms .resort").forEach(d=>{
     const m=(d.dataset.modes||"").split(" ");
-    let show;
-    if(mode==="all") show=true;
-    else if(mode==="busonly") show = m.length===1 && m[0]==="bus";
-    else show = m.includes(mode);
+    const t=(d.dataset.tags||"").split(" ").filter(Boolean);
+    let show=true;
+    if(activeMode==="busonly") show = m.length===1 && m[0]==="bus";
+    else if(activeMode!=="all") show = m.includes(activeMode);
+    if(show && activeTags.size)
+      for(const tag of activeTags){ if(!t.includes(tag)){ show=false; break; } }
     d.hidden=!show;
     if(!show) d.open=false;
   });
+}
+
+function applyFilter(mode){
+  activeMode=mode;
+  applyFilters();
 }
 
 const RSEL=["resort","resortStay","resortList"];
@@ -1418,16 +1453,25 @@ document.querySelectorAll("#chips .chip").forEach(c=>{
   });
 });
 
+document.querySelectorAll("#chipsAmenity .chip").forEach(c=>{
+  c.addEventListener("click",()=>{
+    const tag=c.dataset.tag;
+    if(activeTags.has(tag)){ activeTags.delete(tag); c.setAttribute("aria-pressed","false"); }
+    else { activeTags.add(tag); c.setAttribute("aria-pressed","true"); }
+    applyFilters();
+  });
+});
+
 el("copyLink").addEventListener("click",copyLink);
 
 /* Views. One is shown at a time; the hash names it, or names a section
    inside it, so a shared link opens where the sharer was looking. */
-const VIEWS=["decide","explore","shop","read"];
+const VIEWS=["read","decide","explore","shop"];
 const VIEW_OF={};
 document.querySelectorAll(".view").forEach(v=>
   v.querySelectorAll("section[id]").forEach(sec=>{ VIEW_OF[sec.id]=v.id.slice(5); }));
 function showView(name){
-  if(!VIEWS.includes(name)) name="decide";
+  if(!VIEWS.includes(name)) name="read";
   VIEWS.forEach(v=>{ el("view-"+v).hidden=v!==name; });
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===name?"true":"false"));
   // The year strip measures its own width, which is zero while hidden.
@@ -1438,7 +1482,7 @@ function applyHash(){
   const h=decodeURIComponent(location.hash.slice(1));
   if(VIEWS.includes(h)){ showView(h); return; }
   const sec=h&&VIEW_OF[h]?el(h):null;
-  showView(sec?VIEW_OF[h]:"decide");
+  showView(sec?VIEW_OF[h]:"read");
   if(sec){
     const fold=sec.querySelector("details.fold"); if(fold) fold.open=true;
     const bar=document.querySelector(".tabs"); window.scrollTo({top:sec.getBoundingClientRect().top+window.scrollY-(bar?bar.offsetHeight:0)-16});
@@ -1446,7 +1490,7 @@ function applyHash(){
 }
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   const v=showView(t.dataset.view);
-  try{ history.replaceState(null,"",location.pathname+location.search+(v==="decide"?"":"#"+v)); }catch(e){}
+  try{ history.replaceState(null,"",location.pathname+location.search+(v==="read"?"":"#"+v)); }catch(e){}
   window.scrollTo({top:Math.max(0,document.querySelector(".tabs").offsetTop-8)});
 }));
 window.addEventListener("hashchange",applyHash);

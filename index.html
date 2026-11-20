@@ -23,12 +23,12 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
   <button class="btn ghost theme" id="themeToggle" aria-pressed="false">Dark mode</button>
   <h1>Disney Vacation Club at Walt&nbsp;Disney&nbsp;World</h1>
   <p>Whether to own, whether to buy resale or direct, and which contract &mdash; worked out from how your family actually travels.</p>
-  <p class="asof">Point charts, dues, cash rates and prices as of September 2026.</p>
+  <p class="asof">Point charts, dues, cash rates and prices as of November 2026.</p>
   <nav class="tabs" aria-label="Views">
-    <button class="tab" data-view="decide" aria-selected="true">Decide<small>Own or book, which resort, resale or direct</small></button>
+    <button class="tab" data-view="read" aria-selected="true">Read<small>Resorts, fine print, sources</small></button>
+    <button class="tab" data-view="decide" aria-selected="false">Decide<small>Own or book, which resort, resale or direct</small></button>
     <button class="tab" data-view="explore" aria-selected="false">Explore<small>What a contract buys, and when to go</small></button>
     <button class="tab" data-view="shop" aria-selected="false">Shop<small>Score a listing, rank a broker&rsquo;s board</small></button>
-    <button class="tab" data-view="read" aria-selected="false">Read<small>Resorts, fine print, sources</small></button>
   </nav>
 </header>
 
@@ -343,6 +343,15 @@ if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)
     <button class="chip" data-mode="skyliner" aria-pressed="false">Skyliner</button>
     <button class="chip" data-mode="boat" aria-pressed="false">Boat</button>
     <button class="chip" data-mode="busonly" aria-pressed="false">Bus only</button>
+  </div>
+  <div class="chips chips-amenity" id="chipsAmenity">
+    <button class="chip amenity-chip" data-tag="signature" aria-pressed="false">Signature dining</button>
+    <button class="chip amenity-chip" data-tag="character" aria-pressed="false">Character dining</button>
+    <button class="chip amenity-chip" data-tag="spa" aria-pressed="false">Full spa</button>
+    <button class="chip amenity-chip" data-tag="pool-slide" aria-pressed="false">Pool slide</button>
+    <button class="chip amenity-chip" data-tag="short-deed" aria-pressed="false">Short deed (&le;2042)</button>
+    <button class="chip amenity-chip" data-tag="long-deed" aria-pressed="false">Long deed (&ge;2060)</button>
+    <button class="chip amenity-chip" data-tag="low-dues" aria-pressed="false">Low dues</button>
   </div>
   <div id="rooms"></div>
 </section>

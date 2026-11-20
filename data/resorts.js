@@ -26,14 +26,14 @@ const RESORTS = [
       "The most car-friendly reason to own here: free self-parking and short drives to every park."
     ],
     dining:[
-      ["Jiko &mdash; The Cooking Place","African-inflected fine dining, signature restaurant. Dinner 5:30&ndash;10:00 PM."],
-      ["Boma &mdash; Flavors of Africa","African-inspired buffet at Jambo House. Breakfast 7:30&ndash;11:30 AM, Dinner 5:00&ndash;9:30 PM."],
-      ["Sanaa","Indian-African table service at Kidani Village; book a savanna-window table. Lunch 11:30 AM&ndash;3:00 PM, Dinner 5:00&ndash;9:30 PM."],
-      ["The Mara","Quick service at Jambo House. 6:30 AM&ndash;11:00 PM."],
+      ["Jiko &mdash; The Cooking Place","African-inflected fine dining, signature restaurant. Dinner 5:30&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/jiko-the-cooking-place/"],
+      ["Boma &mdash; Flavors of Africa","African-inspired buffet at Jambo House. Breakfast 7:30&ndash;11:30 AM, Dinner 5:00&ndash;9:30 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/boma-flavors-of-africa/"],
+      ["Sanaa","Indian-African table service at Kidani Village; book a savanna-window table. Lunch 11:30 AM&ndash;3:00 PM, Dinner 5:00&ndash;9:30 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/sanaa/"],
+      ["The Mara","Quick service at Jambo House. 6:30 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/mara/"],
       ["Sanaa Lounge","Lounge at Kidani with the same savanna views and a menu of small plates and cocktails. Opens at 11:30 AM."],
-      ["Cape Town Lounge and Wine Bar","Lobby-level wine bar at Jambo House. Opens at 4:00 PM."],
-      ["Victoria Falls Lounge","Overlooks Boma from a mezzanine at Jambo House. 4:00 PM&ndash;midnight; food 5:00&ndash;10:00 PM."],
-      ["Uzima Springs Pool Bar","Pool bar at Jambo House. Opens at 11:00 AM."],
+      ["Cape Town Lounge and Wine Bar","Lobby-level wine bar at Jambo House. Opens at 4:00 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/cape-town-lounge-and-wine-bar/"],
+      ["Victoria Falls Lounge","Overlooks Boma from a mezzanine at Jambo House. 4:00 PM&ndash;midnight; food 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/victoria-falls-lounge/"],
+      ["Uzima Springs Pool Bar","Pool bar at Jambo House. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/animal-kingdom-lodge/uzima-springs-pool-bar/"],
       ["Maji Pool Bar","Pool bar at Kidani Village. Opens at 11:00 AM."]
     ],
     amenities:[
@@ -62,16 +62,16 @@ const RESORTS = [
       "Exterior maintenance on the main Contemporary tower runs into late 2027; rooms and dining stay open."
     ],
     dining:[
-      ["California Grill","Fifteenth-floor signature with sushi bar and the best indoor fireworks view on property. Dinner 5:00&ndash;10:00 PM."],
+      ["California Grill","Fifteenth-floor signature with sushi bar and the best indoor fireworks view on property. Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/california-grill/"],
       ["California Grill Lounge","Lounge seating at the California Grill; same view, walk-up only. Dinner 5:00&ndash;10:00 PM."],
-      ["Steakhouse 71","Table service off the lobby, all three meals. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM."],
-      ["Steakhouse 71 Lounge","Adjoining lounge with cocktails and bar bites. Noon&ndash;11:00 PM."],
-      ["Chef Mickey&rsquo;s","Character buffet on the Grand Canyon Concourse. Breakfast 7:00&ndash;11:30 AM, Lunch 11:00 AM&ndash;2:30 PM, Dinner 5:00&ndash;9:30 PM."],
-      ["Contempo Caf&eacute;","Quick service with mobile ordering. 7:00 AM&ndash;11:00 PM."],
-      ["Contemporary Grounds","Grab-and-go coffee and snacks. Opens early morning."],
-      ["Outer Rim","Lobby lounge. Weekdays 4:00 PM&ndash;11:00 PM, weekends noon&ndash;11:00 PM."],
-      ["The Sand Bar","Pool bar at the Contemporary feature pool. Opens at 11:00 AM."],
-      ["Cove Bar","Private pool bar for Bay Lake Tower and DVC guests. Opens at 11:00 AM."],
+      ["Steakhouse 71","Table service off the lobby, all three meals. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/steakhouse-71/"],
+      ["Steakhouse 71 Lounge","Adjoining lounge with cocktails and bar bites. Noon&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/steakhouse-71-lounge/"],
+      ["Chef Mickey&rsquo;s","Character buffet on the Grand Canyon Concourse. Breakfast 7:00&ndash;11:30 AM, Lunch 11:00 AM&ndash;2:30 PM, Dinner 5:00&ndash;9:30 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/chef-mickeys/"],
+      ["Contempo Caf&eacute;","Quick service with mobile ordering. 7:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/contempo-cafe/"],
+      ["Contemporary Grounds","Grab-and-go coffee and snacks. Opens early morning.","https://disneyworld.disney.go.com/dining/contemporary-resort/contemporary-grounds/"],
+      ["Outer Rim","Lobby lounge. Weekdays 4:00 PM&ndash;11:00 PM, weekends noon&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/contemporary-resort/outer-rim/"],
+      ["The Sand Bar","Pool bar at the Contemporary feature pool. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/contemporary-resort/sand-bar/"],
+      ["Cove Bar","Private pool bar for Bay Lake Tower and DVC guests. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/contemporary-resort/cove-bar/"],
       ["Top of the World Lounge &mdash; A Villains Lair","Rooftop bar with an outdoor fireworks deck, open only to members who bought direct. Opens at 6:00 PM."]
     ],
     amenities:[
@@ -98,16 +98,16 @@ const RESORTS = [
       "Bus to Magic Kingdom, Animal Kingdom, Disney Springs and the water parks."
     ],
     dining:[
-      ["Cape May Caf&eacute;","Minnie&rsquo;s character breakfast and seafood clambake dinner. Breakfast 7:30&ndash;11:00 AM, Dinner 5:00&ndash;10:00 PM."],
-      ["Beaches &amp; Cream Soda Shop","1950s ice cream parlor and grill; home of the Kitchen Sink. 11:00 AM&ndash;11:00 PM."],
-      ["Beach Club Marketplace","Quick service with grab-and-go and made-to-order items. 6:00 AM&ndash;11:30 PM."],
-      ["Hurricane Hanna&rsquo;s Waterside Bar and Grill","Bar and grill at Stormalong Bay. Opens at 11:00 AM."],
-      ["Ale &amp; Compass Restaurant","Table service at the Yacht Club. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM."],
-      ["Ale &amp; Compass Lounge","Lounge adjacent to Ale &amp; Compass. Opens at noon."],
-      ["The Market at Ale &amp; Compass","Quick service at the Yacht Club. 7:00 AM&ndash;11:00 PM."],
-      ["Yachtsman Steakhouse","Signature steakhouse at the Yacht Club. Dinner 5:00&ndash;9:30 PM."],
-      ["Crew&rsquo;s Cup Lounge","Pub-style lounge at the Yacht Club. 4:00 PM&ndash;11:00 PM."],
-      ["Martha&rsquo;s Vineyard","Wine bar at the Yacht Club. Opens at noon."]
+      ["Cape May Caf&eacute;","Minnie&rsquo;s character breakfast and seafood clambake dinner. Breakfast 7:30&ndash;11:00 AM, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/beach-club-resort/cape-may-cafe/"],
+      ["Beaches &amp; Cream Soda Shop","1950s ice cream parlor and grill; home of the Kitchen Sink. 11:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/beach-club-resort/beaches-and-cream-soda-shop/"],
+      ["Beach Club Marketplace","Quick service with grab-and-go and made-to-order items. 6:00 AM&ndash;11:30 PM.","https://disneyworld.disney.go.com/dining/beach-club-resort/beach-club-marketplace/"],
+      ["Hurricane Hanna&rsquo;s Waterside Bar and Grill","Bar and grill at Stormalong Bay. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/beach-club-resort/hurricane-hanna-grill/"],
+      ["Ale &amp; Compass Restaurant","Table service at the Yacht Club. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM.","https://disneyworld.disney.go.com/dining/yacht-club-resort/ale-and-compass/"],
+      ["Ale &amp; Compass Lounge","Lounge adjacent to Ale &amp; Compass. Opens at noon.","https://disneyworld.disney.go.com/dining/yacht-club-resort/ale-and-compass-lounge/"],
+      ["The Market at Ale &amp; Compass","Quick service at the Yacht Club. 7:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/yacht-club-resort/ale-and-compass-market/"],
+      ["Yachtsman Steakhouse","Signature steakhouse at the Yacht Club. Dinner 5:00&ndash;9:30 PM.","https://disneyworld.disney.go.com/dining/yacht-club-resort/yachtsman-steakhouse/"],
+      ["Crew&rsquo;s Cup Lounge","Pub-style lounge at the Yacht Club. 4:00 PM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/yacht-club-resort/crew-cup-lounge/"],
+      ["Martha&rsquo;s Vineyard","Wine bar at the Yacht Club. Opens at noon.","https://disneyworld.disney.go.com/dining/yacht-club-resort/marthas-vineyard/"]
     ],
     amenities:[
       "Stormalong Bay: three acres of sand-bottom pool with a lazy river, a shipwreck slide and a snorkeling area. Widely considered the best pool at Walt Disney World and restricted to Beach Club, Yacht Club and villa guests.",
@@ -134,21 +134,21 @@ const RESORTS = [
       "Bus to Magic Kingdom, Animal Kingdom, Disney Springs and the water parks."
     ],
     dining:[
-      ["Flying Fish","Seafood signature restaurant. Dinner: Sun&ndash;Thu 5:30&ndash;10:00 PM, Fri&ndash;Sat 5:30&ndash;10:30 PM."],
-      ["The Cake Bake Shop by Gwendolyn Rogers","Restaurant with sweet and savory meals, plus afternoon tea. 7:00 AM&ndash;11:00 PM."],
-      ["The Cake Bake Shop Bakery","Walk-up bakery counter with cakes, pastries and coffee. 7:00 AM&ndash;11:00 PM."],
-      ["Trattoria al Forno","Italian table service. Breakfast 7:30&ndash;11:00 AM, Dinner 5:00&ndash;10:00 PM."],
+      ["Flying Fish","Seafood signature restaurant. Dinner: Sun&ndash;Thu 5:30&ndash;10:00 PM, Fri&ndash;Sat 5:30&ndash;10:30 PM.","https://disneyworld.disney.go.com/dining/boardwalk/flying-fish/"],
+      ["The Cake Bake Shop by Gwendolyn Rogers","Restaurant with sweet and savory meals, plus afternoon tea. 7:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/boardwalk/cake-bake-shop-restaurant/"],
+      ["The Cake Bake Shop Bakery","Walk-up bakery counter with cakes, pastries and coffee. 7:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/boardwalk/cake-bake-shop-bakery/"],
+      ["Trattoria al Forno","Italian table service. Breakfast 7:30&ndash;11:00 AM, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/boardwalk/trattoria-al-forno/"],
       ["BoardWalk Deli","Counter-service deli. Breakfast, lunch and dinner."],
-      ["Pizza Window","Walk-up pizza by the slice. Lunch and dinner."],
-      ["BoardWalk Ice Cream","Ice cream shop on the promenade. Opens mid-morning."],
+      ["Pizza Window","Walk-up pizza by the slice. Lunch and dinner.","https://disneyworld.disney.go.com/dining/boardwalk/pizza-window/"],
+      ["BoardWalk Ice Cream","Ice cream shop on the promenade. Opens mid-morning.","https://disneyworld.disney.go.com/dining/boardwalk/boardwalk-ice-cream/"],
       ["Carousel Coffee","Coffee shop. Opens early morning."],
-      ["Blue Ribbon Corn Dogs","Walk-up corn dogs on the promenade."],
-      ["Funnel Cake Cart","Walk-up cart on the boardwalk."],
-      ["AbracadaBar","Magic-themed cocktail lounge. 4:00 PM&ndash;midnight."],
+      ["Blue Ribbon Corn Dogs","Walk-up corn dogs on the promenade.","https://disneyworld.disney.go.com/dining/boardwalk/blue-ribbon-corn-dog/"],
+      ["Funnel Cake Cart","Walk-up cart on the boardwalk.","https://disneyworld.disney.go.com/dining/boardwalk/funnel-cake-cart/"],
+      ["AbracadaBar","Magic-themed cocktail lounge. 4:00 PM&ndash;midnight.","https://disneyworld.disney.go.com/dining/boardwalk/abracadabar/"],
       ["Belle Vue Lounge","1930s-style lobby lounge serving coffee in the morning and cocktails in the evening."],
-      ["BoardWalk Joe&rsquo;s Marvelous Margaritas","Frozen cocktail bar on the promenade."],
+      ["BoardWalk Joe&rsquo;s Marvelous Margaritas","Frozen cocktail bar on the promenade.","https://disneyworld.disney.go.com/dining/boardwalk/boardwalk-joes-marvelous-margaritas/"],
       ["Leaping Horse Libations","Pool bar at Luna Park Pool."],
-      ["Hurly-Burly","Seaside live-entertainment venue with 21-plus evenings."]
+      ["Hurly-Burly","Seaside live-entertainment venue with 21-plus evenings.","https://disneyworld.disney.go.com/dining/boardwalk/hurly-burly-lounge/"]
     ],
     amenities:[
       "Luna Park Pool with the Keister Coaster, a 200-foot clown-mouth slide, plus two quiet pools.",
@@ -173,11 +173,11 @@ const RESORTS = [
       "No monorail and no Skyliner. The boat is pleasant but weather-dependent; buses substitute during storms."
     ],
     dining:[
-      ["Storybook Dining at Artist Point","Character dinner with Snow White in an Enchanted Forest setting. Dinner 4:00&ndash;9:00 PM. Reservations required."],
-      ["Whispering Canyon Caf&eacute;","Boisterous skillet dining, all three meals. Breakfast 7:30&ndash;11:30 AM, Lunch 11:30 AM&ndash;2:30 PM, Dinner 5:00&ndash;10:00 PM."],
-      ["Geyser Point Bar &amp; Grill","Open-air bar and grill on Bay Lake; counter service and lounge in one. 11:00 AM&ndash;midnight."],
-      ["Roaring Fork","Quick service. 6:00 AM&ndash;midnight; flatbreads and chicken available late."],
-      ["Territory Lounge","Cozy lounge with craft cocktails and small plates. 4:30 PM&ndash;midnight."],
+      ["Storybook Dining at Artist Point","Character dinner with Snow White in an Enchanted Forest setting. Dinner 4:00&ndash;9:00 PM. Reservations required.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/artist-point/"],
+      ["Whispering Canyon Caf&eacute;","Boisterous skillet dining, all three meals. Breakfast 7:30&ndash;11:30 AM, Lunch 11:30 AM&ndash;2:30 PM, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/whispering-canyon-cafe/"],
+      ["Geyser Point Bar &amp; Grill","Open-air bar and grill on Bay Lake; counter service and lounge in one. 11:00 AM&ndash;midnight.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/geyser-point/"],
+      ["Roaring Fork","Quick service. 6:00 AM&ndash;midnight; flatbreads and chicken available late.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/roaring-fork/"],
+      ["Territory Lounge","Cozy lounge with craft cocktails and small plates. 4:30 PM&ndash;midnight.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/territory-lounge/"],
       ["Trout Pass Pool Bar","Pool bar. Opens at 11:00 AM, seasonal."]
     ],
     amenities:[
@@ -205,11 +205,11 @@ const RESORTS = [
       "No monorail and no Skyliner."
     ],
     dining:[
-      ["Storybook Dining at Artist Point","Character dinner with Snow White in an Enchanted Forest setting. Dinner 4:00&ndash;9:00 PM. Reservations required."],
-      ["Whispering Canyon Caf&eacute;","Boisterous skillet dining, all three meals. Breakfast 7:30&ndash;11:30 AM, Lunch 11:30 AM&ndash;2:30 PM, Dinner 5:00&ndash;10:00 PM."],
-      ["Geyser Point Bar &amp; Grill","Open-air bar and grill on Bay Lake; counter service and lounge in one. 11:00 AM&ndash;midnight."],
-      ["Roaring Fork","Quick service. 6:00 AM&ndash;midnight; flatbreads and chicken available late."],
-      ["Territory Lounge","Cozy lounge with craft cocktails and small plates. 4:30 PM&ndash;midnight."],
+      ["Storybook Dining at Artist Point","Character dinner with Snow White in an Enchanted Forest setting. Dinner 4:00&ndash;9:00 PM. Reservations required.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/artist-point/"],
+      ["Whispering Canyon Caf&eacute;","Boisterous skillet dining, all three meals. Breakfast 7:30&ndash;11:30 AM, Lunch 11:30 AM&ndash;2:30 PM, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/whispering-canyon-cafe/"],
+      ["Geyser Point Bar &amp; Grill","Open-air bar and grill on Bay Lake; counter service and lounge in one. 11:00 AM&ndash;midnight.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/geyser-point/"],
+      ["Roaring Fork","Quick service. 6:00 AM&ndash;midnight; flatbreads and chicken available late.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/roaring-fork/"],
+      ["Territory Lounge","Cozy lounge with craft cocktails and small plates. 4:30 PM&ndash;midnight.","https://disneyworld.disney.go.com/dining/wilderness-lodge-resort/territory-lounge/"],
       ["Trout Pass Pool Bar","Pool bar. Opens at 11:00 AM, seasonal."]
     ],
     amenities:[
@@ -237,10 +237,10 @@ const RESORTS = [
       "Parking is at your building, which makes this one of the easiest resorts to drive from."
     ],
     dining:[
-      ["Olivia&rsquo;s Caf&eacute;","Home-style Key West table service. Breakfast 7:30&ndash;10:30 AM, Lunch 11:30 AM&ndash;5:00 PM, Dinner 5:00&ndash;10:00 PM."],
-      ["Good&rsquo;s Food To Go","Walk-up quick service at the Hospitality House. 7:00 AM&ndash;10:00 PM."],
-      ["Turtle Shack Poolside Snacks","Pool bar near the Turtle Pond pool with pizza, sandwiches, and salads. Lunch, seasonal hours."],
-      ["Gurgling Suitcase Libations &amp; Spirits","Tiny bar off Olivia&rsquo;s. 11:00 AM&ndash;11:00 PM; food until 9:00 PM."]
+      ["Olivia&rsquo;s Caf&eacute;","Home-style Key West table service. Breakfast 7:30&ndash;10:30 AM, Lunch 11:30 AM&ndash;5:00 PM, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/old-key-west-resort/olivia-cafe/"],
+      ["Good&rsquo;s Food To Go","Walk-up quick service at the Hospitality House. 7:00 AM&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/old-key-west-resort/goods-food-to-go/"],
+      ["Turtle Shack Poolside Snacks","Pool bar near the Turtle Pond pool with pizza, sandwiches, and salads. Lunch, seasonal hours.","https://disneyworld.disney.go.com/dining/old-key-west-resort/turtle-shack-poolside-snacks/"],
+      ["Gurgling Suitcase Libations &amp; Spirits","Tiny bar off Olivia&rsquo;s. 11:00 AM&ndash;11:00 PM; food until 9:00 PM.","https://disneyworld.disney.go.com/dining/old-key-west-resort/gurgling-suitcase-libations-and-spirits/"]
     ],
     amenities:[
       "Sandcastle Pool with a 125-foot slide, a sauna and a hot tub, plus three quiet pools spread through the resort.",
@@ -272,16 +272,16 @@ const RESORTS = [
       "Bus to Animal Kingdom, Hollywood Studios, Disney Springs and the water parks."
     ],
     dining:[
-      ["&lsquo;Ohana","Family-style Polynesian dinner and Lilo &amp; Stitch character breakfast. Breakfast 7:30 AM&ndash;noon, Dinner 3:30&ndash;10:00 PM."],
-      ["Kona Caf&eacute;","Tonga Toast, macadamia pancakes, and Pan-Asian fare. Breakfast 7:30&ndash;11:45 AM, Lunch noon&ndash;2:45 PM, Dinner 5:00&ndash;9:45 PM."],
-      ["Wailulu Bar and Grill","Table service in the Island Tower with lagoon views. Lunch and dinner 11:30 AM&ndash;10:00 PM."],
-      ["Capt. Cook&rsquo;s","Quick service, open early and late. 6:30 AM&ndash;11:00 PM."],
-      ["Kona Island","Coffee and grab-and-go sushi. Breakfast 6:30 AM&ndash;noon, Dinner 5:00&ndash;10:00 PM."],
-      ["Pineapple Lanai","Dole Whip window. 10:00 AM&ndash;10:00 PM."],
-      ["Trader Sam&rsquo;s Grog Grotto","Interactive tiki bar; walk-up only. 11:00 AM&ndash;midnight. 21-plus after 8:00 PM."],
-      ["Tambu Lounge","Lounge beside &lsquo;Ohana with the same appetizer menu. 1:00 PM&ndash;midnight."],
-      ["Barefoot Pool Bar","Pool bar at the main Lava Pool. Opens at 11:00 AM."],
-      ["Oasis Bar &amp; Grill","Pool bar at the Island Tower pool. Food served until 8:00 PM."]
+      ["&lsquo;Ohana","Family-style Polynesian dinner and Lilo &amp; Stitch character breakfast. Breakfast 7:30 AM&ndash;noon, Dinner 3:30&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/"],
+      ["Kona Caf&eacute;","Tonga Toast, macadamia pancakes, and Pan-Asian fare. Breakfast 7:30&ndash;11:45 AM, Lunch noon&ndash;2:45 PM, Dinner 5:00&ndash;9:45 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/kona-cafe/"],
+      ["Wailulu Bar and Grill","Table service in the Island Tower with lagoon views. Lunch and dinner 11:00 AM&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/wailulu-bar-grill/"],
+      ["Capt. Cook&rsquo;s","Quick service, open early and late. 6:30 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/capt-cooks/"],
+      ["Kona Island","Coffee and grab-and-go sushi. Breakfast 6:30 AM&ndash;noon, Dinner 5:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/kona-island/"],
+      ["Pineapple Lanai","Dole Whip window. 10:00 AM&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/pineapple-lanai/"],
+      ["Trader Sam&rsquo;s Grog Grotto","Interactive tiki bar; walk-up only. 11:00 AM&ndash;midnight. 21-plus after 8:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/trader-sams-grog-grotto/"],
+      ["Tambu Lounge","Lounge beside &lsquo;Ohana with the same appetizer menu. 1:00 PM&ndash;midnight.","https://disneyworld.disney.go.com/dining/polynesian-resort/tambu-lounge/"],
+      ["Barefoot Pool Bar","Pool bar at the main Lava Pool. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/polynesian-resort/barefoot-pool-bar/"],
+      ["Oasis Bar &amp; Grill","Pool bar at the Island Tower pool. Food served until 8:00 PM.","https://disneyworld.disney.go.com/dining/polynesian-resort/oasis-bar-grill/"]
     ],
     amenities:[
       "Lava Pool with a volcano slide and a zero-entry edge, the Oasis quiet pool, and the Island Tower pool with the Moana splash pad.",
@@ -309,10 +309,10 @@ const RESORTS = [
       "Compact enough to walk the whole resort in a few minutes, which is a genuine advantage with a stroller."
     ],
     dining:[
-      ["Topolino&rsquo;s Terrace &mdash; Flavors of the Riviera","Rooftop French-Italian signature. Character breakfast 7:30 AM&ndash;12:15 PM, Dinner 5:00&ndash;9:30 PM."],
-      ["Primo Piatto","Quick service with breakfast through dinner. 7:00 AM&ndash;10:00 PM."],
-      ["Le Petit Caf&eacute;","Lobby coffee bar by day, wine bar by evening. 7:00 AM&ndash;9:00 PM."],
-      ["Bar Riva","Open-air pool bar with Mediterranean bites. 11:00 AM&ndash;10:00 PM."]
+      ["Topolino&rsquo;s Terrace &mdash; Flavors of the Riviera","Rooftop French-Italian signature. Character breakfast 7:30 AM&ndash;12:15 PM, Dinner 5:00&ndash;9:30 PM.","https://disneyworld.disney.go.com/dining/riviera-resort/topolinos-terrace/"],
+      ["Primo Piatto","Quick service with breakfast through dinner. 7:00 AM&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/riviera-resort/primo-piatto/"],
+      ["Le Petit Caf&eacute;","Lobby coffee bar by day, wine bar by evening. 7:00 AM&ndash;9:00 PM.","https://disneyworld.disney.go.com/dining/riviera-resort/le-petit-cafe/"],
+      ["Bar Riva","Open-air pool bar with Mediterranean bites. 11:00 AM&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/riviera-resort/bar-riva/"]
     ],
     amenities:[
       "Riviera Pool with a zero-entry edge and a slide, the Beau Soleil quiet pool, and the S'il Vous Play splash pad.",
@@ -340,13 +340,13 @@ const RESORTS = [
       "Congress Park buildings look across the water at Disney Springs and are the shortest walk out."
     ],
     dining:[
-      ["The Turf Club Bar and Grill","Steaks and seasonal entr&eacute;es with a golf-course patio. Dinner Wed&ndash;Sun, 4:30&ndash;9:00 PM. Closed Mon&ndash;Tue."],
-      ["The Turf Club Lounge","Lounge adjacent to the Turf Club. 4:00&ndash;11:00 PM on days the restaurant is open."],
-      ["The Artist&rsquo;s Palette","Combined quick service and grocery market, the resort&rsquo;s hub. 7:00 AM&ndash;11:00 PM."],
-      ["The Paddock Grill","Quick service by the main pool with sandwiches, salads and bar service. 7:30 AM&ndash;9:00 PM."],
-      ["On the Rocks","Pool bar at High Rock Spring Pool. Opens at 11:00 AM."],
-      ["Backstretch Pool Bar","Seasonal pool bar at The Paddock. 11:00 AM&ndash;6:00 PM when open."],
-      ["Chip &rsquo;n&rsquo; Dale&rsquo;s Caf&eacute;","Grab-and-go snacks at the Lake Buena Vista Golf Course."],
+      ["The Turf Club Bar and Grill","Steaks and seasonal entr&eacute;es with a golf-course patio. Dinner Wed&ndash;Sun, 4:30&ndash;9:00 PM. Closed Mon&ndash;Tue.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/turf-club-bar-and-grill/"],
+      ["The Turf Club Lounge","Lounge adjacent to the Turf Club. 4:00&ndash;11:00 PM on days the restaurant is open.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/turf-club-lounge/"],
+      ["The Artist&rsquo;s Palette","Combined quick service and grocery market, the resort&rsquo;s hub. 7:00 AM&ndash;11:00 PM.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/artists-palette/"],
+      ["The Paddock Grill","Quick service by the main pool with sandwiches, salads and bar service. 7:30 AM&ndash;9:00 PM.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/paddock-grill/"],
+      ["On the Rocks","Pool bar at High Rock Spring Pool. Opens at 11:00 AM.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/on-the-rocks/"],
+      ["Backstretch Pool Bar","Seasonal pool bar at The Paddock. 11:00 AM&ndash;6:00 PM when open.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/backstretch-pool-bar/"],
+      ["Chip &rsquo;n&rsquo; Dale&rsquo;s Caf&eacute;","Grab-and-go snacks at the Lake Buena Vista Golf Course.","https://disneyworld.disney.go.com/dining/saratoga-springs-resort-and-spa/chip-n-dales-cafe/"],
       ["Nearby","Disney Springs is a 10-minute walk or a short boat ride, which effectively gives this resort forty-plus restaurants."]
     ],
     amenities:[
@@ -377,18 +377,18 @@ const RESORTS = [
       "Bus to Animal Kingdom, Hollywood Studios, Disney Springs and the water parks."
     ],
     dining:[
-      ["Victoria &amp; Albert&rsquo;s","Forbes Five-Star; adults only, jackets required. Dinner seatings: first 5:00&ndash;6:00 PM, second 8:30&ndash;9:15 PM. Also offers a Chef&rsquo;s Table and the Queen Victoria Room."],
-      ["C&iacute;tricos","Signature restaurant. Dinner 5:00&ndash;9:30 PM. Sunday brunch 10:00 AM&ndash;2:00 PM."],
-      ["C&iacute;tricos Lounge","Lounge adjacent to C&iacute;tricos."],
-      ["Narcoossee&rsquo;s","Waterfront signature with fireworks views. Dinner 5:30&ndash;10:00 PM. Sunday brunch 10:00 AM&ndash;2:00 PM."],
-      ["Grand Floridian Caf&eacute;","Casual table service. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM."],
-      ["1900 Park Fare","Character buffet. Breakfast 8:00&ndash;11:00 AM, Dinner 4:30&ndash;8:30 PM."],
-      ["The Garden View Lounge &mdash; Tea Experience","Alice in Wonderland afternoon tea. Reservations required."],
-      ["Gasparilla Island Grill","Quick service, open 24 hours. Full breakfast menu 6:30&ndash;11:00 AM; limited overnight menu."],
-      ["Enchanted Rose","Themed lounge off the lobby. Opens at 1:00 PM."],
-      ["The Perch","Lobby bar. Opens at 1:00 PM."],
-      ["Beaches Pool Bar &amp; Grill","Bar and grill at the Beach Pool with burgers, sushi and salads."],
-      ["Courtyard Pool Bar","Bar at the quieter Courtyard Pool."]
+      ["Victoria &amp; Albert&rsquo;s","Forbes Five-Star; adults only, jackets required. Dinner seatings: first 5:00&ndash;6:00 PM, second 8:30&ndash;9:15 PM. Also offers a Chef&rsquo;s Table and the Queen Victoria Room.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/victoria-and-alberts/"],
+      ["C&iacute;tricos","Signature restaurant. Dinner 5:00&ndash;9:30 PM. Sunday brunch 10:00 AM&ndash;2:00 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/citricos/"],
+      ["C&iacute;tricos Lounge","Lounge adjacent to C&iacute;tricos.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/citricos-lounge/"],
+      ["Narcoossee&rsquo;s","Waterfront signature with fireworks views. Dinner 5:30&ndash;10:00 PM. Sunday brunch 10:00 AM&ndash;2:00 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/narcoossees/"],
+      ["Grand Floridian Caf&eacute;","Casual table service. Breakfast 7:30&ndash;11:00 AM, Lunch 11:30 AM&ndash;2:00 PM, Dinner 5:00&ndash;9:00 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/grand-floridian-cafe/"],
+      ["1900 Park Fare","Character buffet. Breakfast 8:00&ndash;11:00 AM, Dinner 4:30&ndash;8:30 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/1900-park-fare/"],
+      ["The Garden View Lounge &mdash; Tea Experience","Alice in Wonderland afternoon tea. Reservations required.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/garden-view-lounge-tea-room-experience/"],
+      ["Gasparilla Island Grill","Quick service. 6:00 AM&ndash;midnight.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/gasparilla-island-grill/"],
+      ["Enchanted Rose","Themed lounge off the lobby. Opens at 1:00 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/enchanted-rose-lounge/"],
+      ["The Perch","Lobby bar. Opens at 1:00 PM.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/the-perch/"],
+      ["Beaches Pool Bar &amp; Grill","Bar and grill at the Beach Pool with burgers, sushi and salads.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/beach-pool-bar/"],
+      ["Courtyard Pool Bar","Bar at the quieter Courtyard Pool.","https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/courtyard-pool-bar/"]
     ],
     amenities:[
       "Beach Pool with a slide and the Alice in Wonderland splash pad, plus the quieter Courtyard Pool.",
@@ -412,9 +412,9 @@ const RESORTS = [
       "The offsetting advantage is that you park a car at your own cabin, which no other DVC resort offers."
     ],
     dining:[
-      ["Hoop-Dee-Doo Musical Revue","Dinner show at Pioneer Hall. Wed&ndash;Sun, shows at 4:00, 6:15 and 8:30 PM. Reservations and prepayment required. Closed Mon&ndash;Tue."],
-      ["Trail&rsquo;s End Restaurant","Quick-service marketplace. Breakfast 7:30&ndash;11:00 AM, Dinner 4:30&ndash;9:30 PM (until 10:00 PM Fri&ndash;Sat)."],
-      ["Crockett&rsquo;s Tavern","Walk-up outdoor bar beside Pioneer Hall. 3:00&ndash;10:00 PM."],
+      ["Hoop-Dee-Doo Musical Revue","Dinner show at Pioneer Hall. Wed&ndash;Sun, shows at 4:00, 6:15 and 8:30 PM. Reservations and prepayment required. Closed Mon&ndash;Tue.","https://disneyworld.disney.go.com/dining/cabins-at-fort-wilderness-resort/hoop-dee-doo-musical-revue/"],
+      ["Trail&rsquo;s End Restaurant","Quick-service marketplace. Breakfast 7:30&ndash;11:00 AM, Dinner 4:30&ndash;9:30 PM (until 10:00 PM Fri&ndash;Sat).","https://disneyworld.disney.go.com/dining/cabins-at-fort-wilderness-resort/trails-end-restaurant/"],
+      ["Crockett&rsquo;s Tavern","Walk-up outdoor bar beside Pioneer Hall. 3:00&ndash;10:00 PM.","https://disneyworld.disney.go.com/dining/cabins-at-fort-wilderness-resort/crockett-tavern/"],
       ["Meadow Snack Bar","Seasonal snack bar. 11:00 AM&ndash;5:00 PM when open; hours may vary."],
       ["Nearby","A short boat ride reaches Geyser Point and Whispering Canyon at Wilderness Lodge."]
     ],
